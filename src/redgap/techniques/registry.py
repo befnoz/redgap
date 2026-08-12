@@ -13,48 +13,24 @@ import re
 import shlex
 
 from redgap.techniques.base import TechniqueSpec
+from redgap.techniques.catalog_data import TECHNIQUES
 
 # The setuid technique may only ever touch this inert target, copied from this
-# inert source. Changing these is the only sanctioned way to alter the target, and
-# the validator below still forbids a dangerous one.
+# inert source. The validator below still forbids a dangerous edit to the T1548.001
+# commands in catalog_data.py.
 INERT_SUID_SOURCE = "/bin/true"
 INERT_SUID_TARGET = "/tmp/redgap_demo_suid"
 
 
+#: Executable specs, built from the single catalog_data source of truth.
 SPECS: dict[str, TechniqueSpec] = {
-    "T1087.001": TechniqueSpec(
-        technique_id="T1087.001",
-        commands=("cat /etc/passwd",),
-        note="Read /etc/passwd to enumerate local accounts.",
-    ),
-    "T1057": TechniqueSpec(
-        technique_id="T1057",
-        commands=("ps aux",),
-        note="List processes (base-rate gap: too noisy for a single-event rule).",
-    ),
-    "T1136.001": TechniqueSpec(
-        technique_id="T1136.001",
-        commands=("useradd -M -N -s /usr/sbin/nologin svc_demo",),
-        cleanup=("userdel svc_demo",),
-        note="Create a nologin, no-password, no-home throwaway account, then delete it.",
-    ),
-    "T1548.001": TechniqueSpec(
-        technique_id="T1548.001",
-        commands=(
-            f"cp {INERT_SUID_SOURCE} {INERT_SUID_TARGET}",
-            # ONE shell command line so CommandLine carries both 'chown root' and
-            # ' chmod u+s' — which is what the shipped SigmaHQ rule requires.
-            f"sh -c 'chown root {INERT_SUID_TARGET} && chmod u+s {INERT_SUID_TARGET}'",
-        ),
-        cleanup=(f"rm -f {INERT_SUID_TARGET}",),
-        note="Setuid an INERT /bin/true copy (never a shell). Matches shipped SigmaHQ rule.",
-    ),
-    "T1070.006": TechniqueSpec(
-        technique_id="T1070.006",
-        commands=("touch -r /etc/hostname /tmp/redgap_agent_file",),
-        cleanup=("rm -f /tmp/redgap_agent_file",),
-        note="Copy a reference file's timestamps (timestomp). Rule-gap by default.",
-    ),
+    t.id: TechniqueSpec(
+        technique_id=t.id,
+        commands=t.commands,
+        cleanup=t.cleanup,
+        note=t.name,
+    )
+    for t in TECHNIQUES
 }
 
 

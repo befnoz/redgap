@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\n' | tee -a /root/.bashrc >/dev/null || true
+REDGAP	13	root	/root	/usr/bin/cp	cp -n /root/.bashrc /root/.bashrc.rgbak
+REDGAP	15	root	/root	/usr/bin/tee	tee -a /root/.bashrc
+REDGAP	16	root	/root	/usr/bin/dash	sh -c mv -f /root/.bashrc.rgbak /root/.bashrc 2>/dev/null; true
+REDGAP	22	root	/root	/usr/bin/mv	mv -f /root/.bashrc.rgbak /root/.bashrc

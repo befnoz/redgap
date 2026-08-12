@@ -20,9 +20,42 @@ FIX = Path(__file__).resolve().parents[1] / "fixtures" / "replay"
 ARTIFACT = {
     "T1087.001": "/etc/passwd",
     "T1057": "ps aux",
-    "T1136.001": "/usr/sbin/useradd",
+    "T1136.001": "useradd",
     "T1548.001": " chmod u+s",
     "T1070.006": "touch -r",
+    "T1082": "uname",
+    "T1016": "/etc/resolv.conf",
+    "T1069.001": "groups",
+    "T1518.001": "falcond",
+    "T1083": "-name hosts",
+    "T1033": "whoami",
+    "T1518": "dpkg",
+    "T1140": "base64",
+    "T1222.002": "chattr",
+    "T1070.004": "shred",
+    "T1497.001": "product_name",
+    "T1059": "system(",
+    "T1059.004": "env /bin/sh",
+    "T1059.006": "print('redgap')",
+    "T1053.003": "crontab",
+    "T1053.002": "at now",
+    "T1548": "cap_setuid",
+    "T1546.004": ".bashrc",
+    "T1098.004": "authorized_keys",
+    "T1552.001": "/tmp/shadow",
+    "T1003.008": "getent",
+    "T1552.004": "id_rsa",
+    "T1560.001": "rg_loot.tgz",
+    "T1005": "cat /etc/hostname",
+    "T1071.001": "RedGap/1.0",
+    "T1090": "http_proxy=",
+    "T1567": "--upload-file",
+    "T1048.003": "http.server",
+    "T1485": "if=/dev/zero",
+    "T1489": "redgap-nonexistent",
+    "T1653": "hibernate.target",
+    "T1565.001": "/etc/hosts",
+    "T1592.004": "/etc/sudoers",
 }
 
 
@@ -62,8 +95,9 @@ def test_committed_events_match_a_reparse_of_the_raw():
 
 
 def test_real_telemetry_carries_the_detectable_artifact():
-    for tech in CATALOG:
-        assert ARTIFACT[tech.id] in _raw(tech.id), tech.id
+    assert set(ARTIFACT) == {t.id for t in CATALOG}, "ARTIFACT must cover every technique"
+    for tid, art in ARTIFACT.items():
+        assert art in _raw(tid), (tid, art)
     # The setuid combined line must carry BOTH substrings the shipped rule needs.
     setuid = _raw("T1548.001")
     assert "chown root" in setuid and " chmod u+s" in setuid

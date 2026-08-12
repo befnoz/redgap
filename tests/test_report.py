@@ -8,7 +8,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from redgap.catalog import CATALOG
+from redgap.catalog import BY_ID
 from redgap.detection.coverage import evaluate_all
 from redgap.detection.sigma_ast import load_rules
 from redgap.report import coverage_dict, markdown_report, navigator_layer
@@ -17,6 +17,10 @@ from redgap.telemetry.schema import make_event
 
 RULES_DIR = Path(__file__).resolve().parents[1] / "rules"
 WHEN = "2026-08-11T00:00:00Z"
+
+# A fixed 5-technique slice (the original kill-chain) so the report renderers are tested
+# against a known 3-detected / 2-gap scenario independent of the full DEMO size.
+DEMO = tuple(BY_ID[i] for i in ("T1087.001", "T1057", "T1136.001", "T1548.001", "T1070.006"))
 
 
 def _verdicts():
@@ -38,11 +42,11 @@ def _verdicts():
             ev("T1070.006", image="/usr/bin/touch", command_line="touch -r /etc/hostname /x")
         ],
     }
-    return evaluate_all(list(CATALOG), events, load_rules(RULES_DIR))
+    return evaluate_all(list(DEMO), events, load_rules(RULES_DIR))
 
 
 def test_coverage_dict_shape_and_evidence():
-    d = coverage_dict(CATALOG, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
+    d = coverage_dict(DEMO, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
     assert d["summary"]["detected"] == 3
     assert d["summary"]["gaps"] == 2
     assert d["summary"]["gaps_by_type"] == {"rule": 1, "base_rate": 1}
@@ -55,7 +59,7 @@ def test_coverage_dict_shape_and_evidence():
 
 
 def test_navigator_layer_colors_and_spec():
-    layer = navigator_layer(CATALOG, _verdicts())
+    layer = navigator_layer(DEMO, _verdicts())
     assert layer["versions"]["layer"] == "4.5"
     assert layer["domain"] == "enterprise-attack"
     colors = {t["techniqueID"]: t["color"] for t in layer["techniques"]}
@@ -69,13 +73,13 @@ def test_navigator_layer_colors_and_spec():
 def test_navigator_multi_tactic_technique_appears_in_every_tactic_column():
     # T1548.001 maps to two tactics; it must be emitted (and colored) for BOTH, so the
     # heatmap agrees with coverage.md/json rather than reading blank in one column.
-    layer = navigator_layer(CATALOG, _verdicts())
+    layer = navigator_layer(DEMO, _verdicts())
     tactics = {t["tactic"] for t in layer["techniques"] if t["techniqueID"] == "T1548.001"}
     assert tactics == {"privilege-escalation", "defense-evasion"}, tactics
 
 
 def test_markdown_has_table_gaps_and_evidence():
-    md = markdown_report(CATALOG, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
+    md = markdown_report(DEMO, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
     assert "3 / 5 techniques detected" in md
     assert "| T1548.001 |" in md
     assert "## Gaps" in md
@@ -86,6 +90,6 @@ def test_markdown_has_table_gaps_and_evidence():
 
 
 def test_reports_are_deterministic():
-    a = coverage_dict(CATALOG, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
-    b = coverage_dict(CATALOG, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
+    a = coverage_dict(DEMO, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
+    b = coverage_dict(DEMO, _verdicts(), mode="replay", run_id="r", generated_at=WHEN)
     assert json.dumps(a, sort_keys=True) == json.dumps(b, sort_keys=True)

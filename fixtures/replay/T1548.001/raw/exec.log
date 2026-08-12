@@ -1,9 +1,9 @@
 REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
 REDGAP	7	root	/root	/usr/bin/dash	sh -c cp /bin/true /tmp/redgap_demo_suid
-REDGAP	13	root	/root	/usr/bin/cp	cp /bin/true /tmp/redgap_demo_suid
-REDGAP	14	root	/root	/usr/bin/dash	sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'
-REDGAP	20	root	/root	/usr/bin/dash	sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid
-REDGAP	21	root	/root	/usr/bin/chown	chown root /tmp/redgap_demo_suid
-REDGAP	22	root	/root	/usr/bin/chmod	chmod u+s /tmp/redgap_demo_suid
-REDGAP	23	root	/root	/usr/bin/dash	sh -c rm -f /tmp/redgap_demo_suid
-REDGAP	29	root	/root	/usr/bin/rm	rm -f /tmp/redgap_demo_suid
+REDGAP	14	root	/root	/usr/bin/cp	cp /bin/true /tmp/redgap_demo_suid
+REDGAP	15	root	/root	/usr/bin/dash	sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'
+REDGAP	21	root	/root	/usr/bin/dash	sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid
+REDGAP	22	root	/root	/usr/bin/chown	chown root /tmp/redgap_demo_suid
+REDGAP	23	root	/root	/usr/bin/chmod	chmod u+s /tmp/redgap_demo_suid
+REDGAP	24	root	/root	/usr/bin/dash	sh -c rm -f /tmp/redgap_demo_suid
+REDGAP	31	root	/root	/usr/bin/rm	rm -f /tmp/redgap_demo_suid

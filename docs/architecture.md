@@ -21,7 +21,7 @@ subset, or requests a technique that does not exist.
 
 | Component | File | Role |
 |-----------|------|------|
-| Technique catalog | `src/redgap/catalog.py`, `techniques/registry.py` | 5 benign techniques + their commands and cleanup |
+| Technique catalog | `src/redgap/catalog.py`, `techniques/catalog_data.py` | 38 benign techniques + their commands and cleanup |
 | Lab | `lab/`, `src/redgap/lab.py` | Disposable Docker container + a ~40-line `LD_PRELOAD` execve collector |
 | Target | `src/redgap/target.py` | `ReplayTarget` (committed real fixtures, offline) / `LiveDockerTarget` |
 | Telemetry | `src/redgap/telemetry/` | snoopy-format parser → SigmaHQ `process_creation` events |

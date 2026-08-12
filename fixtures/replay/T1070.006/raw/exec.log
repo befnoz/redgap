@@ -1,5 +1,5 @@
 REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
-REDGAP	7	root	/root	/usr/bin/dash	sh -c touch -r /etc/hostname /tmp/redgap_agent_file
-REDGAP	13	root	/root	/usr/bin/touch	touch -r /etc/hostname /tmp/redgap_agent_file
-REDGAP	14	root	/root	/usr/bin/dash	sh -c rm -f /tmp/redgap_agent_file
-REDGAP	20	root	/root	/usr/bin/rm	rm -f /tmp/redgap_agent_file
+REDGAP	8	root	/root	/usr/bin/dash	sh -c touch -r /etc/hostname /tmp/redgap_agent_file
+REDGAP	14	root	/root	/usr/bin/touch	touch -r /etc/hostname /tmp/redgap_agent_file
+REDGAP	15	root	/root	/usr/bin/dash	sh -c rm -f /tmp/redgap_agent_file
+REDGAP	21	root	/root	/usr/bin/rm	rm -f /tmp/redgap_agent_file

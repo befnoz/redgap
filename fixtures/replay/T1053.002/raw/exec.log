@@ -1,0 +1,8 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c echo /bin/true | at now + 1 hour || true
+REDGAP	14	root	/root	/usr/bin/at	at now + 1 hour
+REDGAP	15	root	/root	/usr/bin/dash	sh -c atq | cut -f1 | xargs -r atrm; true
+REDGAP	22	root	/root	/usr/bin/at	atq
+REDGAP	24	root	/root	/usr/bin/xargs	xargs -r atrm
+REDGAP	23	root	/root	/usr/bin/cut	cut -f1
+REDGAP	25	root	/root	/usr/bin/at	atrm 1

@@ -1,0 +1,18 @@
+{
+  "technique_id": "T1083",
+  "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
+  "image": "redgap-lab:v0.1",
+  "image_id": "sha256:fc55ea6822e6b1d567b07997a1d1ddbf13149cb5e5d2023c6e7619a047405e1f",
+  "host_kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "git_commit": "expansion-v0.2",
+  "captured_at": "2026-08-13T00:00:00+00:00",
+  "commands": [
+    "find /etc -name hosts"
+  ],
+  "cleanup": [
+    "true"
+  ],
+  "raw_sha256": "dc9400b847c0b7d5bbbd53d6f58d5d1adb7a4769dc5c0faba5334946b525277d",
+  "event_count": 4,
+  "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
+}

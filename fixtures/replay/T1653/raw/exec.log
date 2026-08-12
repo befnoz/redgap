@@ -1,0 +1,5 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c systemctl mask hibernate.target || true
+REDGAP	13	root	/root	/usr/bin/systemctl	systemctl mask hibernate.target
+REDGAP	14	root	/root	/usr/bin/dash	sh -c systemctl unmask hibernate.target 2>/dev/null; true
+REDGAP	20	root	/root	/usr/bin/systemctl	systemctl unmask hibernate.target

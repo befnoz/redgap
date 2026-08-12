@@ -22,9 +22,10 @@ Optional dependency
 Detection content
 -----------------
 - Sigma community rules (SigmaHQ) are distributed under the Detection Rule
-  License (DRL-1.1). Any SigmaHQ rule vendored under rules/ retains its original
-  header, author, and license reference. See:
-  https://github.com/SigmaHQ/sigma/blob/master/LICENSE.Detection.Rules.md
+  License (DRL-1.1). RedGap vendors real SigmaHQ linux/process_creation rules
+  verbatim and loads them at runtime as detection content: one under rules/ and
+  23 under rules/sigmahq/ (each retains its original id, author, and header).
+  See: https://github.com/SigmaHQ/sigma/blob/master/LICENSE.Detection.Rules.md
 - The full SigmaHQ linux/process_creation ruleset (122 rules) is vendored verbatim
   under tests/corpus/sigmahq_linux_process_creation/ as TEST INPUT only (engine
   validation), under DRL-1.1. Source commit and refresh steps are in that directory's

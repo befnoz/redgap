@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c printf '* * * * * /bin/true\n' > /tmp/rgcron && crontab /tmp/rgcron || true
+REDGAP	13	root	/root	/usr/bin/crontab	crontab /tmp/rgcron
+REDGAP	14	root	/root	/usr/bin/dash	sh -c crontab -r 2>/dev/null; rm -f /tmp/rgcron; true
+REDGAP	20	root	/root	/usr/bin/crontab	crontab -r
+REDGAP	21	root	/root	/usr/bin/rm	rm -f /tmp/rgcron

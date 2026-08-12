@@ -1,0 +1,4 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c curl -A 'RedGap/1.0' http://example.com/ || true
+REDGAP	14	root	/root	/usr/bin/curl	curl -A RedGap/1.0 http://example.com/
+REDGAP	16	root	/root	/usr/bin/dash	sh -c true

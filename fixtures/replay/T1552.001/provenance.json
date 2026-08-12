@@ -1,0 +1,18 @@
+{
+  "technique_id": "T1552.001",
+  "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
+  "image": "redgap-lab:v0.1",
+  "image_id": "sha256:fc55ea6822e6b1d567b07997a1d1ddbf13149cb5e5d2023c6e7619a047405e1f",
+  "host_kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "git_commit": "expansion-v0.2",
+  "captured_at": "2026-08-13T00:00:00+00:00",
+  "commands": [
+    "touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak"
+  ],
+  "cleanup": [
+    "rm -f /tmp/shadow /tmp/shadow.bak"
+  ],
+  "raw_sha256": "911ebddc88e8e310b57f2b829ac9874a8d8465fd109f1cbedc077897762f522c",
+  "event_count": 6,
+  "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
+}

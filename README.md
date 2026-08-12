@@ -2,7 +2,7 @@
 
 **Find the red gaps in your detection coverage.**
 
-RedGap is an automated, MITRE ATT&CK-mapped **offense↔detection coverage harness**. It runs a small set of *benign* ATT&CK techniques against its own disposable local lab, collects real telemetry with an **independent collector**, and then **deterministically** — from logs and Sigma rules, with no AI in the loop — decides whether each technique was *detected* or is a *gap*. The output is a coverage report (`technique → detected? → gap type`) plus an ATT&CK Navigator layer.
+RedGap is an automated, MITRE ATT&CK-mapped **offense↔detection coverage harness**. It runs **38 benign** ATT&CK techniques (across 11 tactics) against its own disposable local lab, collects real telemetry with an **independent collector**, and then **deterministically** — from logs and Sigma rules, with no AI in the loop — decides whether each technique was *detected* or is a *gap*. The output is a coverage report (`technique → detected? → gap type`) plus an ATT&CK Navigator layer.
 
 The name is the output: in the coverage grid, detected techniques are green and gaps are **red**. RedGap finds the red.
 
@@ -13,7 +13,7 @@ The name is the output: in the coverage grid, detected techniques are green and 
 
 > **v0.1 — what this is and is not.** RedGap v0.1 is a deterministic harness over a *fixed* set of techniques. It is **not** an autonomous agent that continuously attacks and adapts. Adaptive, gap-driven technique chaining (the agent choosing its next attack from the last result) is the honest **next step**, tracked on the roadmap. Precise scope on purpose.
 
-**Status.** RedGap's own parser + evaluator ingests **all 122 real SigmaHQ `linux/process_creation` rules** with zero parser errors and zero evaluator crashes — that ruleset is vendored under [`tests/corpus/`](tests/corpus/sigmahq_linux_process_creation/) and checked by [`test_sigmahq_corpus.py`](tests/test_sigmahq_corpus.py), so the claim is reproducible, not asserted. **290 tests** run fully offline in CI. Coverage is computed from **5 committed real-telemetry captures** — one per technique, each with a raw log + parsed events + sha256 provenance — not authored logs. See [docs/architecture.md](docs/architecture.md) · committed output in [docs/samples/](docs/samples/).
+**Status.** RedGap's own parser + evaluator ingests **all 122 real SigmaHQ `linux/process_creation` rules** with zero parser errors and zero evaluator crashes — that ruleset is vendored under [`tests/corpus/`](tests/corpus/sigmahq_linux_process_creation/) and checked by [`test_sigmahq_corpus.py`](tests/test_sigmahq_corpus.py), so the claim is reproducible, not asserted. **290 tests** run fully offline in CI. Coverage is computed from **38 committed real-telemetry captures** — one per technique, each with a raw log + parsed events + sha256 provenance — not authored logs; the default run detects **26/38** across 11 ATT&CK tactics. See [docs/architecture.md](docs/architecture.md) · committed output in [docs/samples/](docs/samples/).
 
 ---
 
@@ -67,7 +67,7 @@ The committed `coverage.json` is identical whichever planner ran — a test asse
 
 ## What a run shows
 
-A v0.1 run is a five-technique mini kill-chain that deliberately produces **both** detections and gaps — and two *different kinds* of gap, because a coverage tool that is all-green is just a checklist:
+A run executes **38 benign techniques across 11 ATT&CK tactics** and produces a real coverage grid: **26 detected · 12 gaps** (7 rule, 5 base-rate). Every verdict is computed by the engine from captured telemetry against real SigmaHQ rules — see the live grid at the [dashboard](https://befnoz.github.io/redgap/) or [docs/samples/](docs/samples/). The original kill-chain below is the illustrative core, showing both *kinds* of gap and the remediation round-trip:
 
 | # | ATT&CK | Tactic | Result |
 |---|--------|--------|--------|
@@ -77,7 +77,7 @@ A v0.1 run is a five-technique mini kill-chain that deliberately produces **both
 | 4 | T1548.001 Setuid/Setgid | Priv. Esc / Defense Evasion | detected (matches a shipped SigmaHQ rule) |
 | 5 | T1070.006 Timestomp | Defense Evasion | **gap (rule)** → closed live in the remediation round-trip |
 
-**The remediation round-trip** is the point: technique 5 fires but no rule catches it (a *rule gap*). Write one Sigma rule, re-run the same command, and watch the verdict flip red→green. Both the before and after coverage reports are committed — RedGap is a tool that finds a real blind spot and closes it, not a status printer.
+**The remediation round-trip** is the point: technique 5 fires but no rule catches it (a *rule gap*). Write one Sigma rule, re-run the same command, and watch the verdict flip red→green (`redgap run --fix` → 27/38). Both the before and after coverage reports are committed — RedGap is a tool that finds a real blind spot and closes it, not a status printer.
 
 ---
 

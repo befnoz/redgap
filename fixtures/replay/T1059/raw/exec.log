@@ -1,0 +1,7 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c awk 'BEGIN {system("/bin/sh -c id")}'
+REDGAP	13	root	/root	/usr/bin/mawk	awk BEGIN {system("/bin/sh -c id")}
+REDGAP	14	root	/root	/usr/bin/dash	sh -c -- /bin/sh -c id
+REDGAP	15	root	/root	/usr/bin/dash	/bin/sh -c id
+REDGAP	16	root	/root	/usr/bin/id	id
+REDGAP	17	root	/root	/usr/bin/dash	sh -c true

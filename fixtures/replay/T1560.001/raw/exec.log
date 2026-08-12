@@ -1,0 +1,7 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true
+REDGAP	13	root	/root	/usr/bin/tar	tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release
+REDGAP	14	root	/root	/usr/bin/dash	/bin/sh -c gzip
+REDGAP	15	root	/root	/usr/bin/gzip	gzip
+REDGAP	16	root	/root	/usr/bin/dash	sh -c rm -f /tmp/rg_loot.tgz
+REDGAP	22	root	/root	/usr/bin/rm	rm -f /tmp/rg_loot.tgz

@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true
+REDGAP	13	root	/root	/usr/bin/touch	touch /tmp/redgap_imm
+REDGAP	14	root	/root	/usr/bin/chattr	chattr -i /tmp/redgap_imm
+REDGAP	15	root	/root	/usr/bin/dash	sh -c rm -f /tmp/redgap_imm
+REDGAP	21	root	/root	/usr/bin/rm	rm -f /tmp/redgap_imm

@@ -1,4 +1,4 @@
-"""The REPLAY pipeline over the committed real fixtures: the default run detects 3/5
+"""The REPLAY pipeline over the committed real fixtures: the default run detects 26/38
 with the flagship on a shipped rule, --fix closes the timestomp gap, and the result is
 deterministic — all offline, no Docker, no API key.
 """
@@ -14,10 +14,11 @@ from redgap.target import ReplayTarget
 WHEN = "2026-08-11T00:00:00Z"
 
 
-def test_replay_default_three_detected(tmp_path):
+def test_replay_default_detected_count(tmp_path):
     verdicts, report = run_coverage(ReplayTarget(), generated_at=WHEN, out_dir=tmp_path)
     by = {v.technique_id: v for v in verdicts}
-    assert report["summary"]["detected"] == 3
+    assert report["summary"]["detected"] == 26
+    assert report["summary"]["techniques"] == 38
     assert by["T1548.001"].detected
     assert "c21c4eaa-ba2e-419a-92b2-8371703cbe21" in by["T1548.001"].firing_rules
     assert by["T1057"].gap_type is GapType.BASE_RATE
@@ -31,8 +32,8 @@ def test_fix_closes_the_timestomp_gap(tmp_path):
     verdicts, report = run_coverage(ReplayTarget(), generated_at=WHEN, out_dir=tmp_path, fix=True)
     by = {v.technique_id: v for v in verdicts}
     assert by["T1070.006"].detected
-    assert report["summary"]["detected"] == 4
-    assert report["summary"]["gaps_by_type"] == {"base_rate": 1}
+    assert report["summary"]["detected"] == 27
+    assert report["summary"]["gaps_by_type"] == {"base_rate": 5, "rule": 6}
 
 
 def test_replay_is_deterministic():

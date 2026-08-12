@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c echo bHM= | base64 -d | sh
+REDGAP	15	root	/root	/usr/bin/dash	sh
+REDGAP	14	root	/root	/usr/bin/base64	base64 -d
+REDGAP	16	root	/root	/usr/bin/ls	ls
+REDGAP	17	root	/root	/usr/bin/dash	sh -c true

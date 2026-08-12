@@ -1,0 +1,7 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true
+REDGAP	13	root	/root	/usr/bin/cp	cp /bin/true /tmp/rgcap
+REDGAP	14	root	/root	/usr/sbin/setcap	setcap cap_setuid+ep /tmp/rgcap
+REDGAP	15	root	/root	/usr/bin/dash	sh -c setcap -r /tmp/rgcap 2>/dev/null; rm -f /tmp/rgcap; true
+REDGAP	21	root	/root	/usr/sbin/setcap	setcap -r /tmp/rgcap
+REDGAP	22	root	/root	/usr/bin/rm	rm -f /tmp/rgcap

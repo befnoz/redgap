@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c touch /tmp/redgap_shred && shred -u /tmp/redgap_shred
+REDGAP	14	root	/root	/usr/bin/touch	touch /tmp/redgap_shred
+REDGAP	15	root	/root	/usr/bin/shred	shred -u /tmp/redgap_shred
+REDGAP	16	root	/root	/usr/bin/dash	sh -c rm -f /tmp/redgap_shred
+REDGAP	22	root	/root	/usr/bin/rm	rm -f /tmp/redgap_shred

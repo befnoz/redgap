@@ -23,7 +23,7 @@
       <rect x="20" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
       <text x="80" y="234" text-anchor="middle">Technique</text>
       <text x="80" y="250" text-anchor="middle">catalog</text>
-      <text x="80" y="268" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">5 benign &#183; MITRE</text>
+      <text x="80" y="268" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">38 benign &#183; MITRE</text>
     </g>
     <g>
       <rect x="168" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>

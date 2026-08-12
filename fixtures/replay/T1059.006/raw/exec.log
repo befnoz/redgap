@@ -1,0 +1,4 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c command -v python3 >/dev/null 2>&1 && python3 -c "print('redgap')" || true
+REDGAP	13	root	/root	/usr/bin/python3.13	python3 -c print('redgap')
+REDGAP	14	root	/root	/usr/bin/dash	sh -c true

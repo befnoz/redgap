@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak
+REDGAP	13	root	/root	/usr/bin/touch	touch /tmp/shadow
+REDGAP	14	root	/root	/usr/bin/cp	cp /tmp/shadow /tmp/shadow.bak
+REDGAP	15	root	/root	/usr/bin/dash	sh -c rm -f /tmp/shadow /tmp/shadow.bak
+REDGAP	21	root	/root	/usr/bin/rm	rm -f /tmp/shadow /tmp/shadow.bak

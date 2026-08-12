@@ -1,0 +1,7 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true
+REDGAP	13	root	/root	/usr/bin/mkdir	mkdir -p /root/.ssh
+REDGAP	15	root	/root	/usr/bin/tee	tee -a /root/.ssh/authorized_keys
+REDGAP	16	root	/root	/usr/bin/dash	sh -c sed -i '/redgap-benign-test/d' /root/.ssh/authorized_keys 2>/dev/null; rmdir --ignore-fail-on-non-empty /root/.ssh 2>/dev/null; true
+REDGAP	22	root	/root	/usr/bin/sed	sed -i /redgap-benign-test/d /root/.ssh/authorized_keys
+REDGAP	23	root	/root	/usr/bin/rmdir	rmdir --ignore-fail-on-non-empty /root/.ssh

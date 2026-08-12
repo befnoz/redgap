@@ -1,0 +1,5 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c env http_proxy=http://127.0.0.1:3128 true
+REDGAP	14	root	/root	/usr/bin/env	env http_proxy=http://127.0.0.1:3128 true
+REDGAP	14	root	/root	/usr/bin/true	true
+REDGAP	15	root	/root	/usr/bin/dash	sh -c true

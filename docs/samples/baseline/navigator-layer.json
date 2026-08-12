@@ -109,6 +109,703 @@
           "value": "none"
         }
       ]
+    },
+    {
+      "techniqueID": "T1082",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by 42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "42df45e7-e6e9-43b5-8f26-bec5b39cc239"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1016",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1069.001",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by 676381a6-15ca-4d73-a9c8-6a22e970b90d",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "676381a6-15ca-4d73-a9c8-6a22e970b90d"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1518.001",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "c9d8b7fd-78e4-44fe-88f6-599135d46d60"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1083",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1033",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1518",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1140",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by ba592c6d-6888-43c3-b8c6-689b8fe47337",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "ba592c6d-6888-43c3-b8c6-689b8fe47337"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1222.002",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by 34979410-e4b5-4e5d-8cfb-389fdff05c12",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "34979410-e4b5-4e5d-8cfb-389fdff05c12"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070.004",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by 30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1497.001",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059",
+      "tactic": "execution",
+      "color": "#2e7d32",
+      "comment": "detected by 8c1a5675-cb85-452f-a298-b01b22a51856",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "8c1a5675-cb85-452f-a298-b01b22a51856"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059.004",
+      "tactic": "execution",
+      "color": "#2e7d32",
+      "comment": "detected by bed978f8-7f3a-432b-82c5-9286a9b3031a",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "bed978f8-7f3a-432b-82c5-9286a9b3031a"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059.006",
+      "tactic": "execution",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.003",
+      "tactic": "execution",
+      "color": "#2e7d32",
+      "comment": "detected by 6b14bac8-3e3a-4324-8109-42f0546a347f",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.003",
+      "tactic": "persistence",
+      "color": "#2e7d32",
+      "comment": "detected by 6b14bac8-3e3a-4324-8109-42f0546a347f",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.003",
+      "tactic": "privilege-escalation",
+      "color": "#2e7d32",
+      "comment": "detected by 6b14bac8-3e3a-4324-8109-42f0546a347f",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.002",
+      "tactic": "privilege-escalation",
+      "color": "#2e7d32",
+      "comment": "detected by d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.002",
+      "tactic": "execution",
+      "color": "#2e7d32",
+      "comment": "detected by d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.002",
+      "tactic": "persistence",
+      "color": "#2e7d32",
+      "comment": "detected by d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548",
+      "tactic": "privilege-escalation",
+      "color": "#2e7d32",
+      "comment": "detected by ed447910-bc30-4575-a598-3a2e49516a7a",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "ed447910-bc30-4575-a598-3a2e49516a7a"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548",
+      "tactic": "persistence",
+      "color": "#2e7d32",
+      "comment": "detected by ed447910-bc30-4575-a598-3a2e49516a7a",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "ed447910-bc30-4575-a598-3a2e49516a7a"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1546.004",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1546.004",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1098.004",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1552.001",
+      "tactic": "credential-access",
+      "color": "#2e7d32",
+      "comment": "detected by fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1003.008",
+      "tactic": "credential-access",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1552.004",
+      "tactic": "credential-access",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1560.001",
+      "tactic": "collection",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1005",
+      "tactic": "collection",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1071.001",
+      "tactic": "command-and-control",
+      "color": "#2e7d32",
+      "comment": "detected by b86d356d-6093-443d-971c-9b07db583c68",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "b86d356d-6093-443d-971c-9b07db583c68"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1090",
+      "tactic": "command-and-control",
+      "color": "#2e7d32",
+      "comment": "detected by 72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1567",
+      "tactic": "exfiltration",
+      "color": "#2e7d32",
+      "comment": "detected by 00b90cc1-17ec-402c-96ad-3a8117d7a582",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1567",
+      "tactic": "command-and-control",
+      "color": "#2e7d32",
+      "comment": "detected by 00b90cc1-17ec-402c-96ad-3a8117d7a582",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1048.003",
+      "tactic": "exfiltration",
+      "color": "#2e7d32",
+      "comment": "detected by 3f0f5957-04f8-4792-ad89-192b0303bde6",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "3f0f5957-04f8-4792-ad89-192b0303bde6"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1485",
+      "tactic": "impact",
+      "color": "#2e7d32",
+      "comment": "detected by 2953194b-e33c-4859-b9e8-05948c167447",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "2953194b-e33c-4859-b9e8-05948c167447"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1489",
+      "tactic": "impact",
+      "color": "#2e7d32",
+      "comment": "detected by de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "de25eeb8-3655-4643-ac3a-b662d3f26b6b"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1653",
+      "tactic": "persistence",
+      "color": "#2e7d32",
+      "comment": "detected by c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1653",
+      "tactic": "impact",
+      "color": "#2e7d32",
+      "comment": "detected by c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1565.001",
+      "tactic": "impact",
+      "color": "#2e7d32",
+      "comment": "detected by 86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "86157017-c2b1-4d4a-8c33-93b8e67e4af4"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1592.004",
+      "tactic": "reconnaissance",
+      "color": "#2e7d32",
+      "comment": "detected by 0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+        }
+      ]
     }
   ],
   "legendItems": [

@@ -1,0 +1,18 @@
+{
+  "technique_id": "T1053.003",
+  "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
+  "image": "redgap-lab:v0.1",
+  "image_id": "sha256:fc55ea6822e6b1d567b07997a1d1ddbf13149cb5e5d2023c6e7619a047405e1f",
+  "host_kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "git_commit": "expansion-v0.2",
+  "captured_at": "2026-08-13T00:00:00+00:00",
+  "commands": [
+    "printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true"
+  ],
+  "cleanup": [
+    "crontab -r 2>/dev/null; rm -f /tmp/rgcron; true"
+  ],
+  "raw_sha256": "5a7e46c4dd3a1099151098559fd848aec509f8cb5a053df14ef742d51f627b63",
+  "event_count": 6,
+  "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
+}

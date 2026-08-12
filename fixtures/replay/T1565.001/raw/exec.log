@@ -1,0 +1,4 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c sed -n '1p' /etc/hosts || true
+REDGAP	13	root	/root	/usr/bin/sed	sed -n 1p /etc/hosts
+REDGAP	14	root	/root	/usr/bin/dash	sh -c true

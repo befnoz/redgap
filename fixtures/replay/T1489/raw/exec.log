@@ -1,0 +1,4 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c systemctl stop redgap-nonexistent.service || true
+REDGAP	13	root	/root	/usr/bin/systemctl	systemctl stop redgap-nonexistent.service
+REDGAP	14	root	/root	/usr/bin/dash	sh -c true

@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c env /bin/sh -c id
+REDGAP	13	root	/root	/usr/bin/env	env /bin/sh -c id
+REDGAP	13	root	/root	/usr/bin/dash	/bin/sh -c id
+REDGAP	14	root	/root	/usr/bin/id	id
+REDGAP	15	root	/root	/usr/bin/dash	sh -c true
