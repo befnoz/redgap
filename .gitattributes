@@ -1,0 +1,3 @@
+# Normalize line endings to LF in the repository. The CI runners and the Docker
+# lab are Linux; committing CRLF would break shell scripts and the collector build.
+* text=auto eol=lf

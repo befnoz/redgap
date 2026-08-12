@@ -1,0 +1,5 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c useradd -M -N -s /usr/sbin/nologin svc_demo
+REDGAP	13	root	/root	/usr/sbin/useradd	useradd -M -N -s /usr/sbin/nologin svc_demo
+REDGAP	18	root	/root	/usr/bin/dash	sh -c userdel svc_demo
+REDGAP	24	root	/root	/usr/sbin/userdel	userdel svc_demo

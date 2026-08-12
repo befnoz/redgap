@@ -1,0 +1,32 @@
+title: Local Account Created via useradd, adduser or newusers
+id: 7c1a9e10-1a2b-4c3d-8e4f-000000000136
+status: experimental
+description: >
+    Detects creation of a local account with useradd/adduser/newusers, a common
+    persistence step (ATT&CK T1136.001). Help/version invocations are filtered out
+    so they do not over-credit coverage.
+references:
+    - https://attack.mitre.org/techniques/T1136/001/
+author: RedGap
+date: 2026-08-11
+tags:
+    - attack.persistence
+    - attack.t1136.001
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '/useradd'
+            - '/adduser'
+            - '/newusers'
+    filter_help:
+        CommandLine|contains:
+            - ' --help'
+            - ' -h '
+            - ' --version'
+    condition: selection and not filter_help
+falsepositives:
+    - Legitimate administrator provisioning
+level: medium

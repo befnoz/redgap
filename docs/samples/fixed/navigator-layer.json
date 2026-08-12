@@ -1,0 +1,127 @@
+{
+  "name": "RedGap coverage",
+  "versions": {
+    "attack": "16",
+    "navigator": "4.19.0",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "RedGap offense<->detection coverage. Green = detected by a Sigma rule; red = gap. Verdicts are deterministic (logs + rules), not AI-generated.",
+  "techniques": [
+    {
+      "techniqueID": "T1087.001",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by 7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1057",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1136.001",
+      "tactic": "persistence",
+      "color": "#2e7d32",
+      "comment": "detected by 7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "7c1a9e10-1a2b-4c3d-8e4f-000000000136"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548.001",
+      "tactic": "privilege-escalation",
+      "color": "#2e7d32",
+      "comment": "detected by c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548.001",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070.006",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by 7c1a9e10-1a2b-4c3d-8e4f-000000000706",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "7c1a9e10-1a2b-4c3d-8e4f-000000000706"
+        }
+      ]
+    }
+  ],
+  "legendItems": [
+    {
+      "label": "detected",
+      "color": "#2e7d32"
+    },
+    {
+      "label": "gap (uncovered)",
+      "color": "#c62828"
+    }
+  ],
+  "hideDisabled": false,
+  "showTacticRowBackground": false,
+  "sorting": 0
+}

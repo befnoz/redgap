@@ -1,0 +1,24 @@
+# The lab runs on an INTERNAL bridge (no external egress) pinned to the same subnet the
+# allowlist permits (172.28.0.0/24). Every technique acts only on the container's own
+# throwaway state. `no-new-privileges` blocks privilege escalation via the setuid bit
+# the T1548.001 technique sets on its inert /bin/true copy.
+name: redgap-lab
+
+services:
+  lab:
+    build: .
+    image: redgap-lab:v0.1
+    container_name: redgap-lab
+    security_opt:
+      - "no-new-privileges:true"
+    networks:
+      - labnet
+    command: ["sleep", "infinity"]
+
+networks:
+  labnet:
+    driver: bridge
+    internal: true
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24

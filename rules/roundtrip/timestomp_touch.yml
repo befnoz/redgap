@@ -1,0 +1,32 @@
+# NOT loaded by default. This is the "closing" rule for the remediation round-trip:
+# with the default rule set, T1070.006 (timestomp) fires but nothing catches it
+# (a rule gap). Loading this rule (`redgap run --fix`) flips that verdict red->green.
+title: Timestomping via touch Reference or Explicit Timestamp
+id: 7c1a9e10-1a2b-4c3d-8e4f-000000000706
+status: experimental
+description: >
+    Detects touch used to copy a reference file's timestamps or set an explicit
+    timestamp — the tool-invocation signature of timestomping (ATT&CK T1070.006).
+    The regex covers separated, bundled, and attached getopt forms (-r, -amt,
+    -t202001010000, --reference=, --date=). Note: this catches the touch invocation,
+    not the syscall-level metadata change; effect-level detection (utimensat) is a
+    documented roadmap item.
+references:
+    - https://attack.mitre.org/techniques/T1070/006/
+author: RedGap
+date: 2026-08-11
+tags:
+    - attack.defense-evasion
+    - attack.t1070.006
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection_img:
+        Image|endswith: '/touch'
+    selection_flag:
+        CommandLine|re: '(?i)(\s-\w*[rtd]\b|\s-\w*[rtd][0-9]|--reference|--date)'
+    condition: all of selection_*
+falsepositives:
+    - Build systems or archivers that legitimately preserve timestamps
+level: medium

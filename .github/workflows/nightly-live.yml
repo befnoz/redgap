@@ -1,0 +1,43 @@
+name: nightly-live
+
+# Best-effort: on a real Linux kernel (where the LD_PRELOAD collector is fully reliable)
+# bring up the disposable Docker lab, run the loop LIVE, and re-capture the fixtures. This
+# is the authenticity check — an independent re-capture whose normalized events match the
+# committed ones is what proves the fixtures are real, not hand-authored. It never gates a
+# merge (continue-on-error); the offline REPLAY job in ci.yml is the required check.
+on:
+  schedule:
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+
+      - name: Run the loop LIVE against the disposable lab
+        run: redgap run --live --json > coverage-live.json
+
+      - name: Re-capture fixtures and show the diff (authenticity check)
+        run: |
+          redgap capture
+          git --no-pager diff --stat -- fixtures/ || true
+
+      - name: Upload live artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: live-artifacts
+          path: |
+            coverage-live.json
+            fixtures/

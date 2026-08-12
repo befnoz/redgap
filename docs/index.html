@@ -1,0 +1,483 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>RedGap — offense↔detection coverage</title>
+<meta name="description" content="RedGap runs benign MITRE ATT&CK techniques against its own disposable lab and deterministically decides — from logs and Sigma rules, no AI in the loop — whether each was detected or is a gap." />
+<style>
+  :root {
+    --ground: #0b0e14;
+    --surface: #121722;
+    --surface-2: #0f141d;
+    --border: #232b39;
+    --text: #d8dee9;
+    --muted: #8a94a6;
+    --faint: #5c6676;
+    --green: #3fb950;
+    --green-dim: #1c3326;
+    --red: #f85149;
+    --red-dim: #3a1d1d;
+    --amber: #d29922;
+    --amber-dim: #352a12;
+    --accent: #f85149;
+    --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --maxw: 1040px;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --ground: #f6f8fb; --surface: #ffffff; --surface-2: #f0f3f8; --border: #e1e6ee;
+      --text: #10151d; --muted: #56606f; --faint: #97a1b0;
+      --green: #1a7f37; --green-dim: #e5f3ea; --red: #cf222e; --red-dim: #fbe9e9;
+      --amber: #9a6700; --amber-dim: #f6efdd; --accent: #cf222e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #0b0e14; --surface: #121722; --surface-2: #0f141d; --border: #232b39;
+    --text: #d8dee9; --muted: #8a94a6; --faint: #5c6676;
+    --green: #3fb950; --green-dim: #1c3326; --red: #f85149; --red-dim: #3a1d1d;
+    --amber: #d29922; --amber-dim: #352a12; --accent: #f85149;
+  }
+  :root[data-theme="light"] {
+    --ground: #f6f8fb; --surface: #ffffff; --surface-2: #f0f3f8; --border: #e1e6ee;
+    --text: #10151d; --muted: #56606f; --faint: #97a1b0;
+    --green: #1a7f37; --green-dim: #e5f3ea; --red: #cf222e; --red-dim: #fbe9e9;
+    --amber: #9a6700; --amber-dim: #f6efdd; --accent: #cf222e;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--ground); color: var(--text);
+    font-family: var(--sans); line-height: 1.6;
+    font-size: 16px; letter-spacing: 0.01em;
+  }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+  a { color: inherit; text-decoration: none; }
+  a.link { color: var(--text); border-bottom: 1px solid var(--faint); }
+  a.link:hover { border-color: var(--accent); color: var(--accent); }
+  h1, h2, h3 { font-family: var(--mono); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+  code, .mono { font-family: var(--mono); }
+  .eyebrow {
+    font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .muted { color: var(--muted); }
+
+  /* Top bar */
+  .topbar {
+    position: sticky; top: 0; z-index: 20; backdrop-filter: blur(10px);
+    background: color-mix(in srgb, var(--ground) 82%, transparent);
+    border-bottom: 1px solid var(--border);
+  }
+  .topbar .wrap { display: flex; align-items: center; gap: 16px; height: 56px; }
+  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-weight: 600; }
+  .brand .logo { display: grid; grid-template-columns: repeat(3, 6px); grid-auto-rows: 6px; gap: 2px; }
+  .brand .logo i { background: var(--green); border-radius: 1px; }
+  .brand .logo i.gap { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
+  .topnav { margin-left: auto; display: flex; gap: 18px; align-items: center; font-size: 14px; }
+  .topnav a { color: var(--muted); }
+  .topnav a:hover { color: var(--text); }
+  .theme-btn {
+    font-family: var(--mono); font-size: 12px; color: var(--muted); cursor: pointer;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 9px;
+  }
+  .theme-btn:hover { color: var(--text); border-color: var(--faint); }
+  @media (max-width: 680px) { .topnav a.hide-sm { display: none; } }
+
+  /* Hero */
+  .hero { padding: 74px 0 48px; }
+  .hero h1 { font-size: clamp(38px, 7vw, 68px); margin: 0 0 6px; letter-spacing: -0.02em; }
+  .hero h1 .gap { color: var(--accent); }
+  .hero .tag { font-size: clamp(18px, 2.6vw, 23px); color: var(--text); margin: 0 0 20px; max-width: 30ch; }
+  .hero .lede { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 28px; }
+  .hero .lede b { color: var(--text); font-weight: 600; }
+  .cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+  .btn {
+    font-family: var(--mono); font-size: 14px; padding: 10px 15px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--surface); color: var(--text);
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+  }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  :root[data-theme="light"] .btn.primary { color: #fff; }
+  .btn:hover { border-color: var(--faint); }
+  .btn.primary:hover { filter: brightness(1.08); border-color: var(--accent); }
+
+  /* Stat strip */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 40px 0 0; }
+  @media (max-width: 680px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
+  .stat .n { font-family: var(--mono); font-size: 30px; font-weight: 600; line-height: 1; }
+  .stat .n.g { color: var(--green); }
+  .stat .n.r { color: var(--red); }
+  .stat .l { font-size: 12.5px; color: var(--muted); margin-top: 7px; }
+
+  section { padding: 52px 0; border-top: 1px solid var(--border); }
+  section h2 { font-size: clamp(24px, 4vw, 32px); margin: 8px 0 8px; }
+  section .sub { color: var(--muted); max-width: 66ch; margin: 0 0 26px; }
+
+  /* Trust boundary band */
+  .flow { display: grid; grid-template-columns: 1fr; gap: 14px; }
+  .flowrow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
+  .node {
+    flex: 1 1 150px; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 14px; min-width: 130px;
+  }
+  .node .k { font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  .node .d { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
+  .node.engine { border-color: var(--green); background: var(--green-dim); }
+  .node.engine .k { color: var(--green); }
+  .node.llm { border: 1px dashed var(--accent); background: transparent; }
+  .node.llm .k { color: var(--accent); }
+  .arrowline { text-align: center; color: var(--faint); font-family: var(--mono); font-size: 12px; }
+
+  /* Heatmap */
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 0 0 18px; font-size: 13px; color: var(--muted); }
+  .legend span { display: inline-flex; align-items: center; gap: 7px; }
+  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
+  .swatch.g { background: var(--green); } .swatch.r { background: var(--red); }
+  .swatch.a { background: var(--amber); } .swatch.u { background: var(--surface-2); }
+  .matrix-scroll { overflow-x: auto; padding-bottom: 8px; border-radius: 12px; }
+  .matrix { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(112px, 1fr); gap: 8px; min-width: 900px; }
+  .tcol { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 9px 8px; }
+  .tcol h4 {
+    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.03em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 9px; line-height: 1.3; min-height: 26px; font-weight: 600;
+  }
+  .cell {
+    border-radius: 7px; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border);
+    background: var(--surface); font-size: 11px;
+  }
+  .cell .id { font-family: var(--mono); font-weight: 600; font-size: 11.5px; }
+  .cell .nm { color: var(--muted); font-size: 10.5px; margin-top: 3px; line-height: 1.3; }
+  .cell.det { background: var(--green-dim); border-color: var(--green); }
+  .cell.det .id { color: var(--green); }
+  .cell.gap-rule { background: var(--red-dim); border-color: var(--red); }
+  .cell.gap-rule .id { color: var(--red); }
+  .cell.gap-base { background: var(--amber-dim); border-color: var(--amber); }
+  .cell.gap-base .id { color: var(--amber); }
+  .tcol .empty { color: var(--faint); font-family: var(--mono); font-size: 11px; text-align: center; padding: 8px 0; }
+
+  /* Table */
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: none; }
+  td .tid { font-family: var(--mono); font-weight: 600; }
+  td .rule { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+  .pill { font-family: var(--mono); font-size: 11.5px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+  .pill.det { color: var(--green); background: var(--green-dim); border: 1px solid var(--green); }
+  .pill.rule { color: var(--red); background: var(--red-dim); border: 1px solid var(--red); }
+  .pill.base { color: var(--amber); background: var(--amber-dim); border: 1px solid var(--amber); }
+
+  .toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin-bottom: 22px; }
+  .toggle button { font-family: var(--mono); font-size: 13px; padding: 8px 16px; background: var(--surface); color: var(--muted); border: none; cursor: pointer; }
+  .toggle button.on { background: var(--accent); color: #fff; }
+
+  /* Code blocks */
+  .code {
+    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px; font-family: var(--mono); font-size: 13.5px; overflow-x: auto; margin: 0 0 12px;
+    color: var(--text);
+  }
+  .code .c { color: var(--faint); }
+  .code .p { color: var(--accent); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+
+  footer { border-top: 1px solid var(--border); padding: 40px 0 60px; color: var(--muted); font-size: 14px; }
+  footer .row { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: center; }
+  footer .fine { margin-top: 18px; font-size: 12.5px; color: var(--faint); max-width: 70ch; }
+  .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <a class="brand" href="#top">
+      <span class="logo" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i class="gap"></i><i></i><i></i><i></i><i></i>
+      </span>
+      RedGap
+    </a>
+    <nav class="topnav">
+      <a href="#coverage" class="hide-sm">Coverage</a>
+      <a href="#trust" class="hide-sm">Trust boundary</a>
+      <a href="#run">Run it</a>
+      <a href="#repo">GitHub</a>
+      <button class="theme-btn" id="themeBtn" title="Toggle theme">◑ theme</button>
+    </nav>
+  </div>
+</div>
+
+<a id="top"></a>
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow reveal">Automated MITRE ATT&amp;CK offense ↔ detection coverage · v0.1</div>
+    <h1 class="reveal">Find the <span class="gap">red gaps</span><br>in your detection.</h1>
+    <p class="tag reveal">Does your detection actually fire? Prove it — don't assume it.</p>
+    <p class="lede reveal">RedGap runs a set of <b>benign</b> ATT&amp;CK techniques against its own disposable
+      local lab, collects real telemetry with an independent collector, then
+      <b>deterministically</b> — from logs and Sigma rules, with <b>no AI in the loop</b> —
+      decides whether each technique was <b>detected</b> or is a <b>gap</b>. The verdict is a
+      pure function of <span class="mono">(events, rules)</span>, written to disk before any
+      language model is ever called.</p>
+    <div class="cta reveal">
+      <a class="btn primary" href="#run">$ pip install redgap</a>
+      <a class="btn" href="#coverage">See a live run ↓</a>
+      <a class="btn" href="#repo">View source</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat reveal"><div class="n g" id="s-det">3</div><div class="l">techniques detected</div></div>
+      <div class="stat reveal"><div class="n r" id="s-gap">2</div><div class="l">coverage gaps found</div></div>
+      <div class="stat reveal"><div class="n">122</div><div class="l">real SigmaHQ rules parsed, 0 crashes</div></div>
+      <div class="stat reveal"><div class="n">290</div><div class="l">tests, run fully offline</div></div>
+    </div>
+  </div>
+</header>
+
+<section id="coverage">
+  <div class="wrap">
+    <div class="eyebrow reveal">The run</div>
+    <h2 class="reveal">A five-technique kill-chain, mapped onto ATT&amp;CK</h2>
+    <p class="sub reveal">This is a real REPLAY run over committed telemetry. It deliberately produces
+      both detections and <em>two kinds</em> of gap — because a coverage tool that is all-green is
+      just a checklist. Flip to <span class="mono">after&nbsp;--fix</span> to watch the remediation
+      round-trip close the timestomp gap live.</p>
+
+    <div class="toggle reveal" role="tablist">
+      <button id="tb-base" class="on" onclick="setView('baseline')">baseline</button>
+      <button id="tb-fix" onclick="setView('fixed')">after&nbsp;--fix</button>
+    </div>
+
+    <div class="legend reveal">
+      <span><i class="swatch g"></i> detected</span>
+      <span><i class="swatch r"></i> gap · rule (closeable)</span>
+      <span><i class="swatch a"></i> gap · base-rate (needs correlation)</span>
+      <span><i class="swatch u"></i> tactic not yet tested</span>
+    </div>
+
+    <div class="matrix-scroll reveal">
+      <div class="matrix" id="matrix"></div>
+    </div>
+    <p class="muted" style="font-size:12.5px;margin-top:12px">
+      5 techniques executed with real telemetry, placed across the 14 ATT&amp;CK enterprise tactics.
+      Expanding the executed set toward the full matrix is the next milestone.
+    </p>
+
+    <div style="height:26px"></div>
+    <div class="tbl-scroll reveal">
+      <table>
+        <thead>
+          <tr><th>ATT&amp;CK</th><th>Technique</th><th>Tactic</th><th>Result</th><th>Firing rule / gap</th></tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="trust">
+  <div class="wrap">
+    <div class="eyebrow reveal">The one idea</div>
+    <h2 class="reveal">The verdict is not the AI's to make</h2>
+    <p class="sub reveal">LLMs hallucinate confident verdicts. A coverage tool whose ground truth a model
+      can fabricate is worthless — so RedGap draws the trust boundary in code. The optional planner can
+      order the techniques and narrate the report; it <b>cannot</b> change a single verdict. A test asserts
+      the coverage is byte-identical with and without the LLM.</p>
+    <div class="flow reveal">
+      <div class="node llm" style="max-width:520px;margin:0 auto 4px">
+        <div class="k">LLM planner · optional</div>
+        <div class="d">orders techniques · narrates — <b>cannot set a verdict</b></div>
+      </div>
+      <div class="arrowline">▲ read-only · chooses next ▲</div>
+      <div class="flowrow">
+        <div class="node"><div class="k">Technique catalog</div><div class="d">5 benign · MITRE-mapped</div></div>
+        <div class="node"><div class="k">Lab</div><div class="d">disposable Docker · no network</div></div>
+        <div class="node"><div class="k">Collector</div><div class="d">independent LD_PRELOAD execve shim</div></div>
+        <div class="node engine"><div class="k">Sigma engine</div><div class="d">deterministic · verdict = f(logs, rules)</div></div>
+        <div class="node"><div class="k">Coverage → reports</div><div class="d">JSON · Markdown · Navigator</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="roundtrip">
+  <div class="wrap">
+    <div class="eyebrow reveal">The point</div>
+    <h2 class="reveal">Find a real blind spot — then close it</h2>
+    <p class="sub reveal">Technique T1070.006 (timestomp) fires, but no rule catches it: a <b>rule gap</b>.
+      Write one Sigma rule, re-run the same command, and the verdict flips red → green. Both the before and
+      after reports are committed. RedGap isn't a status printer — it's a loop that finds a gap and closes it.</p>
+    <div class="grid2 reveal">
+      <div>
+        <div class="eyebrow" style="margin-bottom:8px">before</div>
+        <div class="code"><span class="p">$</span> redgap run
+<span class="c"># T1070.006  Timestomp   ● gap (rule)</span>
+<span class="c"># 3/5 detected · 2 gaps</span></div>
+      </div>
+      <div>
+        <div class="eyebrow" style="margin-bottom:8px">after — one rule added</div>
+        <div class="code"><span class="p">$</span> redgap run --fix
+<span class="c"># T1070.006  Timestomp   ● detected</span>
+<span class="c"># 4/5 detected · 1 gap</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="run">
+  <div class="wrap">
+    <div class="eyebrow reveal">Run it</div>
+    <h2 class="reveal">One command. No key, no cloud, no Docker.</h2>
+    <p class="sub reveal">The default path re-evaluates real captured telemetry (committed with sha256
+      provenance) through the exact same engine used live. Docker is only needed for a fresh live capture.</p>
+    <div class="grid2">
+      <div class="reveal">
+        <div class="eyebrow" style="margin-bottom:8px">offline coverage run</div>
+        <div class="code"><span class="p">$</span> pip install redgap
+<span class="p">$</span> redgap run          <span class="c"># REPLAY, prints the table + writes reports</span>
+<span class="p">$</span> redgap run --fix    <span class="c"># close the timestomp gap: red → green</span></div>
+        <p class="muted" style="font-size:13px">From source instead: <span class="mono">git clone … &amp;&amp; pip install -e .</span></p>
+      </div>
+      <div class="reveal">
+        <div class="eyebrow" style="margin-bottom:8px">live against the disposable lab</div>
+        <div class="code"><span class="p">$</span> redgap run --live   <span class="c"># needs Docker Desktop</span>
+<span class="c"># builds a throwaway Debian container,</span>
+<span class="c"># runs the techniques, captures real</span>
+<span class="c"># telemetry, tears the container down</span></div>
+        <p class="muted" style="font-size:13px">The lab builds and destroys itself — nothing to set up by hand.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer id="repo">
+  <div class="wrap">
+    <div class="row">
+      <a class="btn" href="https://github.com/befnoz/redgap">★ Star on GitHub</a>
+      <a class="link" href="#coverage">Coverage</a>
+      <a class="link" href="#trust">Trust boundary</a>
+      <a class="link" href="#run">Quickstart</a>
+    </div>
+    <p class="fine">RedGap attacks only its own disposable local lab — no free-form target, the live
+      container runs with no network, and every launch is gated in code. Every technique is a benign,
+      published Atomic-Red-Team-derived detection test. MIT licensed. ATT&amp;CK® is a registered trademark
+      of The MITRE Corporation. Detection content from SigmaHQ under the Detection Rule License.</p>
+  </div>
+</footer>
+
+<script type="application/json" id="data">
+{
+  "baseline": {
+    "detected": 3, "gaps": 2,
+    "techniques": [
+      {"id":"T1087.001","name":"Account Discovery: Local Account","tactics":["Discovery"],"detected":true,"gap_type":"none","rule":"7c1a9e10-…-000000000087"},
+      {"id":"T1057","name":"Process Discovery","tactics":["Discovery"],"detected":false,"gap_type":"base_rate","rule":""},
+      {"id":"T1136.001","name":"Create Account: Local Account","tactics":["Persistence"],"detected":true,"gap_type":"none","rule":"7c1a9e10-…-000000000136"},
+      {"id":"T1548.001","name":"Abuse Elevation Control Mechanism: Setuid and Setgid","tactics":["Privilege Escalation","Defense Evasion"],"detected":true,"gap_type":"none","rule":"c21c4eaa-ba2e-419a-92b2-8371703cbe21"},
+      {"id":"T1070.006","name":"Indicator Removal: Timestomp","tactics":["Defense Evasion"],"detected":false,"gap_type":"rule","rule":""}
+    ]
+  },
+  "fixed": {
+    "detected": 4, "gaps": 1,
+    "techniques": [
+      {"id":"T1087.001","name":"Account Discovery: Local Account","tactics":["Discovery"],"detected":true,"gap_type":"none","rule":"7c1a9e10-…-000000000087"},
+      {"id":"T1057","name":"Process Discovery","tactics":["Discovery"],"detected":false,"gap_type":"base_rate","rule":""},
+      {"id":"T1136.001","name":"Create Account: Local Account","tactics":["Persistence"],"detected":true,"gap_type":"none","rule":"7c1a9e10-…-000000000136"},
+      {"id":"T1548.001","name":"Abuse Elevation Control Mechanism: Setuid and Setgid","tactics":["Privilege Escalation","Defense Evasion"],"detected":true,"gap_type":"none","rule":"c21c4eaa-ba2e-419a-92b2-8371703cbe21"},
+      {"id":"T1070.006","name":"Indicator Removal: Timestomp","tactics":["Defense Evasion"],"detected":true,"gap_type":"none","rule":"7c1a9e10-…-000000000706"}
+    ]
+  }
+}
+</script>
+
+<script>
+  var TACTICS = ["Reconnaissance","Resource Development","Initial Access","Execution","Persistence",
+    "Privilege Escalation","Defense Evasion","Credential Access","Discovery","Lateral Movement",
+    "Collection","Command and Control","Exfiltration","Impact"];
+  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var view = "baseline";
+
+  function cellClass(t) {
+    if (t.detected) return "det";
+    if (t.gap_type === "rule") return "gap-rule";
+    return "gap-base";
+  }
+  function pill(t) {
+    if (t.detected) return '<span class="pill det">● detected</span>';
+    if (t.gap_type === "rule") return '<span class="pill rule">● gap · rule</span>';
+    return '<span class="pill base">● gap · base-rate</span>';
+  }
+
+  function render() {
+    var d = DATA[view];
+    document.getElementById("s-det").textContent = d.detected;
+    document.getElementById("s-gap").textContent = d.gaps;
+
+    // matrix
+    var byTactic = {};
+    d.techniques.forEach(function (t) {
+      t.tactics.forEach(function (tac) { (byTactic[tac] = byTactic[tac] || []).push(t); });
+    });
+    var m = document.getElementById("matrix");
+    m.innerHTML = "";
+    TACTICS.forEach(function (tac) {
+      var col = document.createElement("div");
+      col.className = "tcol";
+      var techs = byTactic[tac] || [];
+      var cells = techs.map(function (t) {
+        return '<div class="cell ' + cellClass(t) + '"><div class="id">' + t.id +
+          '</div><div class="nm">' + t.name.replace(/^[^:]*:\s*/, "") + "</div></div>";
+      }).join("");
+      col.innerHTML = "<h4>" + tac + "</h4>" + (cells || '<div class="empty">—</div>');
+      m.appendChild(col);
+    });
+
+    // table
+    var tb = document.getElementById("tbody");
+    tb.innerHTML = d.techniques.map(function (t) {
+      var rule = t.rule ? '<span class="rule">' + t.rule + "</span>" : '<span class="muted">—</span>';
+      return "<tr><td><span class='tid'>" + t.id + "</span></td><td>" +
+        t.name.replace(/^[^:]*:\s*/, "") + "</td><td class='muted'>" + t.tactics.join(" / ") +
+        "</td><td>" + pill(t) + "</td><td>" + rule + "</td></tr>";
+    }).join("");
+  }
+
+  function setView(v) {
+    view = v;
+    document.getElementById("tb-base").classList.toggle("on", v === "baseline");
+    document.getElementById("tb-fix").classList.toggle("on", v === "fixed");
+    render();
+  }
+
+  // theme toggle
+  (function () {
+    var btn = document.getElementById("themeBtn");
+    btn.addEventListener("click", function () {
+      var cur = document.documentElement.getAttribute("data-theme");
+      var isDark = cur ? cur === "dark"
+        : window.matchMedia("(prefers-color-scheme: dark)").matches;
+      document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+    });
+  })();
+
+  // reveal on scroll
+  (function () {
+    var els = document.querySelectorAll(".reveal");
+    if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
+    var io = new IntersectionObserver(function (ents) {
+      ents.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+    }, { threshold: 0.08 });
+    els.forEach(function (e) { io.observe(e); });
+  })();
+
+  render();
+</script>
+</body>
+</html>

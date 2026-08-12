@@ -1,0 +1,36 @@
+title: Local Account Discovery via /etc/passwd Read
+id: 7c1a9e10-1a2b-4c3d-8e4f-000000000087
+status: experimental
+description: >
+    Detects reading /etc/passwd with a common file reader/editor to enumerate local
+    accounts (ATT&CK T1087.001). The reader set mirrors the shipped SigmaHQ Linux
+    account-discovery rule so this authored rule stays parity-faithful.
+references:
+    - https://attack.mitre.org/techniques/T1087/001/
+author: RedGap
+date: 2026-08-11
+tags:
+    - attack.discovery
+    - attack.t1087.001
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '/cat'
+            - '/less'
+            - '/more'
+            - '/head'
+            - '/tail'
+            - '/vi'
+            - '/vim'
+            - '/nano'
+            - '/ed'
+            - '/emacs'
+            - '/sqlite3'
+        CommandLine|contains: '/etc/passwd'
+    condition: selection
+falsepositives:
+    - Administrators or scripts legitimately inspecting /etc/passwd
+level: low

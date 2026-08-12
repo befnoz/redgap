@@ -1,0 +1,171 @@
+{
+  "tool": "redgap",
+  "mode": "replay",
+  "run_id": "replay",
+  "generated_at": "2026-08-11T00:00:00+00:00",
+  "tool_versions": {},
+  "summary": {
+    "techniques": 5,
+    "detected": 4,
+    "gaps": 1,
+    "gaps_by_type": {
+      "base_rate": 1
+    }
+  },
+  "techniques": [
+    {
+      "id": "T1087.001",
+      "name": "Account Discovery: Local Account",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+      ],
+      "matched_event_ids": [
+        "ev_cf537b5c2d6309ee"
+      ],
+      "evidence": [
+        {
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+          "rule_title": "Local Account Discovery via /etc/passwd Read",
+          "event_id": "ev_cf537b5c2d6309ee",
+          "matched_fields": {
+            "CommandLine": "cat /etc/passwd",
+            "Image": "/usr/bin/cat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1057",
+      "name": "Process Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1136.001",
+      "name": "Create Account: Local Account",
+      "tactics": [
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "7c1a9e10-1a2b-4c3d-8e4f-000000000136"
+      ],
+      "matched_event_ids": [
+        "ev_7a82c5de0c49e240"
+      ],
+      "evidence": [
+        {
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+          "rule_title": "Local Account Created via useradd, adduser or newusers",
+          "event_id": "ev_7a82c5de0c49e240",
+          "matched_fields": {
+            "Image": "/usr/sbin/useradd"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1548.001",
+      "name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+      "tactics": [
+        "Privilege Escalation",
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+      ],
+      "matched_event_ids": [
+        "ev_8676a61a4976881c",
+        "ev_54be21732e201e9c"
+      ],
+      "evidence": [
+        {
+          "rule_id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+          "rule_title": "Setuid and Setgid",
+          "event_id": "ev_8676a61a4976881c",
+          "matched_fields": {
+            "CommandLine": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
+          }
+        },
+        {
+          "rule_id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+          "rule_title": "Setuid and Setgid",
+          "event_id": "ev_54be21732e201e9c",
+          "matched_fields": {
+            "CommandLine": "sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1070.006",
+      "name": "Indicator Removal: Timestomp",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "7c1a9e10-1a2b-4c3d-8e4f-000000000706"
+      ],
+      "matched_event_ids": [
+        "ev_5f0ee45189e9b6a6"
+      ],
+      "evidence": [
+        {
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000706",
+          "rule_title": "Timestomping via touch Reference or Explicit Timestamp",
+          "event_id": "ev_5f0ee45189e9b6a6",
+          "matched_fields": {
+            "CommandLine": "touch -r /etc/hostname /tmp/redgap_agent_file",
+            "Image": "/usr/bin/touch"
+          }
+        }
+      ]
+    }
+  ]
+}

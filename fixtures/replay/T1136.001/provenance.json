@@ -1,0 +1,18 @@
+{
+  "technique_id": "T1136.001",
+  "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
+  "image": "redgap-lab:v0.1",
+  "image_id": "sha256:1b379b674e23a0be2f23afeb6081248af4d4231d8e5d48551ce84779403d55e8",
+  "host_kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "git_commit": "unknown",
+  "captured_at": "2026-08-11T00:00:00Z",
+  "commands": [
+    "useradd -M -N -s /usr/sbin/nologin svc_demo"
+  ],
+  "cleanup": [
+    "userdel svc_demo"
+  ],
+  "raw_sha256": "3131f523edf7ba23b8c2ca17830e82eebbeb3856b2b338d89dd0ecf8e2f16d68",
+  "event_count": 5,
+  "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
+}

@@ -1,0 +1,3 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c cat /etc/passwd
+REDGAP	13	root	/root	/usr/bin/cat	cat /etc/passwd

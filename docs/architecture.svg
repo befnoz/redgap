@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" font-family="-apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#57606a"/>
+    </marker>
+    <marker id="arrowR" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="#cf222e"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="360" fill="#ffffff"/>
+  <text x="24" y="34" font-size="18" font-weight="700" fill="#1f2328">RedGap — offense &#8596; detection coverage</text>
+  <text x="24" y="54" font-size="12" fill="#57606a">The verdict is deterministic; the LLM is an optional layer that sits outside it.</text>
+
+  <!-- optional LLM box -->
+  <rect x="330" y="88" width="380" height="52" rx="8" fill="#fdeff0" stroke="#cf222e" stroke-width="1.5" stroke-dasharray="6 4"/>
+  <text x="520" y="110" font-size="13" font-weight="700" fill="#cf222e" text-anchor="middle">LLM planner &#183; optional</text>
+  <text x="520" y="128" font-size="11" fill="#a4404a" text-anchor="middle">orders techniques &#183; narrates &#8212; cannot set a verdict</text>
+
+  <!-- pipeline boxes -->
+  <g font-size="13" font-weight="700" fill="#1f2328">
+    <g>
+      <rect x="20" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+      <text x="80" y="234" text-anchor="middle">Technique</text>
+      <text x="80" y="250" text-anchor="middle">catalog</text>
+      <text x="80" y="268" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">5 benign &#183; MITRE</text>
+    </g>
+    <g>
+      <rect x="168" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+      <text x="228" y="242" text-anchor="middle">Lab</text>
+      <text x="228" y="262" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">Docker &#183; Replay</text>
+    </g>
+    <g>
+      <rect x="316" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+      <text x="376" y="234" text-anchor="middle">Collector</text>
+      <text x="376" y="250" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">independent</text>
+      <text x="376" y="266" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">execve &#8594; events</text>
+    </g>
+    <g>
+      <rect x="464" y="200" width="120" height="80" rx="8" fill="#e9f6ef" stroke="#1a7f4b" stroke-width="1.5"/>
+      <text x="524" y="234" text-anchor="middle" fill="#12633a">Sigma engine</text>
+      <text x="524" y="252" text-anchor="middle" font-size="10.5" font-weight="700" fill="#1a7f4b">deterministic</text>
+      <text x="524" y="268" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">verdict = f(logs, rules)</text>
+    </g>
+    <g>
+      <rect x="612" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+      <text x="672" y="242" text-anchor="middle">Coverage</text>
+      <text x="672" y="262" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">detected / gap</text>
+    </g>
+    <g>
+      <rect x="760" y="200" width="120" height="80" rx="8" fill="#f6f8fa" stroke="#d0d7de"/>
+      <text x="820" y="234" text-anchor="middle">Reports</text>
+      <text x="820" y="252" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">JSON &#183; Markdown</text>
+      <text x="820" y="268" text-anchor="middle" font-size="10.5" font-weight="400" fill="#57606a">ATT&amp;CK Navigator</text>
+    </g>
+  </g>
+
+  <!-- pipeline arrows -->
+  <g stroke="#57606a" stroke-width="1.6" marker-end="url(#arrow)">
+    <line x1="140" y1="240" x2="166" y2="240"/>
+    <line x1="288" y1="240" x2="314" y2="240"/>
+    <line x1="436" y1="240" x2="462" y2="240"/>
+    <line x1="584" y1="240" x2="610" y2="240"/>
+    <line x1="732" y1="240" x2="758" y2="240"/>
+  </g>
+
+  <!-- LLM connectors (dashed, red) -->
+  <g stroke="#cf222e" stroke-width="1.4" stroke-dasharray="5 4" fill="none">
+    <path d="M400,140 C400,175 300,165 260,199" marker-end="url(#arrowR)"/>
+    <path d="M672,200 C672,168 640,150 632,141" marker-end="url(#arrowR)"/>
+  </g>
+  <text x="300" y="182" font-size="10" fill="#cf222e">chooses next</text>
+  <text x="686" y="176" font-size="10" fill="#cf222e" text-anchor="start">read-only</text>
+
+  <!-- caption -->
+  <text x="24" y="320" font-size="12" fill="#1f2328">The <tspan font-weight="700">detected / gap</tspan> verdict is a pure function of logs and Sigma rules, written to disk <tspan font-weight="700">before</tspan> any model is called.</text>
+  <text x="24" y="340" font-size="12" fill="#57606a">REPLAY re-evaluates real captured telemetry offline; a test asserts the coverage is byte-identical with and without the LLM.</text>
+</svg>

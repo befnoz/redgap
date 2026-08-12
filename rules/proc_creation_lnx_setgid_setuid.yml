@@ -1,0 +1,32 @@
+# Vendored VERBATIM from SigmaHQ, unmodified below this comment block.
+# Source: https://github.com/SigmaHQ/sigma/blob/master/rules/linux/process_creation/proc_creation_lnx_setgid_setuid.yml
+# License: Detection Rule License (DRL-1.1) — https://github.com/SigmaHQ/sigma/blob/master/LICENSE.Detection.Rules.md
+# Author: Ömer Günal. Retained here to prove RedGap's setuid detection is a real,
+# third-party shipped rule — not one RedGap authored to match its own payload.
+title: Setuid and Setgid
+id: c21c4eaa-ba2e-419a-92b2-8371703cbe21
+status: test
+description: Detects suspicious change of file privileges with chown and chmod commands
+references:
+    - https://github.com/redcanaryco/atomic-red-team/blob/f339e7da7d05f6057fdfcdd3742bfcf365fee2a9/atomics/T1548.001/T1548.001.md
+author: Ömer Günal
+date: 2020-06-16
+modified: 2022-10-05
+tags:
+    - attack.persistence
+    - attack.privilege-escalation
+    - attack.t1548.001
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection_root:
+        CommandLine|contains: 'chown root'
+    selection_perm:
+        CommandLine|contains:
+            - ' chmod u+s'
+            - ' chmod g+s'
+    condition: all of selection_*
+falsepositives:
+    - Legitimate administration activities
+level: low

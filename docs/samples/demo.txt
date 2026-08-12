@@ -1,0 +1,20 @@
+$ redgap run
+REPLAY — re-evaluating real captured telemetry; no live attack run
+                                     RedGap coverage — replay
+  ATT&CK      Technique                     Tactic                            Result              Rule / gap
+ ───────────────────────────────────────────────────────────────────────────────────────────────────────────
+  T1087.001   Account Discovery: Local      Discovery                         ● detected          7c1a9e10-…087
+  T1057       Process Discovery             Discovery                         ● gap (base_rate)   —
+  T1136.001   Create Account: Local         Persistence                       ● detected          7c1a9e10-…136
+  T1548.001   Setuid and Setgid             Privilege Escalation / Def. Ev.   ● detected          c21c4eaa-…21
+  T1070.006   Indicator Removal: Timestomp  Defense Evasion                   ● gap (rule)        —
+
+3/5 detected · 2 gaps  (base_rate:1, rule:1)
+wrote coverage.json/.md + navigator-layer.json → out/
+
+# Then close the timestomp rule gap and re-run — the verdict flips red -> green:
+
+$ redgap run --fix
+...
+  T1070.006   Indicator Removal: Timestomp  Defense Evasion                   ● detected          7c1a9e10-…706
+4/5 detected · 1 gap  (base_rate:1)
