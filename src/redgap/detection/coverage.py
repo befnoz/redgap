@@ -2,8 +2,9 @@
 
 For each technique we gather the events its execution produced, find the rules
 tagged to that technique, and ask the engine whether any rule fires on any event.
-``detected`` is a pure boolean from that. The whole ``Verdict`` is computed here and
-persisted before any LLM is invoked.
+``detected`` is a pure boolean from that. The whole ``Verdict`` is a pure function of
+``(events, rules)`` — independent of any planner and byte-identical whether or not the
+optional LLM ran.
 
 Rules that were EXCLUDED at load (unsupported feature / unreadable) are threaded in so a
 dropped closing rule cannot masquerade as a "no rule shipped" base-rate gap — the report

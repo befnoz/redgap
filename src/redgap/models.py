@@ -75,8 +75,8 @@ class Verdict:
     """The deterministic result for one technique execution.
 
     ``detected`` is ``True`` iff at least one mapped rule fired on at least one
-    collected event. It is computed by the engine and persisted before any LLM
-    call.
+    collected event. It is a pure function of the events and rules — independent of
+    the optional LLM planner and byte-identical whether or not it ran.
     """
 
     technique_id: str

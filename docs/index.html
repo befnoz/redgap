@@ -12,7 +12,7 @@
     --surface-2: #0f141d;
     --border: #232b39;
     --text: #d8dee9;
-    --muted: #8a94a6;
+    --muted: #9aa4b4;
     --faint: #5c6676;
     --green: #3fb950;
     --green-dim: #1c3326;
@@ -35,7 +35,7 @@
   }
   :root[data-theme="dark"] {
     --ground: #0b0e14; --surface: #121722; --surface-2: #0f141d; --border: #232b39;
-    --text: #d8dee9; --muted: #8a94a6; --faint: #5c6676;
+    --text: #d8dee9; --muted: #9aa4b4; --faint: #5c6676;
     --green: #3fb950; --green-dim: #1c3326; --red: #f85149; --red-dim: #3a1d1d;
     --amber: #d29922; --amber-dim: #352a12; --accent: #f85149;
   }
@@ -129,7 +129,7 @@
   .node.engine .k { color: var(--green); }
   .node.llm { border: 1px dashed var(--accent); background: transparent; }
   .node.llm .k { color: var(--accent); }
-  .arrowline { text-align: center; color: var(--faint); font-family: var(--mono); font-size: 12px; }
+  .arrowline { text-align: center; color: var(--muted); font-family: var(--mono); font-size: 12px; }
 
   /* Heatmap */
   .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 0 0 18px; font-size: 13px; color: var(--muted); }
@@ -156,7 +156,7 @@
   .cell.gap-rule .id { color: var(--red); }
   .cell.gap-base { background: var(--amber-dim); border-color: var(--amber); }
   .cell.gap-base .id { color: var(--amber); }
-  .tcol .empty { color: var(--faint); font-family: var(--mono); font-size: 11px; text-align: center; padding: 8px 0; }
+  .tcol .empty { color: var(--muted); font-family: var(--mono); font-size: 11px; text-align: center; padding: 8px 0; }
 
   /* Table */
   .tbl-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
@@ -181,14 +181,14 @@
     padding: 14px 16px; font-family: var(--mono); font-size: 13.5px; overflow-x: auto; margin: 0 0 12px;
     color: var(--text);
   }
-  .code .c { color: var(--faint); }
+  .code .c { color: var(--muted); }
   .code .p { color: var(--accent); }
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
   @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
 
   footer { border-top: 1px solid var(--border); padding: 40px 0 60px; color: var(--muted); font-size: 14px; }
   footer .row { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: center; }
-  footer .fine { margin-top: 18px; font-size: 12.5px; color: var(--faint); max-width: 70ch; }
+  footer .fine { margin-top: 18px; font-size: 12.5px; color: var(--muted); max-width: 70ch; }
   .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
@@ -209,7 +209,7 @@
       <a href="#trust" class="hide-sm">Trust boundary</a>
       <a href="#run">Run it</a>
       <a href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">GitHub</a>
-      <button class="theme-btn" id="themeBtn" title="Toggle theme">◑ theme</button>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle dark/light theme" aria-pressed="false" title="Toggle theme">◑ theme</button>
     </nav>
   </div>
 </div>
@@ -241,6 +241,14 @@
   </div>
 </header>
 
+<noscript>
+  <div class="wrap" style="padding:16px 22px;color:var(--muted)">
+    The interactive coverage grid needs JavaScript. The same data is in
+    <a class="link" href="https://github.com/befnoz/redgap/tree/main/docs/samples">docs/samples/</a>.
+  </div>
+</noscript>
+
+<main>
 <section id="coverage">
   <div class="wrap">
     <div class="eyebrow reveal">The run</div>
@@ -250,9 +258,22 @@
       Flip to <span class="mono">after&nbsp;--fix</span> to watch the remediation round-trip close the
       timestomp gap live.</p>
 
-    <div class="toggle reveal" role="tablist">
-      <button id="tb-base" class="on" onclick="setView('baseline')">baseline</button>
-      <button id="tb-fix" onclick="setView('fixed')">after&nbsp;--fix</button>
+    <div class="toggle reveal" role="group" aria-label="Coverage dataset">
+      <button id="tb-base" class="on" aria-pressed="true" onclick="setView('baseline')">sample · baseline</button>
+      <button id="tb-fix" aria-pressed="false" onclick="setView('fixed')">sample · after&nbsp;--fix</button>
+      <button id="tb-custom" aria-pressed="false" onclick="setView('custom')" style="display:none">your report</button>
+    </div>
+
+    <div class="reveal" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:-6px 0 18px">
+      <label class="btn" style="cursor:pointer;margin:0">
+        <input type="file" id="upload" accept=".json,application/json" hidden />
+        ↥ Upload your coverage.json
+      </label>
+      <span id="upload-note" class="muted" style="font-size:12.5px;max-width:62ch">
+        Run <span class="mono">redgap run</span> and drop your own <span class="mono">out/coverage.json</span>
+        here to see <em>your</em> coverage grid. It is parsed in your browser — nothing is uploaded, it never
+        leaves your machine.
+      </span>
     </div>
 
     <div class="legend reveal">
@@ -356,6 +377,7 @@
     </div>
   </div>
 </section>
+</main>
 
 <footer id="repo">
   <div class="wrap">
@@ -1174,6 +1196,12 @@
   var DATA = JSON.parse(document.getElementById("data").textContent);
   var view = "baseline";
 
+  function esc(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+  function shortName(n) { return esc(String(n).replace(/^[^:]*:\s*/, "")); }
   function cellClass(t) {
     if (t.detected) return "det";
     if (t.gap_type === "rule") return "gap-rule";
@@ -1185,55 +1213,132 @@
     return '<span class="pill base">● gap · base-rate</span>';
   }
 
+  // Accept both this dashboard's compact shape and a raw `redgap run` coverage.json.
+  function normalizeCoverage(obj) {
+    if (!obj || typeof obj !== "object" || !Array.isArray(obj.techniques)) {
+      throw new Error("not a coverage report (no techniques array)");
+    }
+    var techs = obj.techniques.map(function (t) {
+      t = t && typeof t === "object" ? t : {}; // tolerate null/scalar elements
+      var rule = t.rule != null ? t.rule
+        : (Array.isArray(t.firing_rules) && t.firing_rules.length ? t.firing_rules[0] : "");
+      return {
+        id: String(t.id || "?"),
+        name: String(t.name || t.id || "?"),
+        tactics: Array.isArray(t.tactics) ? t.tactics.map(String) : [],
+        detected: !!t.detected,
+        gap_type: String(t.gap_type || (t.detected ? "none" : "rule")),
+        rule: String(rule || ""),
+      };
+    });
+    var nDet = techs.filter(function (t) { return t.detected; }).length;
+    var s = obj.summary || {};
+    // Coerce to a finite number so a hostile summary string cannot reach the DOM.
+    var det = Number.isFinite(+s.detected) ? +s.detected : nDet;
+    var gaps = Number.isFinite(+s.gaps) ? +s.gaps : techs.length - nDet;
+    return { detected: det, gaps: gaps, techniques: techs };
+  }
+
   function render() {
     var d = DATA[view];
     document.getElementById("s-det").textContent = d.detected;
     document.getElementById("s-gap").textContent = d.gaps;
 
-    // matrix
-    var byTactic = {};
+    // matrix — group by tactic, appending any tactics not in the standard 14.
+    // Object.create(null): a "__proto__"/"constructor" tactic name can't hit a prototype.
+    var byTactic = Object.create(null);
     d.techniques.forEach(function (t) {
-      t.tactics.forEach(function (tac) { (byTactic[tac] = byTactic[tac] || []).push(t); });
+      (t.tactics.length ? t.tactics : ["(untagged)"]).forEach(function (tac) {
+        (byTactic[tac] = byTactic[tac] || []).push(t);
+      });
     });
+    var cols = TACTICS.slice();
+    Object.keys(byTactic).forEach(function (k) { if (cols.indexOf(k) < 0) cols.push(k); });
     var m = document.getElementById("matrix");
     m.innerHTML = "";
-    TACTICS.forEach(function (tac) {
+    cols.forEach(function (tac) {
       var col = document.createElement("div");
       col.className = "tcol";
       var techs = byTactic[tac] || [];
       var cells = techs.map(function (t) {
-        return '<div class="cell ' + cellClass(t) + '"><div class="id">' + t.id +
-          '</div><div class="nm">' + t.name.replace(/^[^:]*:\s*/, "") + "</div></div>";
+        return '<div class="cell ' + cellClass(t) + '"><div class="id">' + esc(t.id) +
+          '</div><div class="nm">' + shortName(t.name) + "</div></div>";
       }).join("");
-      col.innerHTML = "<h4>" + tac + "</h4>" + (cells || '<div class="empty">—</div>');
+      col.innerHTML = "<h4>" + esc(tac) + "</h4>" + (cells || '<div class="empty">—</div>');
       m.appendChild(col);
     });
 
     // table
     var tb = document.getElementById("tbody");
     tb.innerHTML = d.techniques.map(function (t) {
-      var rule = t.rule ? '<span class="rule">' + t.rule + "</span>" : '<span class="muted">—</span>';
-      return "<tr><td><span class='tid'>" + t.id + "</span></td><td>" +
-        t.name.replace(/^[^:]*:\s*/, "") + "</td><td class='muted'>" + t.tactics.join(" / ") +
+      var rule = t.rule ? '<span class="rule">' + esc(t.rule) + "</span>" : '<span class="muted">—</span>';
+      return "<tr><td><span class='tid'>" + esc(t.id) + "</span></td><td>" +
+        shortName(t.name) + "</td><td class='muted'>" + esc(t.tactics.join(" / ")) +
         "</td><td>" + pill(t) + "</td><td>" + rule + "</td></tr>";
     }).join("");
   }
 
   function setView(v) {
     view = v;
-    document.getElementById("tb-base").classList.toggle("on", v === "baseline");
-    document.getElementById("tb-fix").classList.toggle("on", v === "fixed");
+    [["tb-base", "baseline"], ["tb-fix", "fixed"], ["tb-custom", "custom"]].forEach(function (p) {
+      var b = document.getElementById(p[0]);
+      if (!b) return;
+      var on = v === p[1];
+      b.classList.toggle("on", on);
+      b.setAttribute("aria-pressed", on ? "true" : "false");
+    });
     render();
   }
 
-  // theme toggle
+  // Upload-your-own coverage.json — fully client-side; the file never leaves the browser.
+  (function () {
+    var input = document.getElementById("upload");
+    var note = document.getElementById("upload-note");
+    if (!input) return;
+    input.addEventListener("change", function () {
+      var file = input.files && input.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          DATA.custom = normalizeCoverage(JSON.parse(String(reader.result)));
+          document.getElementById("tb-custom").style.display = "";
+          note.innerHTML = "Loaded <b>" + esc(file.name) + "</b> — " + DATA.custom.detected +
+            " detected, " + DATA.custom.gaps + " gaps. Parsed locally; nothing was uploaded.";
+          note.style.color = "";
+          setView("custom");
+        } catch (e) {
+          note.textContent = "Could not read that file as a RedGap coverage.json: " + e.message;
+          note.style.color = "var(--red)";
+        }
+        input.value = "";
+      };
+      reader.onerror = function () {
+        note.textContent = "Could not read that file.";
+        note.style.color = "var(--red)";
+      };
+      reader.readAsText(file);
+    });
+  })();
+
+  // theme toggle — persisted across reloads and state exposed to assistive tech
   (function () {
     var btn = document.getElementById("themeBtn");
+    var root = document.documentElement;
+    function isDark() {
+      var cur = root.getAttribute("data-theme");
+      return cur ? cur === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    }
+    try {
+      var saved = localStorage.getItem("redgap-theme");
+      if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
+    } catch (e) { /* localStorage unavailable */ }
+    btn.setAttribute("aria-pressed", isDark() ? "true" : "false");
     btn.addEventListener("click", function () {
-      var cur = document.documentElement.getAttribute("data-theme");
-      var isDark = cur ? cur === "dark"
-        : window.matchMedia("(prefers-color-scheme: dark)").matches;
-      document.documentElement.setAttribute("data-theme", isDark ? "light" : "dark");
+      var dark = !isDark();
+      root.setAttribute("data-theme", dark ? "dark" : "light");
+      btn.setAttribute("aria-pressed", dark ? "true" : "false");
+      try { localStorage.setItem("redgap-theme", dark ? "dark" : "light"); } catch (e) { /* ignore */ }
     });
   })();
 

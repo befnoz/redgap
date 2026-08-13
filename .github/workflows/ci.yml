@@ -72,4 +72,4 @@ jobs:
           cd "$RUNNER_TEMP"
           redgap version
           redgap run --json > "$RUNNER_TEMP/coverage-installed.json"
-          python -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['summary']['techniques']==5, d['summary']" "$RUNNER_TEMP/coverage-installed.json"
+          python -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['summary']['techniques']==len(d['techniques'])>0, d['summary']" "$RUNNER_TEMP/coverage-installed.json"

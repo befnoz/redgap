@@ -13,6 +13,11 @@ _GAP_EXPLANATION = {
 }
 
 
+def _cell(text: object) -> str:
+    """Escape ``|`` so a value never breaks the Markdown table's column alignment."""
+    return str(text).replace("|", "\\|")
+
+
 def markdown_report(
     catalog: Sequence[Technique],
     verdicts: Sequence[Verdict],
@@ -45,7 +50,8 @@ def markdown_report(
         rules = ", ".join(v.firing_rules) if v.firing_rules else "-"
         tactic = " / ".join(tech.tactics)
         out.append(
-            f"| {i} | {tech.id} | {tech.name} | {tactic} | {detected_cell} | {gap_cell} | {rules} |"
+            f"| {i} | {_cell(tech.id)} | {_cell(tech.name)} | {_cell(tactic)} | "
+            f"{detected_cell} | {gap_cell} | {_cell(rules)} |"
         )
     out.append("")
 

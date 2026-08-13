@@ -46,7 +46,7 @@ pip install -e .
 redgap run
 ```
 
-**Live dashboard:** the same coverage, as an interactive web page — `https://befnoz.github.io/redgap/` (see [docs/DEPLOY.md](docs/DEPLOY.md) to switch it on).
+**Live dashboard:** the same coverage, as an interactive web page — `https://befnoz.github.io/redgap/`. Drop your **own** `out/coverage.json` on it to render *your* gap grid entirely in the browser (nothing is uploaded). See [docs/DEPLOY.md](docs/DEPLOY.md) to switch it on.
 
 To run the real thing against the local Docker lab:
 

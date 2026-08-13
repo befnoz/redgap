@@ -7,14 +7,19 @@ from __future__ import annotations
 
 import hashlib
 import json
+import shutil
 from pathlib import Path
 
+import pytest
+
 from redgap.catalog import CATALOG
+from redgap.target import FixtureError, ReplayTarget
 from redgap.telemetry.snoopy import parse_snoopy_log
 
 FIX = Path(__file__).resolve().parents[1] / "fixtures" / "replay"
+FIRST = CATALOG[0].id  # processed first by events_by_technique, so its break raises first
 
-# The real captured telemetry for each technique must contain this substring — the
+# The real captured telemetry for each technique must contain this substring - the
 # artifact the technique's rule keys on. For setuid this pins the leading-space
 # invariant (' chmod u+s') the shipped SigmaHQ rule requires, on REAL telemetry.
 ARTIFACT = {
@@ -101,3 +106,74 @@ def test_real_telemetry_carries_the_detectable_artifact():
     # The setuid combined line must carry BOTH substrings the shipped rule needs.
     setuid = _raw("T1548.001")
     assert "chown root" in setuid and " chmod u+s" in setuid
+
+
+# --- the fail-closed integrity contract (a doctored/blanked fixture must be refused) ---
+
+
+def _fixtures(tmp_path: Path) -> Path:
+    """A temp copy of ALL committed fixtures, so the only integrity failure in a test is
+    the one it deliberately introduces into the first-in-catalog technique (reached first
+    by events_by_technique). Without a full copy, an incidental 'missing' would mask it."""
+    dst = tmp_path / "replay"
+    shutil.copytree(FIX, dst)
+    return dst
+
+
+def _load(fixtures_dir: Path):
+    return ReplayTarget(fixtures_dir=fixtures_dir).events_by_technique()
+
+
+def test_good_temp_fixture_loads(tmp_path):
+    # sanity: the untouched copy loads, so later breakage is what triggers the refusal
+    _load(_fixtures(tmp_path))
+
+
+def test_missing_provenance_is_refused(tmp_path):
+    d = _fixtures(tmp_path)
+    (d / FIRST / "provenance.json").unlink()
+    with pytest.raises(FixtureError):
+        _load(d)
+
+
+def test_missing_raw_log_is_refused(tmp_path):
+    d = _fixtures(tmp_path)
+    (d / FIRST / "raw" / "exec.log").unlink()
+    with pytest.raises(FixtureError):
+        _load(d)
+
+
+def test_blank_raw_sha256_is_refused(tmp_path):
+    d = _fixtures(tmp_path)
+    p = d / FIRST / "provenance.json"
+    prov = json.loads(p.read_text(encoding="utf-8"))
+    prov["raw_sha256"] = ""
+    p.write_text(json.dumps(prov), encoding="utf-8")
+    with pytest.raises(FixtureError):
+        _load(d)
+
+
+def test_absent_raw_sha256_key_is_refused(tmp_path):
+    d = _fixtures(tmp_path)
+    p = d / FIRST / "provenance.json"
+    prov = json.loads(p.read_text(encoding="utf-8"))
+    prov.pop("raw_sha256", None)
+    p.write_text(json.dumps(prov), encoding="utf-8")
+    with pytest.raises(FixtureError):
+        _load(d)
+
+
+def test_tampered_raw_log_is_refused(tmp_path):
+    d = _fixtures(tmp_path)
+    raw = d / FIRST / "raw" / "exec.log"
+    raw.write_text(raw.read_text(encoding="utf-8") + "REDGAP\t9\tr\t/\t/x\ty\n", encoding="utf-8")
+    with pytest.raises(FixtureError):
+        _load(d)
+
+
+@pytest.mark.parametrize("bad", ["{ not json", "[]", '"a string"', "12"])
+def test_corrupt_or_non_object_provenance_is_refused(tmp_path, bad):
+    d = _fixtures(tmp_path)
+    (d / FIRST / "provenance.json").write_text(bad, encoding="utf-8")
+    with pytest.raises(FixtureError):
+        _load(d)

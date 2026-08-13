@@ -30,4 +30,5 @@ Thumbs.db
 # Runtime output (reports are regenerated; only committed samples live under docs/ or fixtures/)
 out/
 out-*/
+coverage-*.json
 *.tmp

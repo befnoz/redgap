@@ -102,6 +102,10 @@ def _match_string(
     """Match ``actual`` against a SigmaString. ``whole`` uses fullmatch (field equality
     with wildcards); ``whole=False`` uses search (keyword substring). ``ignorecase`` is
     disabled for ``|cased`` values."""
+    # ReDoS guard. Caveat: a >64K value returns a definite non-match — a safe under-match
+    # for a positive selection, but under an odd number of enclosing NOTs (a
+    # `selection and not filter` idiom with a huge field) it becomes an over-match. Known
+    # bound, documented in SCOPE.md; process_creation fields here are far under 64K.
     if len(actual) > MAX_MATCH_LEN:
         return False
     regex = _sigmastring_to_regex(value)
@@ -124,13 +128,31 @@ def _match_regex(value: SigmaRegularExpression, actual: str) -> bool:
     return re.search(pattern, actual, flags) is not None
 
 
-def _match_compare(actual: Any, value: SigmaCompareExpression) -> bool:
-    # A boolean is an int subclass; exclude it so it cannot coerce to 1.0/0.0 (mirrors
-    # the equality path, which also refuses to let a bool over-match a number).
+# A canonical number: no digit-group underscores, surrounding whitespace, inf/nan, or
+# other float()-isms, so a string field only compares numerically when it really is a
+# plain number (matching the string-typed equality path and SCOPE.md's guarantee).
+_CANONICAL_NUMBER = re.compile(r"[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?")
+
+
+def _to_number(actual: Any) -> float | None:
+    # A boolean is an int subclass; exclude it so it cannot coerce to 1.0/0.0.
     if isinstance(actual, bool):
+        return None
+    try:
+        if isinstance(actual, int | float):
+            return float(actual)  # may overflow for arbitrary-precision ints
+        if isinstance(actual, str) and _CANONICAL_NUMBER.fullmatch(actual):
+            return float(actual)
+    except (ValueError, OverflowError):
+        return None
+    return None
+
+
+def _match_compare(actual: Any, value: SigmaCompareExpression) -> bool:
+    left = _to_number(actual)
+    if left is None:
         return False
     try:
-        left = float(actual)
         right = float(value.number.number)
     except (TypeError, ValueError, OverflowError):
         return False

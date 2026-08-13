@@ -174,6 +174,8 @@ def make_planner(engine: CoverageEngine, *, use_llm: bool | None = None):
     if enabled and os.getenv("ANTHROPIC_API_KEY"):
         try:
             return LLMPlanner(engine)
-        except Exception:  # noqa: BLE001 - any SDK/import failure falls back to deterministic
+        except Exception:  # noqa: BLE001 - a CONSTRUCTION/import failure falls back here
+            # (a runtime API error inside .run() propagates; the verdict is unaffected —
+            #  a crash yields no report, never a wrong verdict.)
             return HeuristicPlanner(engine)
     return HeuristicPlanner(engine)

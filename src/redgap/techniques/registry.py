@@ -112,27 +112,6 @@ def _chmod_mode_and_paths(args: list[str]) -> tuple[str | None, list[str]]:
     return mode, paths
 
 
-def _install_mode_and_paths(args: list[str]) -> tuple[str | None, list[str]]:
-    """install: the mode comes via -m/--mode; path operands are the non-flag tokens."""
-    mode: str | None = None
-    paths: list[str] = []
-    i = 0
-    while i < len(args):
-        a = args[i]
-        if a in ("-m", "--mode"):
-            mode = args[i + 1] if i + 1 < len(args) else None
-            i += 2
-            continue
-        if a.startswith("--mode="):
-            mode = a.split("=", 1)[1]
-        elif a.startswith("-m") and len(a) > 2:
-            mode = a[2:]
-        elif not a.startswith("-"):
-            paths.append(a)
-        i += 1
-    return mode, paths
-
-
 def _setuid_targets_only_inert(mode: str | None, paths: list[str], args: list[str]) -> bool:
     """True iff a chmod/install grants no setuid/setgid bit to anything but the inert
     target. A --reference flag (mode copied from another file), a missing mode, or a
@@ -205,11 +184,12 @@ def _simple_commands(cmd: str) -> list[list[str]]:
 
 def is_safe_setuid_command(cmd: str) -> bool:
     """Strict positive allowlist. Return True only if every simple command in ``cmd`` is
-    known-safe: a ``chmod``/``install`` that grants a setuid/setgid bit exclusively to
+    known-safe: a ``chmod`` that grants a setuid/setgid bit exclusively to
     :data:`INERT_SUID_TARGET`, a ``chown`` that touches only the inert target, a ``cp``
     with no mode-preserving flag, or a benign leaf utility. **Everything else fails
     closed** — interpreters, exec-wrappers (``env``, ``sudo``, ``xargs`` …), ``setcap``,
-    ``--reference`` tricks, a shell with no ``-c`` body, or anything unparseable."""
+    ``install`` (its ``-t DIR`` grammar can hide the real setuid target), ``--reference``
+    tricks, a shell with no ``-c`` body, or anything unparseable."""
     try:
         simples = _simple_commands(cmd)
     except _Unparseable:
@@ -222,10 +202,6 @@ def is_safe_setuid_command(cmd: str) -> bool:
             mode, paths = _chmod_mode_and_paths(argv[1:])
             if not _setuid_targets_only_inert(mode, paths, argv[1:]):
                 return False
-        elif prog == "install":
-            mode, paths = _install_mode_and_paths(argv[1:])
-            if not _setuid_targets_only_inert(mode, paths, argv[1:]):
-                return False
         elif prog == "chown":
             if any(p != INERT_SUID_TARGET for p in _chown_paths(argv[1:])):
                 return False
@@ -233,7 +209,7 @@ def is_safe_setuid_command(cmd: str) -> bool:
             if any(_is_cp_preserve(a) for a in argv[1:]):
                 return False
         elif prog not in _BENIGN_LEAF_PROGRAMS:
-            return False  # unknown / exec-capable / interpreter / grouping — fail closed
+            return False  # unknown / exec-capable / interpreter / install / grouping — fail closed
     return True
 
 

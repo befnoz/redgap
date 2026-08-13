@@ -87,6 +87,10 @@ def test_guard_fails_closed_on_unparseable_command():
         "nice chmod u+s /bin/sh",
         "install -m 4755 /bin/sh /tmp/rootsh",  # install can create a setuid file
         "install -m4755 /bin/sh /tmp/rootsh",
+        # install's -t/--target-directory grammar hides the real setuid target (DIR/basename)
+        f"install -m4755 --target-directory=/etc/cron.d {INERT_SUID_TARGET}",
+        f"install -m 4755 --target-directory=/etc/cron.d {INERT_SUID_TARGET}",
+        f"install -m4755 -t/etc/cron.d {INERT_SUID_TARGET}",
         "chmod --reference=/usr/bin/passwd /bin/sh",  # copy setuid bits from a setuid file
         "sh -cx 'chmod u+s /bin/sh'",  # bundled -c flag still runs the body
         "bash -xc 'chmod u+s /bin/sh'",

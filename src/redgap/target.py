@@ -35,8 +35,6 @@ class Target(Protocol):
 
     def events_by_technique(self) -> dict[str, list[Event]]: ...
 
-    def provenance(self) -> dict: ...
-
 
 class ReplayTarget:
     """Re-evaluate committed real-telemetry fixtures. Offline, no Docker, no key.
@@ -69,7 +67,13 @@ class ReplayTarget:
                     f"{tech.id}: missing provenance.json — refusing to trust an "
                     f"unverifiable fixture ({prov_path})"
                 )
-            want = json.loads(prov_path.read_text(encoding="utf-8")).get("raw_sha256")
+            try:
+                prov = json.loads(prov_path.read_text(encoding="utf-8"))
+            except json.JSONDecodeError as exc:
+                raise FixtureError(f"{tech.id}: unparseable provenance.json — {exc}") from exc
+            if not isinstance(prov, dict):
+                raise FixtureError(f"{tech.id}: provenance.json is not a JSON object")
+            want = prov.get("raw_sha256")
             if not want:
                 raise FixtureError(
                     f"{tech.id}: provenance.json has no raw_sha256 — cannot verify "
@@ -83,14 +87,6 @@ class ReplayTarget:
                 )
             out[tech.id] = parse_snoopy_log(raw, run_id=self.run_id, technique_id=tech.id)
         return out
-
-    def provenance(self) -> dict:
-        provs: dict[str, dict] = {}
-        for tech in CATALOG:
-            p = self.fixtures_dir / tech.id / "provenance.json"
-            if p.exists():
-                provs[tech.id] = json.loads(p.read_text(encoding="utf-8"))
-        return {"mode": "replay", "fixtures": provs}
 
 
 class LiveDockerTarget:
@@ -114,6 +110,3 @@ class LiveDockerTarget:
             _, events = lab.capture_technique(tech.id)
             out[tech.id] = events
         return out
-
-    def provenance(self) -> dict:
-        return {"mode": "live", "note": "fresh live capture; commit via `redgap capture`"}

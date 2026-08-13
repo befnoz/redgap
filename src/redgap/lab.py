@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import subprocess
 import tempfile
 from pathlib import Path
@@ -32,11 +33,28 @@ class LabError(RuntimeError):
     """A docker/lab operation failed."""
 
 
+# Docker CLI env vars that select the daemon. Neutralized so the argv gate in
+# assert_lab_only cannot be sidestepped via the environment: DOCKER_HOST/--context could
+# otherwise redirect every call to a remote/off-box engine with no argv change.
+_DAEMON_ENV_VARS = ("DOCKER_HOST", "DOCKER_TLS_VERIFY", "DOCKER_CERT_PATH")
+
+
+def _local_docker_env() -> dict[str, str]:
+    """A copy of the environment forced to the LOCAL default docker daemon."""
+    env = {k: v for k, v in os.environ.items() if k not in _DAEMON_ENV_VARS}
+    env["DOCKER_CONTEXT"] = "default"  # override any active remote context (env + config)
+    return env
+
+
 def _docker(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
-    # Every docker call is gated: assert_lab_only refuses a remote daemon or any
-    # container-creating command that is not `--network none` (see redgap.allowlist).
+    # Every docker call is gated to the LOCAL daemon two ways: assert_lab_only refuses a
+    # remote-daemon argv flag or any container-creating command that is not
+    # `--network none`, AND the environment is sanitized so DOCKER_HOST/DOCKER_CONTEXT
+    # cannot redirect us off-box (see redgap.allowlist).
     assert_lab_only(args)
-    proc = subprocess.run(["docker", *args], capture_output=True, text=True)
+    proc = subprocess.run(
+        ["docker", *args], capture_output=True, text=True, env=_local_docker_env()
+    )
     if check and proc.returncode != 0:
         raise LabError(f"docker {' '.join(args)} failed:\n{proc.stderr.strip()}")
     return proc
