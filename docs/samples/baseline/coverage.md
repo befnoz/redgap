@@ -23,7 +23,7 @@
 | 13 | T1140 | Deobfuscate/Decode Files or Information | Defense Evasion | yes | - | ba592c6d-6888-43c3-b8c6-689b8fe47337 |
 | 14 | T1222.002 | Linux and Mac File and Directory Permissions Modification | Defense Evasion | yes | - | 34979410-e4b5-4e5d-8cfb-389fdff05c12 |
 | 15 | T1070.004 | Indicator Removal: File Deletion | Defense Evasion | yes | - | 30aed7b6-d2c1-4eaf-9382-b6bc43e50c57 |
-| 16 | T1497.001 | Virtualization/Sandbox Evasion: System Checks | Defense Evasion | no | rule | - |
+| 16 | T1497.001 | Virtualization/Sandbox Evasion: System Checks | Defense Evasion / Discovery | no | rule | - |
 | 17 | T1059 | Command and Scripting Interpreter | Execution | yes | - | 8c1a5675-cb85-452f-a298-b01b22a51856 |
 | 18 | T1059.004 | Command and Scripting Interpreter: Unix Shell | Execution | yes | - | bed978f8-7f3a-432b-82c5-9286a9b3031a |
 | 19 | T1059.006 | Command and Scripting Interpreter: Python | Execution | no | base_rate | - |
@@ -31,7 +31,7 @@
 | 21 | T1053.002 | Scheduled Task/Job: At | Privilege Escalation / Execution / Persistence | yes | - | d2d642d7-b393-43fe-bae4-e81ed5915c4b |
 | 22 | T1548 | Abuse Elevation Control Mechanism | Privilege Escalation / Defense Evasion | yes | - | ed447910-bc30-4575-a598-3a2e49516a7a |
 | 23 | T1546.004 | Event Triggered Execution: Unix Shell Configuration Modification | Persistence / Privilege Escalation | no | base_rate | - |
-| 24 | T1098.004 | Account Manipulation: SSH Authorized Keys | Persistence | no | rule | - |
+| 24 | T1098.004 | Account Manipulation: SSH Authorized Keys | Persistence / Privilege Escalation | no | rule | - |
 | 25 | T1552.001 | Unsecured Credentials: Credentials In Files | Credential Access | yes | - | fa4aaed5-4fe0-498d-bbc0-08e3346387ba |
 | 26 | T1003.008 | OS Credential Dumping: /etc/passwd and /etc/shadow | Credential Access | no | rule | - |
 | 27 | T1552.004 | Unsecured Credentials: Private Keys | Credential Access | no | rule | - |

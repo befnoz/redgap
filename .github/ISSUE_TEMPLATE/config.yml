@@ -1,0 +1,12 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Report a vulnerability (private)
+    url: https://github.com/befnoz/redgap/security/advisories/new
+    about: >-
+      Please report security issues privately via a GitHub Security Advisory, not a public
+      issue. See SECURITY.md.
+  - name: Scope and ethics
+    url: https://github.com/befnoz/redgap/blob/main/SCOPE.md
+    about: >-
+      RedGap attacks only its own disposable local lab. Do not open issues requesting
+      off-box, weaponized, or real-exploit behavior.

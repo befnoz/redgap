@@ -46,6 +46,10 @@ def _local_docker_env() -> dict[str, str]:
     """A copy of the environment forced to the LOCAL default docker daemon."""
     env = {k: v for k, v in os.environ.items() if k not in _DAEMON_ENV_VARS}
     env["DOCKER_CONTEXT"] = "default"  # override any active remote context (env + config)
+    # `docker build` uses buildx, whose builder is chosen INDEPENDENTLY of DOCKER_CONTEXT
+    # (via BUILDX_BUILDER / a persisted default). Pin it to the local docker-driver builder
+    # so a remote-driver builder cannot run the image build off-box.
+    env["BUILDX_BUILDER"] = "default"
     return env
 
 

@@ -476,7 +476,8 @@
       "id": "T1497.001",
       "name": "Virtualization/Sandbox Evasion: System Checks",
       "tactics": [
-        "Defense Evasion"
+        "Defense Evasion",
+        "Discovery"
       ],
       "executed": true,
       "telemetry_present": true,
@@ -720,7 +721,8 @@
       "id": "T1098.004",
       "name": "Account Manipulation: SSH Authorized Keys",
       "tactics": [
-        "Persistence"
+        "Persistence",
+        "Privilege Escalation"
       ],
       "executed": true,
       "telemetry_present": true,

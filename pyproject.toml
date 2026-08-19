@@ -26,6 +26,13 @@ dependencies = [
     "pysigma==1.5.0",
 ]
 
+[project.urls]
+Homepage = "https://befnoz.github.io/redgap/"
+Repository = "https://github.com/befnoz/redgap"
+Documentation = "https://befnoz.github.io/redgap/"
+Changelog = "https://github.com/befnoz/redgap/blob/main/CHANGELOG.md"
+Issues = "https://github.com/befnoz/redgap/issues"
+
 [project.optional-dependencies]
 # The LLM planner is strictly optional. The whole deterministic path runs without it.
 llm = ["anthropic>=0.40"]

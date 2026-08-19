@@ -298,6 +298,23 @@
       ]
     },
     {
+      "techniqueID": "T1497.001",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
       "techniqueID": "T1059",
       "tactic": "execution",
       "color": "#2e7d32",
@@ -521,6 +538,23 @@
     {
       "techniqueID": "T1098.004",
       "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1098.004",
+      "tactic": "privilege-escalation",
       "color": "#c62828",
       "comment": "gap (rule)",
       "enabled": true,

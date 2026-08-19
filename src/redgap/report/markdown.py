@@ -58,7 +58,12 @@ def markdown_report(
     mode: str,
     run_id: str,
     generated_at: str,
+    show_regression: bool = True,
 ) -> str:
+    """``show_regression=False`` (Bring-Your-Own-Rules mode) drops the ``(regression)``
+    marker and the catalog's base-rate/roadmap gap rationale, both of which are relative to
+    RedGap's SHIPPED expectations and are meaningless for a stranger's ruleset - so the
+    written report matches the de-catalog-ized terminal view (see cli._render)."""
     by_id = {v.technique_id: v for v in verdicts}
     ordered = [t for t in catalog if t.id in by_id]
     detected = sum(1 for t in ordered if by_id[t.id].detected)
@@ -77,7 +82,7 @@ def markdown_report(
     for i, tech in enumerate(ordered, 1):
         v = by_id[tech.id]
         detected_cell = "yes" if v.detected else "no"
-        if v.unexpected:
+        if v.unexpected and show_regression:
             detected_cell += " (regression)"
         gap_cell = "-" if v.detected else v.gap_type.value
         rules = ", ".join(v.firing_rules) if v.firing_rules else "-"
@@ -96,8 +101,17 @@ def markdown_report(
         out.append("")
         for tech in gaps:
             v = by_id[tech.id]
-            reason = _GAP_EXPLANATION.get(v.gap_type, v.gap_type.value)
-            line = f"- **{tech.id} {tech.name}** - {v.gap_type.value}: {reason}"
+            if show_regression:
+                label = v.gap_type.value
+                reason = _GAP_EXPLANATION.get(v.gap_type, v.gap_type.value)
+            else:
+                # BYOR: the gap is relative to the USER's rules, so do not assert RedGap's
+                # catalog base-rate/roadmap rationale about a rule they simply haven't written.
+                label = "uncovered"
+                reason = (
+                    "telemetry present, but none of your rules fired (write a rule to close it)"
+                )
+            line = f"- **{tech.id} {tech.name}** - {label}: {reason}"
             if v.candidates_excluded:
                 line += (
                     f" (note: {v.candidates_excluded} rule(s) tagged to this technique were "

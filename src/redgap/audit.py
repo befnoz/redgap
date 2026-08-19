@@ -67,6 +67,7 @@ def run_audit(
         use_llm=None,
         exclude=(),
         loaded=(loaded, excluded),
+        audit_mode=True,
     )
     scorecard = rule_scorecard(
         loaded,

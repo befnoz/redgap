@@ -207,15 +207,26 @@ def rule_scorecard_markdown(scorecard: dict) -> str:
         "firing",
         lambda r: "fired on " + ", ".join(sorted({h["technique_id"] for h in r["fired_on"]})),
     )
-    _section(
-        "SILENT",
-        "silent",
-        lambda r: (
-            "tagged to "
-            + ", ".join(r["in_corpus_techniques"])
-            + " but never fired on real telemetry"
-        ),
-    )
+
+    def _silent_desc(r: dict) -> str:
+        # Only claim "false confidence" for techniques that DID produce telemetry the rule
+        # failed to match; a technique with no telemetry gave the rule nothing to fire on.
+        present = [d["technique_id"] for d in r["silent_detail"] if d.get("telemetry_present")]
+        absent = [d["technique_id"] for d in r["silent_detail"] if not d.get("telemetry_present")]
+        if present and not absent:
+            return "tagged to " + ", ".join(present) + " but never fired on real telemetry"
+        if absent and not present:
+            return (
+                "tagged to "
+                + ", ".join(absent)
+                + " but that produced no telemetry to fire on (untested)"
+            )
+        return (
+            "never fired on real telemetry for " + ", ".join(present) + "; "
+            "no telemetry to fire on for " + ", ".join(absent)
+        )
+
+    _section("SILENT", "silent", _silent_desc)
     _section(
         "OUT-OF-CORPUS",
         "out_of_corpus",

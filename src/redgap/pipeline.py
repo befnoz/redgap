@@ -34,6 +34,7 @@ def run_coverage(
     use_llm: bool | None = None,
     exclude: tuple[str, ...] | None = None,
     loaded: tuple[list, list] | None = None,
+    audit_mode: bool = False,
 ) -> tuple[list[Verdict], dict]:
     """Evaluate coverage for ``target`` and (optionally) write the report artifacts.
 
@@ -69,7 +70,12 @@ def run_coverage(
         )
         (out / "coverage.md").write_text(
             markdown_report(
-                CATALOG, verdicts, mode=target.mode, run_id=target.run_id, generated_at=generated_at
+                CATALOG,
+                verdicts,
+                mode=target.mode,
+                run_id=target.run_id,
+                generated_at=generated_at,
+                show_regression=not audit_mode,
             ),
             encoding="utf-8",
             newline="\n",

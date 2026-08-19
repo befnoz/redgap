@@ -83,6 +83,9 @@
   .dim { color: var(--dim); }
   .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--eyebrow); font-weight: 600; }
   .gapword { color: var(--accent); }
+  /* On the section background (not a white panel), the bright accent red dips below WCAG
+     AA for normal-size text in light mode; the darker ink token clears 4.5:1 in both themes. */
+  .sub .gapword { color: var(--red-ink); }
 
   /* Top bar */
   .topbar { position: sticky; top: 0; z-index: 40; backdrop-filter: blur(14px);
@@ -130,7 +133,7 @@
   .term .bar i:nth-child(1) { background: #ff5f57; } .term .bar i:nth-child(2) { background: #febc2e; } .term .bar i:nth-child(3) { background: #28c840; }
   .term .bar span { margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--faint-ink); }
   .term pre { margin: 0; padding: 16px 18px; font-family: var(--mono); font-size: 13px; line-height: 1.65;
-    min-height: 288px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+    min-height: 330px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
   .term .p { color: var(--accent); } .term .c { color: var(--faint-ink); }
   .term .ok { color: var(--green-ink); } .term .bad { color: var(--red-ink); } .term .warn { color: var(--amber); }
   .term .cur { display: inline-block; width: 8px; height: 15px; background: var(--green); vertical-align: -2px; animation: blink 1.05s step-end infinite; }
@@ -343,7 +346,7 @@
       <div class="stat reveal"><div class="n g" id="s-det">34</div><div class="l">techniques your rules caught</div></div>
       <div class="stat reveal"><div class="n r" id="s-gap">17</div><div class="l">blind spots surfaced</div></div>
       <div class="stat reveal"><div class="n">122</div><div class="l">real SigmaHQ rules parsed, 0 crashes</div></div>
-      <div class="stat reveal"><div class="n">324</div><div class="l">tests, fully offline in CI</div></div>
+      <div class="stat reveal"><div class="n">333</div><div class="l">tests, fully offline in CI</div></div>
     </div>
   </div>
 </header>
@@ -417,8 +420,8 @@
       <div class="step">
         <div class="num">03 · CLOSE</div>
         <h3>Fix it &amp; gate it in CI</h3>
-        <p>Write the missing rule, re-run, watch the verdict flip <span style="color:var(--red)">red</span> →
-          <span style="color:var(--green)">green</span>. Wire RedGap into CI so a new gap fails the build.</p>
+        <p>Write the missing rule, re-run, watch the verdict flip <span style="color:var(--red-ink)">red</span> →
+          <span style="color:var(--green-ink)">green</span>. Wire RedGap into CI so a new gap fails the build.</p>
         <div class="code"><span class="p">$</span> redgap run --fix</div>
       </div>
     </div>
@@ -1099,7 +1102,8 @@
         "id": "T1497.001",
         "name": "Virtualization/Sandbox Evasion: System Checks",
         "tactics": [
-          "Defense Evasion"
+          "Defense Evasion",
+          "Discovery"
         ],
         "detected": false,
         "gap_type": "rule",
@@ -1439,7 +1443,8 @@
         "id": "T1098.004",
         "name": "Account Manipulation: SSH Authorized Keys",
         "tactics": [
-          "Persistence"
+          "Persistence",
+          "Privilege Escalation"
         ],
         "detected": false,
         "gap_type": "rule",
@@ -3024,7 +3029,8 @@
         "id": "T1497.001",
         "name": "Virtualization/Sandbox Evasion: System Checks",
         "tactics": [
-          "Defense Evasion"
+          "Defense Evasion",
+          "Discovery"
         ],
         "detected": true,
         "gap_type": "none",
@@ -3367,7 +3373,8 @@
         "id": "T1098.004",
         "name": "Account Manipulation: SSH Authorized Keys",
         "tactics": [
-          "Persistence"
+          "Persistence",
+          "Privilege Escalation"
         ],
         "detected": true,
         "gap_type": "none",

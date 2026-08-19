@@ -298,6 +298,23 @@
       ]
     },
     {
+      "techniqueID": "T1497.001",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by 7c1a9e10-1a2b-4c3d-8e4f-000000000002",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "7c1a9e10-1a2b-4c3d-8e4f-000000000002"
+        }
+      ]
+    },
+    {
       "techniqueID": "T1059",
       "tactic": "execution",
       "color": "#2e7d32",
@@ -521,6 +538,23 @@
     {
       "techniqueID": "T1098.004",
       "tactic": "persistence",
+      "color": "#2e7d32",
+      "comment": "detected by 7c1a9e10-1a2b-4c3d-8e4f-000000000003",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "7c1a9e10-1a2b-4c3d-8e4f-000000000003"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1098.004",
+      "tactic": "privilege-escalation",
       "color": "#2e7d32",
       "comment": "detected by 7c1a9e10-1a2b-4c3d-8e4f-000000000003",
       "enabled": true,

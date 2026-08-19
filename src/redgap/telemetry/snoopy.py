@@ -31,13 +31,14 @@ FIELD_SEP = "\t"
 def parse_snoopy_line(
     line: str, *, run_id: str, technique_id: str, index: int = 0
 ) -> dict[str, Any] | None:
-    """Parse one syslog line into an event, or ``None`` if it is not a snoopy record.
+    """Parse one collector ``exec.log`` record line into an event, or ``None`` if the line
+    carries no record. The collector writes plain tab-delimited lines (no syslog); we still
+    locate the ``REDGAP<TAB>`` marker ANYWHERE in the line, so any leading prefix a future
+    collector might add is tolerated. A line looks like::
 
-    A real line carries a syslog prefix, e.g.::
+        REDGAP\t1234\troot\t/root\t/usr/bin/cat\tcat /etc/passwd
 
-        Aug 11 09:00:00 host snoopy[1234]: REDGAP\t1234\troot\t/root\t/usr/bin/cat\tcat /etc/passwd
-
-    We locate the ``REDGAP<TAB>`` marker and parse the tab-delimited payload after it.
+    and we parse the tab-delimited payload after the marker.
     """
     needle = MARKER + FIELD_SEP
     pos = line.find(needle)

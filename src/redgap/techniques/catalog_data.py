@@ -197,7 +197,7 @@ TECHNIQUES: tuple[TechDef, ...] = (
     TechDef(
         "T1497.001",
         "Virtualization/Sandbox Evasion: System Checks",
-        ("Defense Evasion",),
+        ("Defense Evasion", "Discovery"),
         "Read a DMI product-name pseudo-file to fingerprint the host (rule gap).",
         ("cat /sys/class/dmi/id/product_name 2>/dev/null || true",),
         ("true",),
@@ -279,7 +279,7 @@ TECHNIQUES: tuple[TechDef, ...] = (
     TechDef(
         "T1098.004",
         "Account Manipulation: SSH Authorized Keys",
-        ("Persistence",),
+        ("Persistence", "Privilege Escalation"),
         "Append a placeholder key to authorized_keys, then remove it (rule gap).",
         (
             r"mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\n' "
@@ -401,6 +401,8 @@ TECHNIQUES: tuple[TechDef, ...] = (
         NONE,
         "rules/sigmahq/proc_creation_lnx_services_stop_and_disable.yml",
     ),
+    # NOTE: T1653's ATT&CK tactic is Persistence (not Impact); it is grouped in this
+    # execution batch for capture ordering, and its tactics tuple below is authoritative.
     TechDef(
         "T1653",
         "Power Settings",
