@@ -4,6 +4,25 @@ All notable changes to RedGap are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-08-20
+
+### Fixed
+- `redgap audit` (Bring Your Own Rules): the written `coverage.md` no longer marks a
+  user's uncovered techniques as "(regression)" or asserts RedGap's own base-rate/roadmap
+  rationale - those are relative to RedGap's shipped catalog, not a foreign ruleset.
+- Corrected two ATT&CK tactic mappings to match MITRE: T1497.001 (+Discovery) and
+  T1098.004 (+Privilege Escalation).
+- Light-theme WCAG AA contrast on the dashboard's inline red/green body text; the hero
+  terminal reserves its height so it no longer grows during the type-in animation.
+- The rule scorecard distinguishes a SILENT rule (telemetry present, never matched) from
+  one that had no telemetry to fire against.
+- Pinned the buildx builder to the local docker driver in the capture path.
+
+### Added
+- `[project.urls]` (Homepage / Repository / Documentation / Changelog / Issues) so the
+  PyPI page links back to the project.
+- `CONTRIBUTING.md`, issue / pull-request templates, and a `rules/` provenance README.
+
 ## [1.0.0] - 2026-08-19
 
 First stable release.
