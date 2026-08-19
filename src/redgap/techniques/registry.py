@@ -1,7 +1,7 @@
 """The v0.1 technique specifications, plus a hard safety validator.
 
 Safety: the setuid technique (T1548.001) sets the setuid bit ONLY on an inert copy
-of ``/bin/true`` — never on a shell or interpreter, which would create a real local
+of ``/bin/true`` - never on a shell or interpreter, which would create a real local
 privilege-escalation primitive. That rule is enforced at import time by
 :func:`_validate_setuid_safety`; editing the spec to target a shell makes the module
 fail to import (and the test suite red).
@@ -20,6 +20,10 @@ from redgap.techniques.catalog_data import TECHNIQUES
 # commands in catalog_data.py.
 INERT_SUID_SOURCE = "/bin/true"
 INERT_SUID_TARGET = "/tmp/redgap_demo_suid"
+#: The setcap technique (T1548) grants a file capability to this inert copy only.
+INERT_SETCAP_TARGET = "/tmp/rgcap"
+#: Every path a privilege/capability grant is allowed to touch.
+INERT_TARGETS = frozenset({INERT_SUID_TARGET, INERT_SETCAP_TARGET})
 
 
 #: Executable specs, built from the single catalog_data source of truth.
@@ -44,7 +48,7 @@ _SYMBOLIC_SETUID = re.compile(r"[-+=][rwxXstugo]*s")
 # Interpreters/wrappers whose '-c ARG' body must be recursed into, so a nested
 # `sh -c '... chmod u+s ...'` is checked, not treated as an opaque argument.
 _SHELL_WRAPPERS = frozenset({"sh", "bash", "dash", "zsh", "ksh", "ash"})
-_SHELL_OPERATORS = frozenset({"&&", "||", ";", "|", "&", "\n"})
+_SHELL_OPERATORS = frozenset({"&&", "||", ";", "|", "&"})  # newlines are whitespace to shlex
 
 
 class _Unparseable(Exception):
@@ -61,10 +65,7 @@ def _mode_grants_setuid(mode: str) -> bool:
     if _SYMBOLIC_SETUID.search(mode):
         return True
     if re.fullmatch(r"[0-7]+", mode):
-        try:
-            return bool(int(mode, 8) & 0o6000)  # 0o4000 setuid | 0o2000 setgid
-        except ValueError:
-            return False
+        return bool(int(mode, 8) & 0o6000)  # 0o4000 setuid | 0o2000 setgid; regex ensures octal
     return False
 
 
@@ -122,7 +123,7 @@ def _setuid_targets_only_inert(mode: str | None, paths: list[str], args: list[st
         return False
     if not _mode_grants_setuid(mode):
         return True
-    return bool(paths) and all(p == INERT_SUID_TARGET for p in paths)
+    return bool(paths) and all(p in INERT_TARGETS for p in paths)
 
 
 def _chown_paths(args: list[str]) -> list[str]:
@@ -184,12 +185,12 @@ def _simple_commands(cmd: str) -> list[list[str]]:
 
 def is_safe_setuid_command(cmd: str) -> bool:
     """Strict positive allowlist. Return True only if every simple command in ``cmd`` is
-    known-safe: a ``chmod`` that grants a setuid/setgid bit exclusively to
-    :data:`INERT_SUID_TARGET`, a ``chown`` that touches only the inert target, a ``cp``
-    with no mode-preserving flag, or a benign leaf utility. **Everything else fails
-    closed** — interpreters, exec-wrappers (``env``, ``sudo``, ``xargs`` …), ``setcap``,
-    ``install`` (its ``-t DIR`` grammar can hide the real setuid target), ``--reference``
-    tricks, a shell with no ``-c`` body, or anything unparseable."""
+    known-safe: a ``chmod``/``chown`` that grants/touches only an inert target
+    (:data:`INERT_TARGETS`), a ``cp`` of ``/bin/true`` onto an inert target with no
+    mode-preserving flag, a ``setcap`` onto an inert target, or a benign leaf utility.
+    **Everything else fails closed** - interpreters, exec-wrappers (``env``, ``sudo``,
+    ``xargs`` ...), ``install`` (its ``-t DIR`` grammar can hide the real setuid target),
+    ``--reference`` tricks, a shell with no ``-c`` body, or anything unparseable."""
     try:
         simples = _simple_commands(cmd)
     except _Unparseable:
@@ -203,27 +204,85 @@ def is_safe_setuid_command(cmd: str) -> bool:
             if not _setuid_targets_only_inert(mode, paths, argv[1:]):
                 return False
         elif prog == "chown":
-            if any(p != INERT_SUID_TARGET for p in _chown_paths(argv[1:])):
+            # --reference=FILE copies another file's owner; like the chmod path, reject it
+            # so a reference-form chown cannot slip a non-inert target past _chown_paths.
+            if _has_reference_flag(argv[1:]):
+                return False
+            if any(p not in INERT_TARGETS for p in _chown_paths(argv[1:])):
                 return False
         elif prog == "cp":
+            # A mode-preserving flag could copy a setuid SOURCE's bit; reject it. AND pin the
+            # copy to `cp /bin/true <inert target>` - without pinning the SOURCE, copying a
+            # shell onto the allowed target and then chmod u+s it yields a setuid-root shell.
             if any(_is_cp_preserve(a) for a in argv[1:]):
                 return False
+            operands = [a for a in argv[1:] if not a.startswith("-")]
+            ok = (
+                len(operands) == 2
+                and operands[0] == INERT_SUID_SOURCE
+                and operands[1] in INERT_TARGETS
+            )
+            if not ok:
+                return False
+        elif prog == "setcap":
+            # setcap grants a file capability; allow it only onto an inert target. The file is
+            # the last non-flag operand (`setcap cap_setuid+ep /tmp/rgcap`, `setcap -r /tmp/rgcap`).
+            operands = [a for a in argv[1:] if not a.startswith("-")]
+            if not operands or operands[-1] not in INERT_TARGETS:
+                return False
         elif prog not in _BENIGN_LEAF_PROGRAMS:
-            return False  # unknown / exec-capable / interpreter / install / grouping — fail closed
+            return False  # unknown / exec-capable / interpreter / install / grouping - fail closed
     return True
 
 
-def _validate_setuid_safety() -> None:
-    """Refuse to load if the setuid technique targets anything but the inert copy."""
-    spec = SPECS.get("T1548.001")
-    if spec is None:
-        return
-    for cmd in spec.commands:
-        if not is_safe_setuid_command(cmd):
-            raise RuntimeError(
-                f"unsafe setuid command in T1548.001: {cmd!r} — the setuid bit may only "
-                f"be set on the inert {INERT_SUID_TARGET}, never on a shell/interpreter"
-            )
+_GRANT_PROGS = frozenset({"chmod", "chown", "setcap", "install"})
 
+
+def _cp_preserves_mode(argv: list[str]) -> bool:
+    """A ``cp`` with a mode-preserving flag - it can copy a setuid SOURCE's bit, so it must
+    be routed through the inert-target allowlist just like chmod/chown/setcap/install."""
+    return bool(argv) and _basename(argv[0]) == "cp" and any(_is_cp_preserve(a) for a in argv[1:])
+
+
+def _spec_grants_privilege(spec) -> bool:
+    """True if any of the spec's commands invokes a setuid/setgid/capability-granting tool
+    (or a mode-preserving ``cp``), so the whole spec must pass the inert-target allowlist."""
+    for cmd in spec.commands:
+        try:
+            simples = _simple_commands(cmd)
+        except _Unparseable:
+            # Fail toward validation on unparseable input that names a granting tool or a
+            # preserve-mode cp (e.g. `cp -p`, `cp --preserve`, `cp --archive`).
+            if re.search(r"\b(?:setcap|chmod|chown|install)\b", cmd) or re.search(
+                r"\bcp\b[^;&|]*(?:--preserve|--archive|\s-[a-zA-Z]*[pa])", cmd
+            ):
+                return True
+            continue
+        if any(
+            _basename(argv[0]) in _GRANT_PROGS or _cp_preserves_mode(argv)
+            for argv in simples
+            if argv
+        ):
+            return True
+    return False
+
+
+def _validate_setuid_safety() -> None:
+    """Refuse to load if ANY capability-granting technique (not a hardcoded id) touches
+    anything but an inert target - fail-closed for every setuid/setgid/setcap spec."""
+    for tid, spec in SPECS.items():
+        if not _spec_grants_privilege(spec):
+            continue
+        for cmd in spec.commands:
+            if not is_safe_setuid_command(cmd):
+                raise RuntimeError(
+                    f"unsafe capability-granting command in {tid}: {cmd!r} - a privilege bit "
+                    f"may only be set on an inert target {sorted(INERT_TARGETS)}"
+                )
+
+
+# A duplicate technique id would desync the execution set from the report; survives python -O.
+if len(SPECS) != len(TECHNIQUES):
+    raise RuntimeError("duplicate technique id in catalog_data.TECHNIQUES")
 
 _validate_setuid_safety()

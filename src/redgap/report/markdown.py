@@ -3,8 +3,26 @@
 from __future__ import annotations
 
 from collections.abc import Sequence
+from pathlib import Path
 
 from redgap.models import GapType, Technique, Verdict
+
+
+def display_path(p: str) -> str:
+    """A cwd-relative POSIX path for a report, never an absolute local build tree.
+
+    The engine keys evidence on a rule's on-disk path (absolute, so the join is
+    unambiguous), but a written report must not ship that absolute path - it is
+    non-portable and fingerprints the machine and user it was built on. Relativize to the
+    current working directory; fall back to the bare filename if the path lives outside it.
+    """
+    if not p:
+        return p
+    try:
+        return Path(p).resolve().relative_to(Path.cwd().resolve()).as_posix()
+    except (ValueError, OSError):
+        return Path(p).name
+
 
 _GAP_EXPLANATION = {
     GapType.RULE: "telemetry present, but no rule fired (closeable by writing a rule)",
@@ -14,8 +32,23 @@ _GAP_EXPLANATION = {
 
 
 def _cell(text: object) -> str:
-    """Escape ``|`` so a value never breaks the Markdown table's column alignment."""
-    return str(text).replace("|", "\\|")
+    """Neutralize every character that could break a Markdown table cell: a literal
+    backslash (escaped first so it cannot combine with the following pipe), the ``|``
+    column separator, and any embedded newline that would split the row."""
+    return str(text).replace("\\", "\\\\").replace("|", "\\|").replace("\r", " ").replace("\n", " ")
+
+
+def _evidence_value(val: object) -> str:
+    """The repr of a matched field value, with backticks neutralized so a value like
+    ``sh -c 'echo `id`'`` cannot pair with the surrounding field-name code span and
+    garble the evidence line."""
+    return repr(val).replace("`", "\\`")
+
+
+def _code(text: object) -> str:
+    """Neutralize backticks and row-breakers for a value placed inside a Markdown `code span`
+    (where `_cell`'s backslash/pipe escaping would render literally)."""
+    return str(text).replace("`", "\\`").replace("\r", " ").replace("\n", " ")
 
 
 def markdown_report(
@@ -34,7 +67,7 @@ def markdown_report(
     out.append("# RedGap coverage report")
     out.append("")
     out.append(f"- Mode: **{mode}**")
-    out.append(f"- Run: `{run_id}`")
+    out.append(f"- Run: `{_code(run_id)}`")
     out.append(f"- Generated: {generated_at}")
     out.append("")
     out.append(f"**{detected} / {len(ordered)} techniques detected.**")
@@ -59,16 +92,16 @@ def markdown_report(
     if gaps:
         out.append("## Gaps")
         out.append("")
-        out.append("A gap is a finding, not an error — each names why detection did not fire:")
+        out.append("A gap is a finding, not an error - each names why detection did not fire:")
         out.append("")
         for tech in gaps:
             v = by_id[tech.id]
             reason = _GAP_EXPLANATION.get(v.gap_type, v.gap_type.value)
-            line = f"- **{tech.id} {tech.name}** — {v.gap_type.value}: {reason}"
+            line = f"- **{tech.id} {tech.name}** - {v.gap_type.value}: {reason}"
             if v.candidates_excluded:
                 line += (
                     f" (note: {v.candidates_excluded} rule(s) tagged to this technique were "
-                    f"excluded at load — see warnings)"
+                    f"excluded at load - see warnings)"
                 )
             out.append(line)
         out.append("")
@@ -82,8 +115,14 @@ def markdown_report(
         v = by_id[tech.id]
         for e in v.evidence:
             any_evidence = True
-            fields = ", ".join(f"`{k}`={val!r}" for k, val in sorted(e.matched_fields.items()))
-            out.append(f"- **{tech.id}** — rule `{e.rule_id}` on event `{e.event_id}`: {fields}")
+            fields = ", ".join(
+                f"`{_code(k)}`={_evidence_value(val)}"
+                for k, val in sorted(e.matched_fields.items())
+            )
+            out.append(
+                f"- **{tech.id}** - rule `{_code(e.rule_id)}` "
+                f"on event `{_code(e.event_id)}`: {fields}"
+            )
     if not any_evidence:
         out.append("- (no detections in this run)")
     out.append("")

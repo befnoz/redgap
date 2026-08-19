@@ -1,0 +1,21 @@
+title: Local Account Enumeration via /etc/passwd
+id: aaaa1111-0000-4000-8000-000000000001
+status: experimental
+description: A rule that genuinely fires on the real telemetry (cat /etc/passwd).
+tags:
+    - attack.discovery
+    - attack.t1087.001
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '/cat'
+            - '/less'
+            - '/head'
+        CommandLine|contains: '/etc/passwd'
+    condition: selection
+falsepositives:
+    - Administrators inspecting /etc/passwd
+level: low

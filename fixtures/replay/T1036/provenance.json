@@ -1,0 +1,18 @@
+{
+  "technique_id": "T1036",
+  "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
+  "image": "redgap-lab:v0.1",
+  "image_id": "sha256:fb8a72704790a818b0dc93ae3a9833894a7c6c9be8364ac5abe03f4efe08996b",
+  "host_kernel": "linux",
+  "git_commit": "unknown",
+  "captured_at": "2026-08-19T13:51:19+00:00",
+  "commands": [
+    "cp /bin/true /tmp/rgmasq && /tmp/rgmasq"
+  ],
+  "cleanup": [
+    "rm -f /tmp/rgmasq"
+  ],
+  "raw_sha256": "ad2ef83049332c7e4ac506415d2cb477d9d54937ea1ed13faf15ac051493a657",
+  "event_count": 5,
+  "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
+}

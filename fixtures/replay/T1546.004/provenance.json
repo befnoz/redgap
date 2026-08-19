@@ -3,7 +3,7 @@
   "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
   "image": "redgap-lab:v0.1",
   "image_id": "sha256:fc55ea6822e6b1d567b07997a1d1ddbf13149cb5e5d2023c6e7619a047405e1f",
-  "host_kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "host_kernel": "linux",
   "git_commit": "expansion-v0.2",
   "captured_at": "2026-08-13T00:00:00+00:00",
   "commands": [
@@ -13,6 +13,6 @@
     "mv -f /root/.bashrc.rgbak /root/.bashrc 2>/dev/null; true"
   ],
   "raw_sha256": "37a1b0302c210ad8b1e0d9e3de2309e90fbaa3c3467ae166ea792c0af9b2c463",
-  "event_count": 6,
+  "event_count": 5,
   "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
 }

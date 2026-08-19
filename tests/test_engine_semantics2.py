@@ -1,5 +1,5 @@
 """Second-wave semantics tests: pin the fixes from the re-verification swarm so none
-can regress — nested-list allowlist bypass, loader robustness, catastrophic-regex
+can regress - nested-list allowlist bypass, loader robustness, catastrophic-regex
 rejection, satisfied-path evidence, numeric keywords, compare hardening, and the
 excluded-rule-vs-base-rate distinction.
 """

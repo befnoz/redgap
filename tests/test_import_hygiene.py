@@ -18,6 +18,8 @@ _CORE = [
     "redgap.detection.sigma_ast",
     "redgap.report",
     "redgap.report.navigator",
+    "redgap.report.scorecard",
+    "redgap.audit",
     "redgap.models",
     "redgap.catalog",
     "redgap.telemetry.snoopy",

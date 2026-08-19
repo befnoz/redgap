@@ -1,0 +1,18 @@
+{
+  "technique_id": "T1543.002",
+  "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
+  "image": "redgap-lab:v0.1",
+  "image_id": "sha256:fb8a72704790a818b0dc93ae3a9833894a7c6c9be8364ac5abe03f4efe08996b",
+  "host_kernel": "linux",
+  "git_commit": "unknown",
+  "captured_at": "2026-08-19T13:51:19+00:00",
+  "commands": [
+    "cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true"
+  ],
+  "cleanup": [
+    "rm -f /etc/systemd/system/redgap-test.service"
+  ],
+  "raw_sha256": "7b209d911bad122e6286de6da494ec5dfcec359b901b86dae51668b5eda5fc0a",
+  "event_count": 4,
+  "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
+}

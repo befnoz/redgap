@@ -3,7 +3,7 @@
   "collector": "redgap_exec.so (LD_PRELOAD execve constructor)",
   "image": "redgap-lab:v0.1",
   "image_id": "sha256:fc55ea6822e6b1d567b07997a1d1ddbf13149cb5e5d2023c6e7619a047405e1f",
-  "host_kernel": "6.6.114.1-microsoft-standard-WSL2",
+  "host_kernel": "linux",
   "git_commit": "expansion-v0.2",
   "captured_at": "2026-08-13T00:00:00+00:00",
   "commands": [
@@ -13,6 +13,6 @@
     "systemctl unmask hibernate.target 2>/dev/null; true"
   ],
   "raw_sha256": "a4266466e4c418dc4cb7bc545dab568349305b33a41a6bc7f55c0d4a59834791",
-  "event_count": 5,
+  "event_count": 4,
   "note": "VERBATIM real capture from a live lab run. Not synthesized. Regenerate with `redgap capture` and diff the volatile-stripped events."
 }

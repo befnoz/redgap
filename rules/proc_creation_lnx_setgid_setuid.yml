@@ -1,8 +1,8 @@
 # Vendored VERBATIM from SigmaHQ, unmodified below this comment block.
 # Source: https://github.com/SigmaHQ/sigma/blob/master/rules/linux/process_creation/proc_creation_lnx_setgid_setuid.yml
-# License: Detection Rule License (DRL-1.1) — https://github.com/SigmaHQ/sigma/blob/master/LICENSE.Detection.Rules.md
+# License: Detection Rule License (DRL-1.1) - https://github.com/SigmaHQ/sigma/blob/master/LICENSE.Detection.Rules.md
 # Author: Ömer Günal. Retained here to prove RedGap's setuid detection is a real,
-# third-party shipped rule — not one RedGap authored to match its own payload.
+# third-party shipped rule - not one RedGap authored to match its own payload.
 title: Setuid and Setgid
 id: c21c4eaa-ba2e-419a-92b2-8371703cbe21
 status: test

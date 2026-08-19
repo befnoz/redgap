@@ -1,0 +1,22 @@
+# Closing rule for the remediation round-trip: NOT loaded by default; `redgap run --fix`
+# loads it and the matching gap flips red -> green. Keyed on the technique's real telemetry.
+title: Archive via tar
+id: 7c1a9e10-1a2b-4c3d-8e4f-000000000006
+status: experimental
+description: Closes the T1560.001 rule-gap by matching its captured telemetry.
+author: RedGap
+date: 2026-08-19
+tags:
+    - attack.collection
+    - attack.t1560.001
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '/tar'
+        CommandLine|contains:
+            - '-czf'
+    condition: selection
+level: medium

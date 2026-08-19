@@ -33,6 +33,6 @@ def test_setuid_is_single_shell_line_with_both_substrings():
     for cmd in suid_cmds:
         # Both substrings must live in ONE command line so the shipped rule matches.
         # The shipped rule requires a LEADING SPACE before chmod (' chmod u+s'), which
-        # the '&& chmod' form provides — assert the exact substring the rule keys on.
+        # the '&& chmod' form provides - assert the exact substring the rule keys on.
         assert "chown root" in cmd
         assert " chmod u+s" in cmd

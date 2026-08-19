@@ -51,8 +51,29 @@ def test_guard_allows_the_inert_target():
     assert is_safe_setuid_command(good) is True
 
 
+def test_setcap_is_pinned_to_the_inert_capability_target():
+    from redgap.techniques.registry import INERT_SETCAP_TARGET
+
+    assert is_safe_setuid_command(f"setcap cap_setuid+ep {INERT_SETCAP_TARGET}") is True
+    assert is_safe_setuid_command(f"setcap -r {INERT_SETCAP_TARGET}") is True
+    # setcap granting a capability to a real binary must fail closed.
+    assert is_safe_setuid_command("setcap cap_setuid+ep /bin/bash") is False
+    assert is_safe_setuid_command("setcap cap_setuid+ep /usr/bin/python3") is False
+
+
+def test_cp_branch_is_pinned_to_the_inert_source_and_target():
+    # The only legitimate cp is the inert copy; it must pass.
+    assert is_safe_setuid_command(f"cp {INERT_SUID_SOURCE} {INERT_SUID_TARGET}") is True
+    # Copying a SHELL onto the allowed target path would become a setuid-root shell after the
+    # (allowed) chmod u+s - the guard must pin the SOURCE, not just the destination.
+    assert is_safe_setuid_command(f"cp /bin/bash {INERT_SUID_TARGET}") is False
+    assert is_safe_setuid_command(f"cp /bin/sh {INERT_SUID_TARGET}") is False
+    # A different destination is also rejected.
+    assert is_safe_setuid_command(f"cp {INERT_SUID_SOURCE} /tmp/rootsh") is False
+
+
 def test_guard_rejects_extra_target_smuggled_alongside_inert():
-    # A second path operand on the same chmod — the inert target is present, but a
+    # A second path operand on the same chmod - the inert target is present, but a
     # real privesc binary rides along. The old substring denylist missed this.
     evil = f"chmod u+s {INERT_SUID_TARGET} /bin/su"
     assert is_safe_setuid_command(evil) is False, evil
@@ -60,7 +81,7 @@ def test_guard_rejects_extra_target_smuggled_alongside_inert():
 
 def test_guard_rejects_shell_setuid_even_when_inert_is_chowned():
     # The inert target is chowned (so the substring is present), but the setuid bit
-    # actually lands on /bin/bash — followed by a quote, not a space, defeating the
+    # actually lands on /bin/bash - followed by a quote, not a space, defeating the
     # old end-of-token check. Must fail closed now.
     evil = f"sh -c 'chown root {INERT_SUID_TARGET} && chmod u+s /bin/bash'"
     assert is_safe_setuid_command(evil) is False, evil
@@ -72,7 +93,7 @@ def test_guard_rejects_octal_setuid_with_leading_zero():
 
 
 def test_guard_fails_closed_on_unparseable_command():
-    # An unbalanced quote cannot be tokenized — the guard must refuse, not allow.
+    # An unbalanced quote cannot be tokenized - the guard must refuse, not allow.
     assert is_safe_setuid_command(f"chmod u+s {INERT_SUID_TARGET} '") is False
 
 

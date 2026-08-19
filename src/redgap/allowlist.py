@@ -1,12 +1,13 @@
-"""Target allowlist — the gate that keeps RedGap pointed at its own lab.
+"""Target allowlist - the gate that keeps RedGap pointed at its own lab.
 
 RedGap must never be usable against a system the operator does not own. That is
 enforced structurally here, not by convention, on two surfaces:
 
 * **Container launches (the LIVE path).** Every ``docker run`` goes through
   :func:`assert_lab_only`, which refuses to start a container unless networking is
-  disabled (``--network none``) or pinned to the private lab subnet. ``lab.py`` routes
-  each launch through it, so an edit that quietly networks the lab fails at runtime.
+  disabled (``--network none``). ``lab.py`` routes each launch through it, so an edit
+  that quietly networks the lab fails at runtime. (The lab subnet below is an accepted
+  *target* string, not a container-networking mode.)
 * **Target strings.** :func:`resolve_and_check` accepts only loopback, the lab subnet,
   or the fixed lab hostnames. There is deliberately **no** function to add a host and
   nothing here reads the environment or CLI to widen the set; hostnames are matched
@@ -63,7 +64,7 @@ def resolve_and_check(target: str) -> str:
         raise TargetNotAllowed(
             f"refusing target {target!r}: RedGap only acts against its own local lab "
             f"(loopback, {_LAB_SUBNET}, or one of {sorted(_LAB_HOSTNAMES)}). "
-            f"There is no override — this is by design (see ETHICS.md)."
+            f"There is no override - this is by design (see ETHICS.md)."
         )
     return t.lower() if not _is_ip(t) else t
 
@@ -76,7 +77,7 @@ def _is_ip(value: str) -> bool:
         return False
 
 
-# Global flags that could point docker at a remote/other engine — never allowed.
+# Global flags that could point docker at a remote/other engine - never allowed.
 _DAEMON_REDIRECT_FLAGS = frozenset({"-H", "--host", "--context", "-c"})
 # Subcommands that create/launch a container (as `docker run` or `docker container run`).
 _CONTAINER_CREATE_VERBS = frozenset({"run", "create"})
@@ -124,8 +125,8 @@ def assert_lab_only(docker_args: Sequence[str]) -> None:
 
     Refuses (1) any daemon-redirecting global flag (``-H``/``--host``/``--context``),
     which could target a remote engine, and (2) any container-creating command
-    (``run``/``create``, including the ``docker container …`` form) whose networking is
-    not disabled — every ``--network``/``--net`` value must be ``none``. Non-creating
+    (``run``/``create``, including the ``docker container ...`` form) whose networking is
+    not disabled - every ``--network``/``--net`` value must be ``none``. Non-creating
     commands (build, exec, cp, rm, inspect) are allowed. :mod:`redgap.lab` routes every
     docker call through here, so an edit that networks the lab fails at runtime."""
     args = list(docker_args)
@@ -143,5 +144,5 @@ def assert_lab_only(docker_args: Sequence[str]) -> None:
     if not nets or any(n != "none" for n in nets):
         raise TargetNotAllowed(
             f"refusing to launch a container with networking {nets or ['(default bridge)']}: "
-            f"RedGap's lab must run with '--network none'. There is no override — by design."
+            f"RedGap's lab must run with '--network none'. There is no override - by design."
         )

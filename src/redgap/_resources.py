@@ -3,10 +3,10 @@ in BOTH an editable checkout and an installed wheel.
 
 In a source checkout the data lives at the repository root (``rules/``, ``fixtures/``,
 ``lab/``). The wheel force-includes those same trees *inside* the package
-(``redgap/rules`` …), so an installed ``redgap`` resolves them through
+(``redgap/rules`` ...), so an installed ``redgap`` resolves them through
 ``importlib.resources`` instead of guessing a path relative to the repo root. This is
 what lets ``pip install .`` / ``pipx install redgap`` run ``redgap run`` from any
-directory — not only an editable install run from the source tree.
+directory - not only an editable install run from the source tree.
 """
 
 from __future__ import annotations
@@ -17,7 +17,7 @@ from pathlib import Path
 
 def _data_root(name: str) -> Path:
     # Installed wheel: the data tree is force-included inside the package. This assumes a
-    # filesystem-based install (pip/pipx unpack to site-packages — the supported targets),
+    # filesystem-based install (pip/pipx unpack to site-packages - the supported targets),
     # not zipimport/zipapp; str() on the Traversable is a real path there.
     try:
         packaged = files("redgap") / name

@@ -2,7 +2,7 @@
 
 ## Reporting a vulnerability
 
-If you find a security issue in RedGap — or believe a technique module could be misused beyond its intended own-lab scope — please **do not open a public issue with exploit details**. Instead, open a minimal private report (GitHub Security Advisory on this repository) or contact the maintainer directly. You will get an acknowledgement as soon as possible.
+If you find a security issue in RedGap - or believe a technique module could be misused beyond its intended own-lab scope - please **do not open a public issue with exploit details**. Instead, open a minimal private report (GitHub Security Advisory on this repository) or contact the maintainer directly. You will get an acknowledgement as soon as possible.
 
 ## What RedGap is (and is not)
 
@@ -12,4 +12,4 @@ If you find a security issue in RedGap — or believe a technique module could b
 
 ## Supported versions
 
-RedGap is pre-1.0. Only the latest `main` is supported.
+RedGap is at 1.0.0. Only the latest release / the current `main` is supported.

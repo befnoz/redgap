@@ -6,6 +6,7 @@ from collections.abc import Sequence
 from typing import Any
 
 from redgap.models import CoverageReport, CoverageRow, Technique, Verdict
+from redgap.report.markdown import display_path
 
 
 def coverage_dict(
@@ -68,6 +69,7 @@ def coverage_dict(
                     {
                         "rule_id": e.rule_id,
                         "rule_title": e.rule_title,
+                        "rule_path": display_path(e.rule_path),
                         "event_id": e.event_id,
                         "matched_fields": dict(e.matched_fields),
                     }

@@ -1,8 +1,8 @@
-"""The deterministic Sigma evaluator — RedGap's own detection engine.
+"""The deterministic Sigma evaluator - RedGap's own detection engine.
 
 pySigma parses a rule into a boolean tree of ``ConditionItem`` nodes with typed
 value leaves; this module *evaluates* that tree against a normalized event dict.
-The whole detection verdict is a pure function of ``(events, rules)`` — no SIEM, no
+The whole detection verdict is a pure function of ``(events, rules)`` - no SIEM, no
 cloud, no language model. A judge can re-run it over the saved events and reproduce
 every ``detected`` bit-for-bit.
 
@@ -48,7 +48,7 @@ Event = dict[str, Any]
 
 #: An INPUT-LENGTH bound: field values longer than this many characters are treated as
 #: a non-match instead of being handed to the regex engine. This bounds input size, not
-#: matching time — catastrophic ``|re`` patterns are rejected separately at load
+#: matching time - catastrophic ``|re`` patterns are rejected separately at load
 #: (see sigma_ast). Not a general ReDoS proof; see SCOPE.md.
 MAX_MATCH_LEN = 64 * 1024
 
@@ -68,12 +68,15 @@ class UnsupportedFeature(Exception):
 
 @dataclass(frozen=True)
 class RuleMatch:
-    """Why a rule fired on an event — the hand-verifiable evidence (satisfied path only)."""
+    """Why a rule fired on an event - the hand-verifiable evidence (satisfied path only)."""
 
     rule_id: str
     rule_title: str
     event_id: str
     matched_fields: dict[str, str]
+    #: The rule's file path - UNIQUE per loaded file (unlike rule_id, which two
+    #: Bring-Your-Own-Rules files can share), so downstream joins can't cross rules.
+    rule_path: str = ""
 
 
 # --------------------------------------------------------------------------- #
@@ -88,11 +91,13 @@ def _sigmastring_to_regex(value: SigmaString) -> str:
                     continue  # collapse consecutive .*
                 out.append(".*")
             elif part == SpecialChars.WILDCARD_SINGLE:
-                out.append(".")
+                out.append("[^\\n]")  # Sigma '?' is one non-newline char, not '.' under DOTALL
             else:  # pragma: no cover - defensive
                 raise UnsupportedFeature(f"unknown special char {part!r}")
-        else:
+        elif isinstance(part, str):
             out.append(re.escape(part))
+        else:  # e.g. an unresolved Placeholder leaf - fail loudly, not with an opaque TypeError
+            raise UnsupportedFeature(f"unsupported SigmaString part: {type(part).__name__}")
     return "".join(out)
 
 
@@ -102,7 +107,7 @@ def _match_string(
     """Match ``actual`` against a SigmaString. ``whole`` uses fullmatch (field equality
     with wildcards); ``whole=False`` uses search (keyword substring). ``ignorecase`` is
     disabled for ``|cased`` values."""
-    # ReDoS guard. Caveat: a >64K value returns a definite non-match — a safe under-match
+    # ReDoS guard. Caveat: a >64K value returns a definite non-match - a safe under-match
     # for a positive selection, but under an odd number of enclosing NOTs (a
     # `selection and not filter` idiom with a huge field) it becomes an over-match. Known
     # bound, documented in SCOPE.md; process_creation fields here are far under 64K.
@@ -247,8 +252,13 @@ def _eval(node: Any, event: Event) -> bool:
     if isinstance(node, ConditionNOT):
         return not _eval(node.args[0], event)
     if isinstance(node, ConditionFieldEqualsValueExpression):
-        actual = None if schema.is_internal_key(node.field) else event.get(node.field)
-        return _match_field(actual, node.value)
+        # An internal bookkeeping key can NEVER satisfy a detection (schema.py invariant).
+        # Returning False here - rather than forcing actual=None - is required because
+        # `_match_field(None, SigmaNull())` is True, so a rule like `_run_id: null` would
+        # otherwise fire on every event. This keeps parity with _satisfied_fields.
+        if schema.is_internal_key(node.field):
+            return False
+        return _match_field(event.get(node.field), node.value)
     if isinstance(node, ConditionValueExpression):
         return _match_keyword(node.value, event)
     if isinstance(node, ConditionIdentifier):  # pragma: no cover - resolved by parse()
@@ -257,7 +267,7 @@ def _eval(node: Any, event: Event) -> bool:
 
 
 def _satisfied_fields(node: Any, event: Event) -> set[str]:
-    """Fields on the SATISFIED path of a matching rule — the honest evidence set.
+    """Fields on the SATISFIED path of a matching rule - the honest evidence set.
 
     A field under a NOT (which fires by NOT matching) or in an unsatisfied OR branch did
     not positively contribute, so it is excluded. Call only when the rule matched.
@@ -295,4 +305,5 @@ def rule_matches(rule: LoadedRule, event: Event) -> RuleMatch | None:
         rule_title=rule.title,
         event_id=str(event.get(schema.EVENT_ID, "")),
         matched_fields=matched,
+        rule_path=rule.path,
     )

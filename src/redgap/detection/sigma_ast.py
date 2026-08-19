@@ -12,10 +12,10 @@ Honesty guarantees enforced here:
   modifier buried in a list-of-list cannot tunnel past it.
 * **No crash takes down a run.** Condition-grammar errors, empty ``of`` patterns,
   unreadable files, and directories that match the glob are each turned into a listed
-  exclusion — one bad rule never aborts the whole load.
+  exclusion - one bad rule never aborts the whole load.
 * **Bounded matching.** A ``|re`` pattern with the classic nested-unbounded-quantifier
   ReDoS shape (e.g. ``(a+)+``) is rejected at load, so no single rule can hang the run.
-  (This is a targeted static guard, not a general ReDoS proof — see SCOPE.md.)
+  (This is a targeted static guard, not a general ReDoS proof - see SCOPE.md.)
 
 The AST accessors are not a stability-guaranteed pySigma API, so they live behind this
 one adapter and ``tests/test_sigma_ast_smoke.py`` pins the expected types. Pin:
@@ -24,6 +24,7 @@ one adapter and ``tests/test_sigma_ast_smoke.py`` pins the expected types. Pin:
 
 from __future__ import annotations
 
+import os
 import re
 import warnings
 from dataclasses import dataclass
@@ -31,7 +32,7 @@ from pathlib import Path
 
 import yaml
 from sigma.rule import SigmaRule
-from sigma.types import SigmaRegularExpression
+from sigma.types import SigmaRegularExpression, SigmaString, SpecialChars
 
 _TECH_TAG = re.compile(r"^attack\.(t\d{4}(?:\.\d{3})?)$", re.IGNORECASE)
 
@@ -54,9 +55,29 @@ SUPPORTED_MODIFIER_TOKENS = frozenset(
     }
 )
 
-#: A group that itself contains an unbounded quantifier, immediately repeated by another
-#: unbounded quantifier — the classic catastrophic-backtracking (ReDoS) signature.
-_CATASTROPHIC_RE = re.compile(r"\([^()]*[*+][^()]*\)[*+]")
+#: Catastrophic-backtracking (ReDoS) signatures. A best-effort static blocklist - it
+#: cannot be complete (a matching-time bound via re2/`regex` timeout is the roadmap, see
+#: SCOPE.md), but it rejects the common shapes a Bring-Your-Own-Rules `|re` could hang on:
+#: a group with an inner quantifier or alternation that is itself quantified (`(a+)+`,
+#: `(a|a)+`, `(a+){2,}`), and two stacked quantified groups (`...)+...)+`). Note the
+#: alternation shape is deliberately CONSERVATIVE: a quantified alternation is rejected
+#: regardless of whether its branches actually overlap, because overlap is not statically
+#: decidable here - so a benign `(sh|bash|zsh)+` is excluded too (a safe over-rejection).
+_CATASTROPHIC_SHAPES = (
+    re.compile(r"\([^()]*[*+][^()]*\)[*+{]"),
+    re.compile(r"\([^()]*\|[^()]*\)[*+{]"),
+    re.compile(r"\)[*+{][^)]*\)[*+{]"),
+)
+
+#: A single wildcard string value with more ``*`` than this lowers to that many greedy
+#: ``.*`` segments, whose backtracking is O(n^k) on a long non-match. Real rules never
+#: stack this many wildcards in one value, so a value over the cap is treated as a
+#: ReDoS-prone shape and excluded at load (input length is separately capped in engine.py).
+_MAX_WILDCARDS = 16
+
+
+def _is_catastrophic(pattern: str) -> bool:
+    return any(p.search(pattern) for p in _CATASTROPHIC_SHAPES)
 
 
 class RuleError(Exception):
@@ -90,7 +111,7 @@ def _tags_from_yaml(yaml_str: str) -> tuple[str, ...]:
     whose parse failed, so we can still tell which technique they were meant to cover)."""
     try:
         doc = yaml.safe_load(yaml_str)
-    except yaml.YAMLError:
+    except (yaml.YAMLError, RecursionError):
         return ()
     tags = (doc or {}).get("tags", []) if isinstance(doc, dict) else []
     ids: list[str] = []
@@ -117,8 +138,8 @@ def _iter_field_keys(block: object):
 def _unsupported_modifiers(yaml_str: str) -> set[str]:
     try:
         doc = yaml.safe_load(yaml_str)
-    except yaml.YAMLError:
-        return set()  # a real YAML error surfaces later via SigmaRule.from_yaml
+    except (yaml.YAMLError, RecursionError):
+        return set()  # a real YAML/nesting error surfaces later via SigmaRule.from_yaml
     detection = (doc or {}).get("detection", {}) if isinstance(doc, dict) else {}
     bad: set[str] = set()
     if isinstance(detection, dict):
@@ -133,21 +154,36 @@ def _unsupported_modifiers(yaml_str: str) -> set[str]:
     return bad
 
 
-def _unsafe_regex(node: object) -> str | None:
-    """Return the first ``|re`` pattern with a catastrophic-backtracking shape, or None."""
+def _unsafe_value(node: object) -> str | None:
+    """First value leaf that could hang matching - a ``|re`` with a catastrophic shape or
+    a wildcard string with too many ``*`` - as a human reason string, else None."""
     args = getattr(node, "args", None)
     if args:
         for arg in args:
-            found = _unsafe_regex(arg)
+            found = _unsafe_value(arg)
             if found is not None:
                 return found
         return None
     value = getattr(node, "value", None)
     if isinstance(value, SigmaRegularExpression):
         pattern = str(value.regexp)
-        if _CATASTROPHIC_RE.search(pattern):
-            return pattern
+        if _is_catastrophic(pattern):
+            return f"|re pattern {pattern!r} has a catastrophic-backtracking shape"
+    elif isinstance(value, SigmaString):
+        stars = sum(1 for part in value.s if part == SpecialChars.WILDCARD_MULTI)
+        if stars > _MAX_WILDCARDS:
+            return f"a value with {stars} '*' wildcards is a ReDoS-prone shape"
     return None
+
+
+def _has_none_operand(node: object) -> bool:
+    """True if any AND/OR/NOT node carries a None operand. pySigma keeps a ``1 of foo_*``
+    that matched zero selections as a literal None inside the tree (it does not raise),
+    so a malformed condition can load clean and only blow up at eval - this catches it."""
+    args = getattr(node, "args", None)
+    if args is None:
+        return False
+    return any(arg is None or _has_none_operand(arg) for arg in args)
 
 
 def parse_rule(yaml_str: str, path: str = "<memory>") -> LoadedRule:
@@ -155,7 +191,7 @@ def parse_rule(yaml_str: str, path: str = "<memory>") -> LoadedRule:
     bad = _unsupported_modifiers(yaml_str)
     if bad:
         raise RuleError(
-            f"{path}: unsupported Sigma modifier(s) {sorted(bad)} — outside RedGap's v0.1 "
+            f"{path}: unsupported Sigma modifier(s) {sorted(bad)} - outside RedGap's v0.1 "
             f"subset (see SCOPE.md); excluded rather than silently mismatched"
         )
 
@@ -177,12 +213,17 @@ def parse_rule(yaml_str: str, path: str = "<memory>") -> LoadedRule:
             f"{path}: condition reduced to nothing (an 'of' pattern matched no selection?)"
         )
 
-    unsafe = _unsafe_regex(ast)
-    if unsafe is not None:
+    # A None buried inside AND/OR/NOT (an `of` pattern that matched zero selections) loads
+    # clean but raises at eval - reject it loudly here, like the whole-condition case above.
+    if _has_none_operand(ast):
         raise RuleError(
-            f"{path}: |re pattern {unsafe!r} has a catastrophic-backtracking shape; excluded "
-            f"so it cannot hang the run (see SCOPE.md)"
+            f"{path}: an 'of' pattern operand matched no selection; "
+            f"excluded rather than silently mismatched"
         )
+
+    unsafe = _unsafe_value(ast)
+    if unsafe is not None:
+        raise RuleError(f"{path}: {unsafe}; excluded so it cannot hang the run (see SCOPE.md)")
 
     return LoadedRule(
         id=str(rule.id) if rule.id else path,
@@ -200,23 +241,49 @@ def load_rules_detailed(
 ) -> tuple[list[LoadedRule], list[tuple[str, str, tuple[str, ...]]]]:
     """Load rules under ``root``; return (loaded, excluded).
 
-    ``excluded`` is a list of ``(path, reason, technique_ids)`` — the technique ids are
+    ``excluded`` is a list of ``(path, reason, technique_ids)`` - the technique ids are
     recovered from the raw YAML so an excluded rule is still attributable to its technique
     in the report. Both ``*.yml`` and ``*.yaml`` are loaded; order is OS-independent; any
     unreadable file or directory that matches the glob becomes an exclusion, not a crash.
     """
     root = Path(root)
-    paths = sorted(
-        set(root.rglob("*.yml")) | set(root.rglob("*.yaml")),
-        key=lambda p: p.as_posix(),
-    )
+    root_r = root.resolve()
+    # Discover *.yml/*.yaml case-INSENSITIVELY (so .YML loads identically on Linux and
+    # Windows) and WITHOUT following directory symlinks (so a Bring-Your-Own-Rules pack
+    # cannot pull files from outside its tree or spin an infinite symlink-cycle glob).
+    found: list[Path] = []
+    for dirpath, _dirnames, filenames in os.walk(root, followlinks=False):
+        for name in filenames:
+            if not name.lower().endswith((".yml", ".yaml")):
+                continue
+            p = Path(dirpath) / name
+            try:
+                if not p.resolve().is_relative_to(root_r):  # a file symlink escaping root
+                    continue
+            except OSError:
+                continue
+            found.append(p)
+    paths = sorted(found, key=lambda p: p.as_posix())
     rules: list[LoadedRule] = []
     excluded: list[tuple[str, str, tuple[str, ...]]] = []
     for path in paths:
-        if any(part in exclude for part in path.parts):
+        # Match the exclude tokens ONLY against components below the rules root. Testing
+        # path.parts (an absolute path) would also match the drive and every ancestor
+        # directory, so a checkout under e.g. .../roundtrip/redgap/ would silently drop
+        # the entire ruleset and produce an all-gaps report. paths come from root.rglob,
+        # so relative_to(root) is always well-defined.
+        if any(part in exclude for part in path.relative_to(root).parts):
             continue
         if not path.is_file():  # rglob also matches directories named *.yml
             continue
+        # A size cap before read: a real Sigma rule is a few KiB. A huge Bring-Your-Own-
+        # Rules file would otherwise be slurped and parsed up to three times.
+        try:
+            if path.stat().st_size > 512 * 1024:
+                excluded.append((str(path), "rule file too large (>512 KiB) - skipped", ()))
+                continue
+        except OSError:
+            pass
         try:
             text = path.read_text(encoding="utf-8")
         except (OSError, UnicodeDecodeError) as exc:
@@ -225,9 +292,12 @@ def load_rules_detailed(
             continue
         try:
             rules.append(parse_rule(text, str(path)))
-        except RuleError as exc:
-            warnings.warn(f"RedGap: excluding rule {path}: {exc}", stacklevel=2)
-            excluded.append((str(path), str(exc), _tags_from_yaml(text)))
+        except (RuleError, RecursionError) as exc:
+            # A deeply-nested YAML rule can hit RecursionError deep in the parser; treat it
+            # as one loud per-file exclusion, never an abort of the whole load.
+            reason = str(exc) or f"{type(exc).__name__} while parsing"
+            warnings.warn(f"RedGap: excluding rule {path}: {reason}", stacklevel=2)
+            excluded.append((str(path), reason, _tags_from_yaml(text)))
     return rules, excluded
 
 

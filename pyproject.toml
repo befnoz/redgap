@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "redgap"
-version = "0.2.1"
+version = "1.0.0"
 description = "Automated, MITRE ATT&CK-mapped offense<->detection coverage harness. Finds the red gaps in your detection coverage."
 readme = "README.md"
 requires-python = ">=3.11"
@@ -12,7 +12,7 @@ license = { file = "LICENSE" }
 authors = [{ name = "befnoz" }]
 keywords = ["security", "detection-engineering", "mitre-attack", "sigma", "purple-team", "coverage"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Information Technology",
     "Topic :: Security",
     "Programming Language :: Python :: 3.11",
@@ -46,7 +46,7 @@ packages = ["src/redgap"]
 "lab" = "redgap/lab"
 
 [tool.hatch.build.targets.sdist]
-include = ["src", "rules", "fixtures", "lab", "tests", "docs", "scripts", "README.md", "LICENSE", "NOTICE"]
+include = ["src", "rules", "fixtures", "lab", "tests", "docs", "scripts", "examples", "README.md", "CHANGELOG.md", "CITATION.cff", "LICENSE", "NOTICE"]
 
 [tool.ruff]
 line-length = 100

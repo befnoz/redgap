@@ -25,7 +25,7 @@ PARENT_IMAGE = "ParentImage"
 PARENT_COMMAND_LINE = "ParentCommandLine"
 USER = "User"
 CURRENT_DIRECTORY = "CurrentDirectory"
-PID = "Pid"
+PID = "ProcessId"  # SigmaHQ/Sysmon-for-Linux standard token (not "Pid"), so a real rule matches
 
 SIGMA_FIELDS: tuple[str, ...] = (
     IMAGE,

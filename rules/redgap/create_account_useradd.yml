@@ -24,7 +24,6 @@ detection:
     filter_help:
         CommandLine|contains:
             - ' --help'
-            - ' -h '
             - ' --version'
     condition: selection and not filter_help
 falsepositives:

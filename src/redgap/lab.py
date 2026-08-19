@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import re
 import subprocess
 import tempfile
 from pathlib import Path
@@ -25,6 +26,8 @@ from redgap.telemetry.snoopy import parse_snoopy_log
 
 IMAGE = "redgap-lab:v0.1"
 CONTAINER_LOG = "/var/log/redgap/exec.log"
+#: A well-formed ATT&CK technique id, so a malformed id can never escape FIXTURES_DIR on write.
+_VALID_TID = re.compile(r"T\d{4}(?:\.\d{3})?\Z")
 LAB_DIR = lab_dir()
 FIXTURES_DIR = fixtures_dir()
 
@@ -52,9 +55,23 @@ def _docker(*args: str, check: bool = True) -> subprocess.CompletedProcess[str]:
     # `--network none`, AND the environment is sanitized so DOCKER_HOST/DOCKER_CONTEXT
     # cannot redirect us off-box (see redgap.allowlist).
     assert_lab_only(args)
-    proc = subprocess.run(
-        ["docker", *args], capture_output=True, text=True, env=_local_docker_env()
-    )
+    # A bounded timeout so a wedged docker build/run/exec fails loudly instead of hanging
+    # the whole capture. capture_technique's finally-block still removes the container.
+    try:
+        proc = subprocess.run(
+            ["docker", *args],
+            capture_output=True,
+            encoding="utf-8",
+            errors="replace",  # never crash capture on a non-UTF-8 byte in docker/technique output
+            env=_local_docker_env(),
+            timeout=600,
+        )
+    except FileNotFoundError as exc:
+        raise LabError(
+            "docker CLI not found on PATH; install Docker to use --live/capture"
+        ) from exc
+    except subprocess.TimeoutExpired as exc:
+        raise LabError(f"docker {' '.join(args)} timed out after {exc.timeout}s") from exc
     if check and proc.returncode != 0:
         raise LabError(f"docker {' '.join(args)} failed:\n{proc.stderr.strip()}")
     return proc
@@ -82,8 +99,9 @@ def capture_technique(technique_id: str) -> tuple[str, list[dict]]:
     spec = SPECS[technique_id]
     name = "redgap-cap-" + technique_id.replace(".", "_").lower()
     _docker("rm", "-f", name, check=False)
-    _docker("run", "-d", "--name", name, *_RUN_HARDENING, IMAGE)
     try:
+        # Inside the try so the finally's `rm -f` always cleans up, even if `run -d` half-starts.
+        _docker("run", "-d", "--name", name, *_RUN_HARDENING, IMAGE)
         for cmd in (*spec.commands, *spec.cleanup):
             _docker("exec", name, "sh", "-c", cmd, check=False)
         # docker cp is non-perturbing (it runs no process in the container), so reading
@@ -91,7 +109,9 @@ def capture_technique(technique_id: str) -> tuple[str, list[dict]]:
         with tempfile.TemporaryDirectory() as td:
             dst = Path(td) / "exec.log"
             _docker("cp", f"{name}:{CONTAINER_LOG}", str(dst))
-            raw = dst.read_text(encoding="utf-8")
+            # errors="replace" to match _docker's policy: a non-UTF-8 byte in a captured
+            # cmdline must never crash the capture with a raw UnicodeDecodeError.
+            raw = dst.read_text(encoding="utf-8", errors="replace")
     finally:
         _docker("rm", "-f", name, check=False)
     events = parse_snoopy_log(raw, run_id=f"capture-{technique_id}", technique_id=technique_id)
@@ -104,13 +124,18 @@ def capture_all(captured_at: str, git_commit: str = "unknown") -> dict[str, int]
     kernel = _kernel()
     counts: dict[str, int] = {}
     for technique_id in SPECS:
+        if not _VALID_TID.match(technique_id):
+            raise LabError(
+                f"refusing to write fixtures for a malformed technique id: {technique_id!r}"
+            )
         raw, events = capture_technique(technique_id)
         out = FIXTURES_DIR / technique_id
         (out / "raw").mkdir(parents=True, exist_ok=True)
-        (out / "raw" / "exec.log").write_text(raw, encoding="utf-8")
+        (out / "raw" / "exec.log").write_text(raw, encoding="utf-8", newline="\n")
         (out / "events.jsonl").write_text(
             "".join(json.dumps(e, ensure_ascii=False, sort_keys=True) + "\n" for e in events),
             encoding="utf-8",
+            newline="\n",
         )
         provenance = {
             "technique_id": technique_id,
@@ -130,7 +155,7 @@ def capture_all(captured_at: str, git_commit: str = "unknown") -> dict[str, int]
             ),
         }
         (out / "provenance.json").write_text(
-            json.dumps(provenance, indent=2, ensure_ascii=False), encoding="utf-8"
+            json.dumps(provenance, indent=2, ensure_ascii=False), encoding="utf-8", newline="\n"
         )
         counts[technique_id] = len(events)
     return counts

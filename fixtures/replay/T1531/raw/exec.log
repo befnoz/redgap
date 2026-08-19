@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true
+REDGAP	13	root	/root	/usr/sbin/groupadd	groupadd rg_grp
+REDGAP	17	root	/root	/usr/sbin/groupdel	groupdel rg_grp
+REDGAP	21	root	/root	/usr/bin/dash	sh -c groupdel rg_grp 2>/dev/null; true
+REDGAP	27	root	/root	/usr/sbin/groupdel	groupdel rg_grp

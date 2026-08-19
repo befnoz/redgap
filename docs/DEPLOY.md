@@ -6,7 +6,7 @@ package (PyPI). Both are wired with GitHub Actions; you only do a little one-tim
 ## 1. Web dashboard → GitHub Pages
 
 `docs/index.html` is a self-contained dashboard (no external assets). It renders the real
-coverage output — the ATT&CK heatmap, the coverage table, and the `--fix` round-trip toggle.
+coverage output - the ATT&CK heatmap, the coverage table, and the `--fix` round-trip toggle.
 
 **One-time:** repo **Settings → Pages → Source = "GitHub Actions"**.
 
@@ -18,7 +18,7 @@ https://<your-username>.github.io/redgap/
 ```
 
 That URL is the clickable proof to put in the CES application. (Prefer the branch method
-instead? Settings → Pages → "Deploy from a branch" → `main` → `/docs` also works — then you
+instead? Settings → Pages → "Deploy from a branch" → `main` → `/docs` also works - then you
 can delete `pages.yml`.)
 
 ## 2. `pip install redgap` → PyPI
@@ -30,7 +30,7 @@ The package is already wheel/sdist-clean (`python -m build` + `twine check` pass
 rename the project in `pyproject.toml` (`name = "..."`, e.g. `redgap-coverage`) and update the
 `url:` lines in `.github/workflows/publish.yml`.
 
-**Set up Trusted Publishing (recommended — no tokens/secrets):**
+**Set up Trusted Publishing (recommended - no tokens/secrets):**
 1. On PyPI: your account → **Publishing** → **Add a pending publisher**.
 2. Fill in: PyPI project name `redgap`, owner = your GitHub user, repository `redgap`,
    workflow `publish.yml`, environment `pypi`.

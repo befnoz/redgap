@@ -26,13 +26,13 @@ class GapType(StrEnum):
     coverage tool. See SCOPE.md for the taxonomy.
     """
 
-    #: Detected — there is no gap.
+    #: Detected - there is no gap.
     NONE = "none"
     #: Telemetry never carried the artifact (the sensor was blind). Roadmap: a
     #: higher-fidelity collector. Not used as an active gap in v0.1.
     VISIBILITY = "visibility"
     #: Telemetry is present but no rule matched. This is *closeable* by writing a
-    #: rule — the remediation round-trip.
+    #: rule - the remediation round-trip.
     RULE = "rule"
     #: A real signal exists but a single-event rule would be too noisy to ship;
     #: needs correlation (roadmap).
@@ -68,6 +68,9 @@ class Evidence:
     rule_title: str
     event_id: str
     matched_fields: dict[str, str]  # field name -> the value that matched
+    #: The firing rule's file path - unique per file, so a scorecard join can't confuse two
+    #: Bring-Your-Own-Rules files that happen to share a Sigma id.
+    rule_path: str = ""
 
 
 @dataclass
@@ -75,7 +78,7 @@ class Verdict:
     """The deterministic result for one technique execution.
 
     ``detected`` is ``True`` iff at least one mapped rule fired on at least one
-    collected event. It is a pure function of the events and rules — independent of
+    collected event. It is a pure function of the events and rules - independent of
     the optional LLM planner and byte-identical whether or not it ran.
     """
 
@@ -95,7 +98,7 @@ class Verdict:
     #: feature / unreadable) and therefore never got a chance to fire.
     candidates_excluded: int = 0
     #: True when a technique we expected to detect (expected_gap_type == NONE) was NOT
-    #: detected — a regression, surfaced in the tool's own report, not only in pytest.
+    #: detected - a regression, surfaced in the tool's own report, not only in pytest.
     unexpected: bool = False
 
     def __post_init__(self) -> None:
@@ -125,7 +128,7 @@ class CoverageReport:
     """The full, engine-authored result of a run.
 
     This is what both planners return. The LLM narrative, if any, is carried
-    separately and clearly labeled — never merged into these facts.
+    separately and clearly labeled - never merged into these facts.
     """
 
     mode: str  # "replay" | "live"

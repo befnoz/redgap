@@ -1,0 +1,94 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" font-family="ui-monospace, 'JetBrains Mono', 'Cascadia Code', Menlo, Consolas, monospace">
+  <defs>
+    <radialGradient id="glowR" cx="82%" cy="30%" r="52%">
+      <stop offset="0%" stop-color="#ff4d55" stop-opacity="0.24"/>
+      <stop offset="72%" stop-color="#ff4d55" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glowG" cx="5%" cy="90%" r="48%">
+      <stop offset="0%" stop-color="#34d178" stop-opacity="0.11"/>
+      <stop offset="72%" stop-color="#34d178" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="9"/></filter>
+  </defs>
+
+  <rect width="1280" height="640" fill="#06080c"/>
+  <rect width="1280" height="640" fill="url(#glowR)"/>
+  <rect width="1280" height="640" fill="url(#glowG)"/>
+  <rect x="0" y="636" width="1280" height="4" fill="#ff4d55" opacity="0.85"/>
+
+  <!-- ===== LEFT column, block vertically centered around y=320 (x: 88 .. ~700) ===== -->
+  <g transform="translate(88,120)">
+    <!-- logo -->
+    <g>
+      <g fill="#34d178">
+        <rect x="0"   y="0"   width="40" height="40" rx="9"/>
+        <rect x="50"  y="0"   width="40" height="40" rx="9"/>
+        <rect x="100" y="0"   width="40" height="40" rx="9"/>
+        <rect x="0"   y="50"  width="40" height="40" rx="9"/>
+        <rect x="100" y="50"  width="40" height="40" rx="9"/>
+        <rect x="0"   y="100" width="40" height="40" rx="9"/>
+        <rect x="50"  y="100" width="40" height="40" rx="9"/>
+        <rect x="100" y="100" width="40" height="40" rx="9"/>
+      </g>
+      <rect x="50" y="50" width="40" height="40" rx="9" fill="#ff4d55" filter="url(#soft)"/>
+      <rect x="50" y="50" width="40" height="40" rx="9" fill="#ff4d55"/>
+    </g>
+  </g>
+
+  <text x="86" y="374" font-size="102" font-weight="700" letter-spacing="-4" fill="#e8edf5">Red<tspan fill="#ff4d55">Gap</tspan></text>
+  <text x="90" y="428" font-size="28" font-weight="600" fill="#e8edf5">Find the <tspan fill="#ff4d55">red gaps</tspan> in your detection.</text>
+  <text x="90" y="466" font-size="17" fill="#9aa6b8">Grade your Sigma rules on real captured ATT&amp;CK telemetry.</text>
+
+  <g font-size="16.5" text-anchor="middle">
+    <g transform="translate(90,498)">
+      <rect width="216" height="42" rx="11" fill="#0e1420" stroke="#1e2736"/>
+      <text x="108" y="27" fill="#9aa6b8"><tspan fill="#6ef0a6" font-weight="700">51</tspan> techniques</text>
+    </g>
+    <g transform="translate(320,498)">
+      <rect width="216" height="42" rx="11" fill="#0e1420" stroke="#1e2736"/>
+      <text x="108" y="27" fill="#ff8a8f" font-weight="700">BYOR scorecard</text>
+    </g>
+    <g transform="translate(550,498)">
+      <rect width="216" height="42" rx="11" fill="#0e1420" stroke="#1e2736"/>
+      <text x="108" y="27" fill="#9aa6b8">no AI in the verdict</text>
+    </g>
+  </g>
+
+  <!-- ===== RIGHT column, heatmap vertically centered around y=300 (x: 812 .. 1118) ===== -->
+  <g transform="translate(812,205)">
+    <!-- 5 x 4 grid, step 63, cell 54; a red cluster = the gap -->
+    <g fill="#34d178" opacity="0.92">
+      <rect x="0"   y="0"   width="54" height="54" rx="11"/>
+      <rect x="126" y="0"   width="54" height="54" rx="11"/>
+      <rect x="189" y="0"   width="54" height="54" rx="11"/>
+      <rect x="252" y="0"   width="54" height="54" rx="11"/>
+      <rect x="0"   y="63"  width="54" height="54" rx="11"/>
+      <rect x="63"  y="63"  width="54" height="54" rx="11"/>
+      <rect x="189" y="63"  width="54" height="54" rx="11"/>
+      <rect x="252" y="63"  width="54" height="54" rx="11"/>
+      <rect x="0"   y="126" width="54" height="54" rx="11"/>
+      <rect x="63"  y="126" width="54" height="54" rx="11"/>
+      <rect x="252" y="126" width="54" height="54" rx="11"/>
+      <rect x="0"   y="189" width="54" height="54" rx="11"/>
+      <rect x="63"  y="189" width="54" height="54" rx="11"/>
+      <rect x="126" y="189" width="54" height="54" rx="11"/>
+      <rect x="189" y="189" width="54" height="54" rx="11"/>
+    </g>
+    <g fill="#f4b942" opacity="0.85">
+      <rect x="63"  y="0"   width="54" height="54" rx="11"/>
+      <rect x="252" y="189" width="54" height="54" rx="11"/>
+    </g>
+    <!-- the gap: a red cluster in the middle -->
+    <g fill="#ff4d55">
+      <rect x="126" y="63"  width="54" height="54" rx="11" filter="url(#soft)"/>
+      <rect x="126" y="63"  width="54" height="54" rx="11"/>
+      <rect x="126" y="126" width="54" height="54" rx="11" filter="url(#soft)"/>
+      <rect x="126" y="126" width="54" height="54" rx="11"/>
+      <rect x="189" y="126" width="54" height="54" rx="11" filter="url(#soft)"/>
+      <rect x="189" y="126" width="54" height="54" rx="11"/>
+    </g>
+    <text x="2" y="290" font-size="17" fill="#9aa6b8">detected, or a gap. <tspan fill="#e8edf5" font-weight="600">prove it.</tspan></text>
+  </g>
+
+  <text x="88" y="600" font-size="16" fill="#66718a">github.com/befnoz/redgap   &#183;   pip install redgap</text>
+</svg>

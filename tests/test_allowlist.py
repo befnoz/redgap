@@ -143,7 +143,7 @@ def test_gate_allows_container_run_alias_offline() -> None:
 
 
 def test_gate_allows_non_creating_commands() -> None:
-    # build/exec/cp/rm/inspect do not create a networked container and are allowed —
+    # build/exec/cp/rm/inspect do not create a networked container and are allowed -
     # including an `exec` whose in-container command legitimately contains `-c`.
     assert_lab_only(("build", "-t", "redgap-lab:v0.1", "lab"))
     assert_lab_only(("exec", "redgap-cap", "sh", "-c", "chmod u+s /tmp/x"))

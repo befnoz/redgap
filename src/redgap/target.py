@@ -39,9 +39,10 @@ class Target(Protocol):
 class ReplayTarget:
     """Re-evaluate committed real-telemetry fixtures. Offline, no Docker, no key.
 
-    The raw capture is re-parsed through the SAME parser used live (byte-parity), after
-    its sha256 is checked against the recorded provenance — a tampered fixture fails
-    loudly rather than silently producing a wrong verdict.
+    The raw capture is re-parsed through the SAME parser used live (content-parity, on the
+    universal-newline-normalized text), after its sha256 is checked against the recorded
+    provenance - a tampered fixture fails loudly rather than silently producing a wrong
+    verdict.
     """
 
     mode = "replay"
@@ -57,33 +58,40 @@ class ReplayTarget:
             raw_path = base / "raw" / "exec.log"
             if not raw_path.exists():
                 raise FixtureError(f"missing fixture for {tech.id}: {raw_path}")
-            raw = raw_path.read_text(encoding="utf-8")
+            try:
+                raw = raw_path.read_text(encoding="utf-8")
+            except (UnicodeDecodeError, OSError) as exc:
+                raise FixtureError(f"{tech.id}: unreadable raw fixture - {exc}") from exc
             # Integrity is mandatory, not best-effort. A fixture with no provenance,
-            # or with an empty/absent raw_sha256, is refused rather than trusted — the
+            # or with an empty/absent raw_sha256, is refused rather than trusted - the
             # check fails closed so a deleted/blanked hash cannot smuggle doctored logs.
             prov_path = base / "provenance.json"
             if not prov_path.exists():
                 raise FixtureError(
-                    f"{tech.id}: missing provenance.json — refusing to trust an "
+                    f"{tech.id}: missing provenance.json - refusing to trust an "
                     f"unverifiable fixture ({prov_path})"
                 )
             try:
                 prov = json.loads(prov_path.read_text(encoding="utf-8"))
-            except json.JSONDecodeError as exc:
-                raise FixtureError(f"{tech.id}: unparseable provenance.json — {exc}") from exc
+            except (json.JSONDecodeError, UnicodeDecodeError, OSError) as exc:
+                raise FixtureError(
+                    f"{tech.id}: unreadable/unparseable provenance.json - {exc}"
+                ) from exc
             if not isinstance(prov, dict):
                 raise FixtureError(f"{tech.id}: provenance.json is not a JSON object")
             want = prov.get("raw_sha256")
             if not want:
                 raise FixtureError(
-                    f"{tech.id}: provenance.json has no raw_sha256 — cannot verify "
+                    f"{tech.id}: provenance.json has no raw_sha256 - cannot verify "
                     f"fixture integrity"
                 )
             got = hashlib.sha256(raw.encode("utf-8")).hexdigest()
             if want != got:
+                # repr the recorded digest: it comes from provenance.json (untrusted-ish), so
+                # a value with terminal-control bytes cannot inject ANSI into the message.
                 raise FixtureError(
-                    f"{tech.id}: raw sha256 mismatch — fixture was edited? "
-                    f"expected {want}, got {got}"
+                    f"{tech.id}: raw sha256 mismatch - fixture was edited? "
+                    f"expected {want!r}, got {got}"
                 )
             out[tech.id] = parse_snoopy_log(raw, run_id=self.run_id, technique_id=tech.id)
         return out
@@ -104,9 +112,14 @@ class LiveDockerTarget:
     def events_by_technique(self) -> dict[str, list[Event]]:
         from redgap import lab  # lazy: Docker only needed for LIVE
 
-        lab.build_image()
-        out: dict[str, list[Event]] = {}
-        for tech in CATALOG:
-            _, events = lab.capture_technique(tech.id)
-            out[tech.id] = events
-        return out
+        # Keep LIVE failures inside the TargetError hierarchy that REPLAY uses, so one
+        # `except TargetError` in the CLI catches both a bad fixture and a wedged lab.
+        try:
+            lab.build_image()
+            out: dict[str, list[Event]] = {}
+            for tech in CATALOG:
+                _, events = lab.capture_technique(tech.id)
+                out[tech.id] = events
+            return out
+        except lab.LabError as exc:
+            raise TargetError(str(exc)) from exc

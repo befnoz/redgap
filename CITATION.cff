@@ -1,0 +1,25 @@
+cff-version: 1.2.0
+message: "If you use RedGap in your work, please cite it as below."
+title: "RedGap"
+abstract: >-
+  RedGap is an automated, MITRE ATT&CK-mapped offense/detection coverage harness.
+  It runs benign ATT&CK techniques against a disposable local lab, captures real
+  telemetry with an independent collector, and deterministically decides - from logs
+  and Sigma rules, with no AI in the verdict - whether each technique was detected or
+  is a gap. It also scores your own Sigma rules and surfaces SILENT rules: rules tagged
+  to a technique that pass their own unit test yet never fire on real telemetry.
+type: software
+authors:
+  - name: "befnoz"
+repository-code: "https://github.com/befnoz/redgap"
+url: "https://befnoz.github.io/redgap/"
+license: MIT
+version: "1.0.0"
+date-released: "2026-08-19"
+keywords:
+  - detection-engineering
+  - detection-coverage
+  - mitre-attack
+  - sigma
+  - purple-team
+  - security

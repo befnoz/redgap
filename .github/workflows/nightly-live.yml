@@ -2,13 +2,16 @@ name: nightly-live
 
 # Best-effort: on a real Linux kernel (where the LD_PRELOAD collector is fully reliable)
 # bring up the disposable Docker lab, run the loop LIVE, and re-capture the fixtures. This
-# is the authenticity check — an independent re-capture whose normalized events match the
+# is the authenticity check - an independent re-capture whose normalized events match the
 # committed ones is what proves the fixtures are real, not hand-authored. It never gates a
 # merge (continue-on-error); the offline REPLAY job in ci.yml is the required check.
 on:
   schedule:
     - cron: "0 6 * * *"
   workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
   live:

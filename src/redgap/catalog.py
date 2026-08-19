@@ -2,8 +2,8 @@
 
 Benign, MITRE ATT&CK-mapped techniques spanning the enterprise matrix. Execution and
 cleanup live in the ``techniques/`` modules; this file is the pure-data catalog the
-engine, coverage join, and reports use. The mix is deliberate — detections plus two
-*kinds* of gap (rule / base-rate) — so the coverage report demonstrates real gap
+engine, coverage join, and reports use. The mix is deliberate - detections plus two
+*kinds* of gap (rule / base-rate) - so the coverage report demonstrates real gap
 intelligence rather than an all-green checklist.
 """
 
@@ -25,3 +25,9 @@ CATALOG: tuple[Technique, ...] = tuple(
 )
 
 BY_ID: dict[str, Technique] = {t.id: t for t in CATALOG}
+# CATALOG (iterated by the engine) and BY_ID (used to resolve a single technique) must
+# stay 1:1. A duplicate id would let BY_ID silently shadow one TechDef while CATALOG still
+# emits two rows - a corrupt report with no error. An `if/raise` (not `assert`, which
+# `python -O` strips) fails loudly at import regardless of optimization.
+if len(BY_ID) != len(CATALOG):
+    raise RuntimeError("duplicate technique id in catalog_data.TECHNIQUES")

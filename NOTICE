@@ -1,4 +1,4 @@
-RedGap — third-party components and attributions
+RedGap - third-party components and attributions
 =================================================
 
 RedGap itself is licensed under the MIT License (see LICENSE).
@@ -9,22 +9,22 @@ no ownership of them and thanks their authors.
 
 Runtime dependencies
 --------------------
-- pySigma (SigmaHQ)            — LGPL-2.1        — Sigma rule parsing.
+- pySigma (SigmaHQ)            - LGPL-2.1        - Sigma rule parsing.
                                  https://github.com/SigmaHQ/pySigma
-- Typer                        — MIT             — command-line interface.
-- Rich                         — MIT             — terminal rendering.
-- PyYAML                       — MIT             — YAML loading.
+- Typer                        - MIT             - command-line interface.
+- Rich                         - MIT             - terminal rendering.
+- PyYAML                       - MIT             - YAML loading.
 
 Optional dependency
 --------------------
-- anthropic (Anthropic SDK)    — MIT             — optional LLM orchestration only.
+- anthropic (Anthropic SDK)    - MIT             - optional LLM orchestration only.
 
 Detection content
 -----------------
 - Sigma community rules (SigmaHQ) are distributed under the Detection Rule
   License (DRL-1.1). RedGap vendors real SigmaHQ linux/process_creation rules
   verbatim and loads them at runtime as detection content: one under rules/ and
-  23 under rules/sigmahq/ (each retains its original id, author, and header).
+  31 under rules/sigmahq/ (each retains its original id, author, and header).
   See: https://github.com/SigmaHQ/sigma/blob/master/LICENSE.Detection.Rules.md
 - The full SigmaHQ linux/process_creation ruleset (122 rules) is vendored verbatim
   under tests/corpus/sigmahq_linux_process_creation/ as TEST INPUT only (engine
@@ -35,13 +35,13 @@ Technique provenance
 -------------------
 - The benign techniques executed by RedGap are derived from Atomic Red Team
   (Red Canary), MIT License. RedGap runs only well-known, published, benign
-  detection tests against its own disposable local lab — never novel offense.
+  detection tests against its own disposable local lab - never novel offense.
   https://github.com/redcanaryco/atomic-red-team
 
 Telemetry / tooling referenced (not redistributed)
 --------------------------------------------------
-- snoopy (a2o/snoopy)          — GPL-2.0         — execve command logger used as
+- snoopy (a2o/snoopy)          - GPL-2.0         - execve command logger used as
                                  an independent telemetry collector in the lab image.
-- Sysmon for Linux (Microsoft) — MIT             — optional high-fidelity collector.
-- MITRE ATT&CK / ATT&CK Navigator layer format — MITRE terms of use. ATT&CK(R) is
+- Sysmon for Linux (Microsoft) - MIT             - optional high-fidelity collector.
+- MITRE ATT&CK / ATT&CK Navigator layer format - MITRE terms of use. ATT&CK(R) is
   a registered trademark of The MITRE Corporation.

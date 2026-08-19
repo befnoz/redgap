@@ -1,0 +1,22 @@
+# Closing rule for the remediation round-trip: NOT loaded by default; `redgap run --fix`
+# loads it and the matching gap flips red -> green. Keyed on the technique's real telemetry.
+title: SSH authorized_keys Modification
+id: 7c1a9e10-1a2b-4c3d-8e4f-000000000003
+status: experimental
+description: Closes the T1098.004 rule-gap by matching its captured telemetry.
+author: RedGap
+date: 2026-08-19
+tags:
+    - attack.persistence
+    - attack.t1098.004
+logsource:
+    product: linux
+    category: process_creation
+detection:
+    selection:
+        Image|endswith:
+            - '/tee'
+        CommandLine|contains:
+            - 'authorized_keys'
+    condition: selection
+level: medium

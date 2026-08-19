@@ -1,7 +1,7 @@
 """A per-technique coverage engine the planners drive.
 
 Whether a planner runs the techniques in catalog order, in an LLM-chosen order, or not
-at all, :meth:`coverage` evaluates every technique deterministically before returning —
+at all, :meth:`coverage` evaluates every technique deterministically before returning -
 so the committed report is byte-identical regardless of the planner. This is what makes
 "the coverage is the same with and without the LLM" literally true.
 """
@@ -51,7 +51,7 @@ class CoverageEngine:
         """Evaluate one technique and return a compact, LLM-facing verdict summary.
 
         The ``detected`` field is produced by the deterministic engine and handed to the
-        caller as immutable data — a planner can sequence calls but cannot change it.
+        caller as immutable data - a planner can sequence calls but cannot change it.
         """
         verdict = self._evaluate(BY_ID[technique_id])
         return {

@@ -469,7 +469,7 @@
     },
     {
       "techniqueID": "T1548",
-      "tactic": "persistence",
+      "tactic": "defense-evasion",
       "color": "#2e7d32",
       "comment": "detected by ed447910-bc30-4575-a598-3a2e49516a7a",
       "enabled": true,
@@ -672,23 +672,6 @@
       ]
     },
     {
-      "techniqueID": "T1567",
-      "tactic": "command-and-control",
-      "color": "#2e7d32",
-      "comment": "detected by 00b90cc1-17ec-402c-96ad-3a8117d7a582",
-      "enabled": true,
-      "metadata": [
-        {
-          "name": "gap_type",
-          "value": "none"
-        },
-        {
-          "name": "firing_rules",
-          "value": "00b90cc1-17ec-402c-96ad-3a8117d7a582"
-        }
-      ]
-    },
-    {
       "techniqueID": "T1048.003",
       "tactic": "exfiltration",
       "color": "#2e7d32",
@@ -757,23 +740,6 @@
       ]
     },
     {
-      "techniqueID": "T1653",
-      "tactic": "impact",
-      "color": "#2e7d32",
-      "comment": "detected by c172b7b5-f3a1-4af2-90b7-822c63df86cb",
-      "enabled": true,
-      "metadata": [
-        {
-          "name": "gap_type",
-          "value": "none"
-        },
-        {
-          "name": "firing_rules",
-          "value": "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
-        }
-      ]
-    },
-    {
       "techniqueID": "T1565.001",
       "tactic": "impact",
       "color": "#2e7d32",
@@ -804,6 +770,261 @@
         {
           "name": "firing_rules",
           "value": "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1007",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by 403ed92c-b7ec-4edd-9947-5b535ee12d46",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "403ed92c-b7ec-4edd-9947-5b535ee12d46"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1049",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by 4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1027",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by e2072cab-8c9a-459b-b63c-40ae79e27031",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "e2072cab-8c9a-459b-b63c-40ae79e27031"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1036",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by 312b42b1-bded-4441-8b58-163a3af58775",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "312b42b1-bded-4441-8b58-163a3af58775"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1055.009",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by 4cad6c64-d6df-42d6-8dae-eb78defdc415",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "4cad6c64-d6df-42d6-8dae-eb78defdc415"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1055.009",
+      "tactic": "privilege-escalation",
+      "color": "#2e7d32",
+      "comment": "detected by 4cad6c64-d6df-42d6-8dae-eb78defdc415",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "4cad6c64-d6df-42d6-8dae-eb78defdc415"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070",
+      "tactic": "defense-evasion",
+      "color": "#2e7d32",
+      "comment": "detected by 95d61234-7f56-465c-6f2d-b562c6fedbc4",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "95d61234-7f56-465c-6f2d-b562c6fedbc4"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1105",
+      "tactic": "command-and-control",
+      "color": "#2e7d32",
+      "comment": "detected by ea34fb97-e2c4-4afb-810f-785e4459b194",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "ea34fb97-e2c4-4afb-810f-785e4459b194"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1531",
+      "tactic": "impact",
+      "color": "#2e7d32",
+      "comment": "detected by 8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1201",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1614.001",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1613",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070.003",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1543.002",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1543.002",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
         }
       ]
     }

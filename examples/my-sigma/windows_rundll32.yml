@@ -1,0 +1,18 @@
+title: Rundll32 Execution (Windows)
+id: aaaa1111-0000-4000-8000-000000000003
+status: experimental
+description: A Windows rule — outside RedGap's Linux corpus, so it is reported OUT-OF-CORPUS
+    (honestly not scored), never a false pass or fail.
+tags:
+    - attack.defense-evasion
+    - attack.t1218.011
+logsource:
+    product: windows
+    category: process_creation
+detection:
+    selection:
+        Image|endswith: '\rundll32.exe'
+    condition: selection
+falsepositives:
+    - Legitimate rundll32 usage
+level: medium

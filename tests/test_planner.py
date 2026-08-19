@@ -1,5 +1,5 @@
 """The planner is orchestration only. These tests pin the trust boundary: whatever the
-LLM does — finish immediately, run a subset, request a bogus technique — the committed
+LLM does - finish immediately, run a subset, request a bogus technique - the committed
 coverage is byte-identical to the deterministic run, because it always comes from
 engine.coverage(), never from the model.
 """
@@ -70,7 +70,7 @@ def test_heuristic_matches_direct_evaluation():
 
 
 def test_llm_finish_immediately_still_produces_full_coverage():
-    # The model finishes without running anything — coverage must still be complete.
+    # The model finishes without running anything - coverage must still be complete.
     llm = LLMPlanner(_engine(), client=_FakeClient([_Resp([_tool("finish")])]))
     assert _canon(llm.run()) == _canon(HeuristicPlanner(_engine()).run())
 

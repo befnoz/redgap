@@ -1,0 +1,6 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c cp /bin/true /tmp/rgmasq && /tmp/rgmasq
+REDGAP	13	root	/root	/usr/bin/cp	cp /bin/true /tmp/rgmasq
+REDGAP	14	root	/root	/tmp/rgmasq	/tmp/rgmasq
+REDGAP	15	root	/root	/usr/bin/dash	sh -c rm -f /tmp/rgmasq
+REDGAP	21	root	/root	/usr/bin/rm	rm -f /tmp/rgmasq

@@ -6,7 +6,7 @@ id: 7c1a9e10-1a2b-4c3d-8e4f-000000000706
 status: experimental
 description: >
     Detects touch used to copy a reference file's timestamps or set an explicit
-    timestamp — the tool-invocation signature of timestomping (ATT&CK T1070.006).
+    timestamp - the tool-invocation signature of timestomping (ATT&CK T1070.006).
     The regex covers separated, bundled, and attached getopt forms (-r, -amt,
     -t202001010000, --reference=, --date=). Note: this catches the touch invocation,
     not the syscall-level metadata change; effect-level detection (utimensat) is a

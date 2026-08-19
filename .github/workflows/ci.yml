@@ -6,6 +6,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+# Least privilege: the workflow only reads the repo; no job needs write scopes.
+permissions:
+  contents: read
+
 # The headline proof: the entire offense->detection->coverage loop runs OFFLINE in
 # REPLAY, with no API key and no cloud, on every push.
 jobs:
@@ -23,7 +27,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install (no LLM extra — CI must run without an API key)
+      - name: Install (no LLM extra - CI must run without an API key)
         run: python -m pip install -e ".[dev]"
 
       - name: Lint

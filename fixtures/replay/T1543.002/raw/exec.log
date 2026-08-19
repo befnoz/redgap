@@ -1,0 +1,5 @@
+REDGAP	1	root	/root	/usr/bin/sleep	sleep infinity
+REDGAP	7	root	/root	/usr/bin/dash	sh -c cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true
+REDGAP	13	root	/root	/usr/bin/cp	cp /etc/hostname /etc/systemd/system/redgap-test.service
+REDGAP	14	root	/root	/usr/bin/dash	sh -c rm -f /etc/systemd/system/redgap-test.service
+REDGAP	20	root	/root	/usr/bin/rm	rm -f /etc/systemd/system/redgap-test.service

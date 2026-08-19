@@ -2,30 +2,33 @@
 
 **Find the red gaps in your detection coverage.**
 
-RedGap is an automated, MITRE ATT&CK-mapped **offense↔detection coverage harness**. It runs **38 benign** ATT&CK techniques (across 11 tactics) against its own disposable local lab, collects real telemetry with an **independent collector**, and then **deterministically** — from logs and Sigma rules, with no AI in the loop — decides whether each technique was *detected* or is a *gap*. The output is a coverage report (`technique → detected? → gap type`) plus an ATT&CK Navigator layer.
+<p align="center">
+  <img src="docs/demo.gif" alt="A real REPLAY coverage run: redgap re-evaluates captured telemetry against Sigma rules and reports 34 of 51 ATT&CK techniques detected, 17 gaps (12 rule, 5 base-rate)." width="720">
+</p>
+
+RedGap is an automated, MITRE ATT&CK-mapped **offense↔detection coverage harness**. It runs **51 benign** ATT&CK techniques (across 11 tactics) against its own disposable local lab, collects real telemetry with an **independent collector**, and then **deterministically** - from logs and Sigma rules, with no AI in the loop - decides whether each technique was *detected* or is a *gap*. Point it at **your own** Sigma rules with `redgap audit --rules` and it grades them the same way. The output is a coverage report (`technique → detected? → gap type`) plus an ATT&CK Navigator layer and a per-rule health scorecard.
 
 The name is the output: in the coverage grid, detected techniques are green and gaps are **red**. RedGap finds the red.
 
 [![CI](https://github.com/befnoz/redgap/actions/workflows/ci.yml/badge.svg)](https://github.com/befnoz/redgap/actions/workflows/ci.yml)
-<!-- Uncomment once Pages is enabled / the package is on PyPI: -->
-<!-- [![Live demo](https://img.shields.io/badge/demo-live-2e7d32)](https://befnoz.github.io/redgap/) -->
-<!-- [![PyPI](https://img.shields.io/pypi/v/redgap)](https://pypi.org/project/redgap/) -->
+[![Live demo](https://img.shields.io/badge/demo-live-2e7d32)](https://befnoz.github.io/redgap/)
+[![PyPI](https://img.shields.io/pypi/v/redgap)](https://pypi.org/project/redgap/)
 
-> **v0.1 — what this is and is not.** RedGap v0.1 is a deterministic harness over a *fixed* set of techniques. It is **not** an autonomous agent that continuously attacks and adapts. Adaptive, gap-driven technique chaining (the agent choosing its next attack from the last result) is the honest **next step**, tracked on the roadmap. Precise scope on purpose.
+> **v1.0 - what this is and is not.** RedGap is a deterministic harness over a *fixed* set of techniques. It is **not** an autonomous agent that continuously attacks and adapts. Adaptive, gap-driven technique chaining (the agent choosing its next attack from the last result) is the honest **next step**, tracked on the roadmap. Precise scope on purpose.
 
-**Status.** RedGap's own parser + evaluator ingests **all 122 real SigmaHQ `linux/process_creation` rules** with zero parser errors and zero evaluator crashes — that ruleset is vendored under [`tests/corpus/`](tests/corpus/sigmahq_linux_process_creation/) and checked by [`test_sigmahq_corpus.py`](tests/test_sigmahq_corpus.py), so the claim is reproducible, not asserted. **290 tests** run fully offline in CI. Coverage is computed from **38 committed real-telemetry captures** — one per technique, each with a raw log + parsed events + sha256 provenance — not authored logs; the default run detects **26/38** across 11 ATT&CK tactics. See [docs/architecture.md](docs/architecture.md) · committed output in [docs/samples/](docs/samples/).
+**Status.** RedGap's own parser + evaluator ingests **all 122 real SigmaHQ `linux/process_creation` rules** with zero parser errors and zero evaluator crashes - that ruleset is vendored under [`tests/corpus/`](tests/corpus/sigmahq_linux_process_creation/) and checked by [`test_sigmahq_corpus.py`](tests/test_sigmahq_corpus.py), so the claim is reproducible, not asserted. **324 tests** run fully offline in CI. Coverage is computed from **51 committed real-telemetry captures** - one per technique, each with a raw log + parsed events + sha256 provenance - not authored logs; the default run detects **34/51** across 11 ATT&CK tactics. See [docs/architecture.md](docs/architecture.md) · committed output in [docs/samples/](docs/samples/).
 
 ---
 
 ## The one idea: the verdict is not the AI's to make
 
-Every `detected` verdict is a **pure function of `(logs, rules)`**, computed and written to disk **before** any language model is ever called. An optional LLM planner may (a) choose the order of techniques and decide when to stop, and (b) narrate the report. It **cannot** decide whether something was detected — both the deterministic and the LLM planner return the engine's coverage, never model text. A test asserts the coverage report is byte-identical with and without the LLM.
+Every `detected` verdict is a **pure function of `(logs, rules)`**, computed and written to disk **before** any language model is ever called. An optional LLM planner may (a) choose the order of techniques and decide when to stop, and (b) narrate the report. It **cannot** decide whether something was detected - both the deterministic and the LLM planner return the engine's coverage, never model text. A test asserts the coverage report is byte-identical with and without the LLM.
 
 This is deliberate. LLMs hallucinate confident verdicts; a coverage tool whose ground truth an LLM can fabricate is worthless. RedGap draws the trust boundary in code.
 
-![RedGap architecture — the deterministic pipeline, with the optional LLM planner drawn outside the verdict path](docs/architecture.svg)
+![RedGap architecture - the deterministic pipeline, with the optional LLM planner drawn outside the verdict path](docs/architecture.svg)
 
-The verdict is a pure function of logs and rules, written to disk **before** any model runs. The LLM (dashed red) can only order techniques and narrate — it sits **outside** the verdict path.
+The verdict is a pure function of logs and rules, written to disk **before** any model runs. The LLM (dashed red) can only order techniques and narrate - it sits **outside** the verdict path.
 
 ---
 
@@ -46,7 +49,7 @@ pip install -e .
 redgap run
 ```
 
-**Live dashboard:** the same coverage, as an interactive web page — `https://befnoz.github.io/redgap/`. Drop your **own** `out/coverage.json` on it to render *your* gap grid entirely in the browser (nothing is uploaded). See [docs/DEPLOY.md](docs/DEPLOY.md) to switch it on.
+**Live dashboard:** the same coverage, as an interactive web page - `https://befnoz.github.io/redgap/`. Drop your **own** `out/coverage.json` on it to render *your* gap grid entirely in the browser (nothing is uploaded). See [docs/DEPLOY.md](docs/DEPLOY.md) to switch it on.
 
 To run the real thing against the local Docker lab:
 
@@ -61,23 +64,98 @@ pip install -e ".[llm]"    # adds the optional anthropic SDK
 redgap run --llm           # equivalently: COVERAGE_LLM=1 redgap run
 ```
 
-The committed `coverage.json` is identical whichever planner ran — a test asserts it.
+The committed `coverage.json` is identical whichever planner ran - a test asserts it.
 
 ---
 
 ## What a run shows
 
-A run executes **38 benign techniques across 11 ATT&CK tactics** and produces a real coverage grid: **26 detected · 12 gaps** (7 rule, 5 base-rate). Every verdict is computed by the engine from captured telemetry against real SigmaHQ rules — see the live grid at the [dashboard](https://befnoz.github.io/redgap/) or [docs/samples/](docs/samples/). The original kill-chain below is the illustrative core, showing both *kinds* of gap and the remediation round-trip:
+A run executes **51 benign techniques across 11 ATT&CK tactics** and produces a real coverage grid: **34 detected · 17 gaps** (12 rule, 5 base-rate). Every verdict is computed by the engine from captured telemetry against real SigmaHQ rules - see the live grid at the [dashboard](https://befnoz.github.io/redgap/) (click any technique for its real telemetry, the rule, and why) or [docs/samples/](docs/samples/). The original kill-chain below is the illustrative core, showing both *kinds* of gap and the remediation round-trip:
 
 | # | ATT&CK | Tactic | Result |
 |---|--------|--------|--------|
 | 1 | T1087.001 Account Discovery: Local | Discovery | detected |
-| 2 | T1057 Process Discovery | Discovery | **gap (base-rate)** — too noisy for a single-event rule; needs correlation (roadmap) |
+| 2 | T1057 Process Discovery | Discovery | **gap (base-rate)** - too noisy for a single-event rule; needs correlation (roadmap) |
 | 3 | T1136.001 Create Account: Local | Persistence | detected |
 | 4 | T1548.001 Setuid/Setgid | Priv. Esc / Defense Evasion | detected (matches a shipped SigmaHQ rule) |
 | 5 | T1070.006 Timestomp | Defense Evasion | **gap (rule)** → closed live in the remediation round-trip |
 
-**The remediation round-trip** is the point: technique 5 fires but no rule catches it (a *rule gap*). Write one Sigma rule, re-run the same command, and watch the verdict flip red→green (`redgap run --fix` → 27/38). Both the before and after coverage reports are committed — RedGap is a tool that finds a real blind spot and closes it, not a status printer.
+**The remediation round-trip** is the point: 12 of the 17 gaps are *rule gaps* - real telemetry, no rule firing. Write the missing rules, re-run, and every one flips red→green (`redgap run --fix` → **46/51**, leaving only the 5 base-rate gaps that honestly need correlation, not a single-event rule). Both the before and after coverage reports are committed - RedGap finds real blind spots and closes them, not a status printer.
+
+---
+
+## The dashboard
+
+The same coverage as an interactive page - [befnoz.github.io/redgap](https://befnoz.github.io/redgap/). The full ATT&CK grid, detected in green, rule-gaps in red, base-rate gaps in amber:
+
+<p align="center">
+  <img src="docs/screenshot-matrix.png" alt="RedGap coverage grid: 51 ATT&CK techniques across 11 tactics, detected in green, rule-gaps in red, base-rate gaps in amber" width="960">
+</p>
+
+Click any technique and the **Detection Playground** opens the real evidence behind the verdict - the attacker command RedGap ran, the captured telemetry, the firing Sigma rule, and the exact fields it matched:
+
+<p align="center">
+  <img src="docs/screenshot-playground.png" alt="Detection Playground drawer for T1548.001 Setuid/Setgid: the attacker command, 8 real captured events, the firing Sigma rule, and the matched CommandLine field" width="500">
+</p>
+
+Drop your own `out/coverage.json` on the page to render your gap grid entirely in the browser - nothing is uploaded.
+
+---
+
+## Bring your own rules - `redgap audit`
+
+RedGap ships a demo rule set, but the real workflow is **your** rules. Point it at your own Sigma directory and it scores every one of RedGap's real-telemetry techniques against them, fully offline:
+
+```bash
+redgap audit --rules ./my-sigma/                    # your ATT&CK coverage + a rule-health scorecard
+redgap audit --rules ./my-sigma/ --fail-under 20    # CI gate: fail the build if coverage drops below N
+```
+
+You get your own coverage grid (drops straight into ATT&CK Navigator) **plus** a per-rule scorecard that buckets every rule you own:
+
+- **firing** - matched real captured telemetry, with the exact event and fields as evidence.
+- **SILENT** - tagged to a technique but never fires on real exec data: *false confidence*. A rule can pass `sigma check` (static validation lints the rule text and its tags) and even match a sample log its author wrote, yet still do nothing on real captured telemetry - and neither static validation nor an author-written test runs the rule against independently captured events, so neither can surface it.
+- **out-of-corpus** / **unevaluable** - reported honestly, never scored pass/fail.
+
+Every classification is a boolean from the same deterministic `(events, rules)` engine - no model ever touches it.
+
+**See it catch a SILENT rule.** [`examples/my-sigma/`](examples/my-sigma/) ships three rules - one that fires, one tagged-but-silent, one out-of-corpus. Run it against RedGap's real telemetry:
+
+```bash
+redgap audit --rules examples/my-sigma
+```
+
+(`examples/` lives in the source tree, not the installed wheel - run this from a `git clone` of the repo, or `pip install -e .`.)
+
+![redgap audit scoring a Sigma rule set: 1 firing, 1 SILENT, 1 out-of-corpus](docs/audit-demo.gif)
+
+The `OS Credential Dumping` rule *looks* like coverage - it is tagged to the right technique and passes static validation - yet it never fires on real Linux telemetry (it only matches a Windows tool name). That is the **SILENT** bucket: false confidence that linting the rule text cannot surface, because it never runs the rule against real events.
+
+---
+
+## How it compares
+
+RedGap does not replace the tools below - it closes a loop each of them leaves open, and
+because its rules are standard Sigma they run **inside** the detection tools unchanged.
+The honest picture:
+
+| Capability | [`sigma-cli`](https://github.com/SigmaHQ/sigma-cli) | [Atomic Red Team](https://github.com/redcanaryco/atomic-red-team) | [Zircolite](https://github.com/wagga40/Zircolite) | **RedGap** |
+|---|:---:|:---:|:---:|:---:|
+| Executes benign ATT&CK techniques | - | ✅ *(hundreds, cross-platform)* | - | ✅ *(51, local lab)* |
+| Captures telemetry with its own collector | - | - *(your EDR does)* | - *(you supply logs)* | ✅ |
+| Runs Sigma rules against real events | - *(lints / converts rule text)* | - | ✅ | ✅ |
+| Emits a detected-vs-gap coverage verdict | - | - | - | ✅ |
+| Flags **SILENT** rules (pass validation, never fire) | - | - | - | ✅ |
+| Gap taxonomy (rule vs base-rate) | - | - | - | ✅ |
+
+They are complementary, not competitors. `sigma-cli` lints (`sigma check`) and converts
+(`sigma convert`) your rules but never runs them against events; Atomic Red Team is a far
+larger cross-platform attack
+library that generates real telemetry for your own EDR to judge; Zircolite runs Sigma at
+forensic speed over logs you already have - and since RedGap's rules are plain Sigma, they
+run unchanged in Zircolite. RedGap's niche is closing the whole loop deterministically for
+a fixed technique set, which is what lets it compute coverage and surface the SILENT rules
+the others have no reason to look for.
 
 ---
 
@@ -100,4 +178,4 @@ Not shipped: weaponizable breadth, real exploits, credential material, or anythi
 
 ## License
 
-MIT — see [LICENSE](LICENSE). Third-party attributions in [NOTICE](NOTICE). ATT&CK® is a registered trademark of The MITRE Corporation.
+MIT - see [LICENSE](LICENSE). Third-party attributions in [NOTICE](NOTICE). ATT&CK® is a registered trademark of The MITRE Corporation.

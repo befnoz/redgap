@@ -56,7 +56,7 @@ def navigator_layer(
             comment = f"gap ({v.gap_type.value})"
         # Emit one entry PER tactic the technique maps to. Navigator scopes a colored
         # cell to its `tactic`, so a multi-tactic technique (e.g. T1548.001 = Privilege
-        # Escalation + Defense Evasion) must appear once per column — otherwise it reads
+        # Escalation + Defense Evasion) must appear once per column - otherwise it reads
         # covered in one tactic and blank in the other, contradicting coverage.md/json.
         for tactic in tech.tactics or ("",):
             techniques.append(

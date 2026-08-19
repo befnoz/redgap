@@ -45,15 +45,28 @@ def test_parse_log_skips_noise_and_preserves_order():
     text = "\n".join(
         [
             "random syslog noise",
-            _line(1, "root", "/", "/usr/bin/ps", "ps aux"),
+            _line(7, "root", "/", "/usr/bin/ps", "ps aux"),
             "more noise here",
-            _line(2, "root", "/", "/usr/sbin/useradd", "useradd -M svc_demo"),
+            _line(8, "root", "/", "/usr/sbin/useradd", "useradd -M svc_demo"),
         ]
     )
     events = parse_snoopy_log(text, run_id="r", technique_id="Tx")
     assert len(events) == 2
     assert events[0][schema.IMAGE] == "/usr/bin/ps"
     assert events[1][schema.IMAGE] == "/usr/sbin/useradd"
+
+
+def test_parse_log_drops_the_container_init_pid1():
+    # The lab's own PID-1 init (`sleep infinity`) must never enter a technique's telemetry.
+    text = "\n".join(
+        [
+            _line(1, "root", "/", "/usr/bin/sleep", "sleep infinity"),
+            _line(9, "root", "/", "/usr/bin/cat", "cat /etc/passwd"),
+        ]
+    )
+    events = parse_snoopy_log(text, run_id="r", technique_id="Tx")
+    assert len(events) == 1
+    assert events[0][schema.IMAGE] == "/usr/bin/cat"
 
 
 def test_end_to_end_setuid_parse_then_detect():

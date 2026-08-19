@@ -1,9 +1,15 @@
-"""Parse snoopy execve telemetry into normalized events.
+"""Parse snoopy-style execve telemetry into normalized events.
 
-snoopy is an ``LD_PRELOAD`` execve logger: an *independent* collector (loaded into
-the shell, not into RedGap's attacker code) that writes one line per executed
-command to syslog. The lab image configures snoopy with the exact ``message_format``
-below so parsing is trivial and unambiguous.
+The collector is ``lab/collector/redgap_exec.c`` - a small in-repo ``LD_PRELOAD``
+constructor (snoopy-style, hence the module name) loaded into the shell, NOT into
+RedGap's attacker code. On each ``execve`` it writes one tab-delimited record per
+executed command to a plain file (``/var/log/redgap/exec.log``); no syslog and no
+external ``snoopy`` package or ``.ini`` is involved. Each record is::
+
+    REDGAP<TAB>pid<TAB>username<TAB>cwd<TAB>filename(executable)<TAB>cmdline
+
+so parsing is trivial and unambiguous. ``MARKER`` + ``FIELD_SEP`` below are the wire
+tokens the C collector emits (kept in sync with its ``snprintf`` layout).
 
 Independence matters: the attacker only runs commands; these events come from a
 separate collector and are read back here by ``run_id``/``technique_id``. RedGap's
@@ -14,13 +20,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from redgap.telemetry.schema import make_event
+from redgap.telemetry.schema import PID, make_event
 
-#: The snoopy datasource format the lab must configure (snoopy.ini message_format).
+#: Wire tokens emitted by the redgap_exec.c collector, one record per execve.
 #: Fields: marker, pid, username, cwd, filename (executable), cmdline.
 MARKER = "REDGAP"
 FIELD_SEP = "\t"
-SNOOPY_MESSAGE_FORMAT = "REDGAP\t%{pid}\t%{username}\t%{cwd}\t%{filename}\t%{cmdline}"
 
 
 def parse_snoopy_line(
@@ -65,9 +70,18 @@ def parse_snoopy_log(text: str, *, run_id: str, technique_id: str) -> list[dict[
     """Parse a snoopy log (one execve per line) into normalized events, in order."""
     events: list[dict[str, Any]] = []
     index = 0
-    for line in text.splitlines():
+    # Split ONLY on '\n' - the sole record delimiter the collector emits. str.splitlines()
+    # would also break on \v \f \x1c-\x1e \x85 U+2028 U+2029, which the universal-newline
+    # read leaves intact, so a cmdline containing one could silently truncate a real record.
+    for line in text.split("\n"):
         event = parse_snoopy_line(line, run_id=run_id, technique_id=technique_id, index=index)
-        if event is not None:
-            events.append(event)
-            index += 1
+        if event is None:
+            continue
+        index += 1
+        # Drop the container's own init process (PID 1, `sleep infinity`): it is lab
+        # scaffolding, not part of the technique, so a Bring-Your-Own-Rules rule cannot
+        # falsely 'fire' on it and score an unrelated technique detected.
+        if event.get(PID) == 1:
+            continue
+        events.append(event)
     return events

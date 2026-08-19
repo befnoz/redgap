@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Regenerate the committed sample reports under ``docs/samples/``.
 
-These are the *offline REPLAY* reports a reviewer gets from ``redgap run`` — checked in
+These are the *offline REPLAY* reports a reviewer gets from ``redgap run`` - checked in
 so the repo shows its own output without anyone having to run it. They are byte-stable:
 the target is the committed fixtures, the run_id is fixed ("replay"), and the timestamp
 is pinned below, so re-running this script produces no diff unless the engine or the

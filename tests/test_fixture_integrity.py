@@ -61,6 +61,20 @@ ARTIFACT = {
     "T1653": "hibernate.target",
     "T1565.001": "/etc/hosts",
     "T1592.004": "/etc/sudoers",
+    # ---- v1.0 expansion ----
+    "T1007": "crontab",
+    "T1049": "/who",
+    "T1027": "base64 -d",
+    "T1036": "/tmp/rgmasq",
+    "T1055.009": "of=/proc/self/mem",
+    "T1070": "dpkg --remove",
+    "T1105": "rgpayload",
+    "T1531": "groupdel",
+    "T1201": "chage",
+    "T1614.001": "locale",
+    "T1613": "/proc/1/cgroup",
+    "T1070.003": "truncate",
+    "T1543.002": "/etc/systemd/system",
 }
 
 
