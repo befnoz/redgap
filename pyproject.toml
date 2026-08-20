@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "redgap"
-version = "1.0.1"
+version = "1.0.2"
 description = "Automated, MITRE ATT&CK-mapped offense<->detection coverage harness. Finds the red gaps in your detection coverage."
 readme = "README.md"
 requires-python = ">=3.11"
