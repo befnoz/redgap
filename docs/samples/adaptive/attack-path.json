@@ -1,0 +1,224 @@
+{
+  "schema": "redgap.attack_path/v1",
+  "tool": "redgap",
+  "mode": "replay",
+  "run_id": "replay",
+  "generated_at": "2026-08-11T00:00:00+00:00",
+  "planner": "adaptive-heuristic",
+  "steps": [
+    {
+      "step": 1,
+      "technique_id": "T1087.001",
+      "name": "Account Discovery: Local Account",
+      "tactics": [
+        "Discovery"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+      ],
+      "reason": {
+        "explanation": "seed - first catalog technique",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 2,
+      "technique_id": "T1592.004",
+      "name": "Gather Victim Host Information: Client Configurations",
+      "tactics": [
+        "Reconnaissance"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+      ],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Reconnaissance",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 3,
+      "technique_id": "T1053.002",
+      "name": "Scheduled Task/Job: At",
+      "tactics": [
+        "Privilege Escalation",
+        "Execution",
+        "Persistence"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+      ],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Privilege Escalation",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 4,
+      "technique_id": "T1027",
+      "name": "Obfuscated Files or Information",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "e2072cab-8c9a-459b-b63c-40ae79e27031"
+      ],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Defense Evasion",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 5,
+      "technique_id": "T1003.008",
+      "name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+      "tactics": [
+        "Credential Access"
+      ],
+      "detected": false,
+      "gap_type": "rule",
+      "firing_rules": [],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Credential Access",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 6,
+      "technique_id": "T1005",
+      "name": "Data from Local System",
+      "tactics": [
+        "Collection"
+      ],
+      "detected": false,
+      "gap_type": "base_rate",
+      "firing_rules": [],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Collection",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 7,
+      "technique_id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "tactics": [
+        "Command and Control"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "b86d356d-6093-443d-971c-9b07db583c68"
+      ],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Command and Control",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 8,
+      "technique_id": "T1048.003",
+      "name": "Exfiltration Over Unencrypted Non-C2 Protocol",
+      "tactics": [
+        "Exfiltration"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "3f0f5957-04f8-4792-ad89-192b0303bde6"
+      ],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Exfiltration",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 9,
+      "technique_id": "T1485",
+      "name": "Data Destruction",
+      "tactics": [
+        "Impact"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "2953194b-e33c-4859-b9e8-05948c167447"
+      ],
+      "reason": {
+        "explanation": "breadth - opens untouched tactic Impact",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 10,
+      "technique_id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files",
+      "tactics": [
+        "Credential Access"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "firing_rules": [
+        "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+      ],
+      "reason": {
+        "explanation": "gap-chase - Credential Access already shows a gap",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 11,
+      "technique_id": "T1552.004",
+      "name": "Unsecured Credentials: Private Keys",
+      "tactics": [
+        "Credential Access"
+      ],
+      "detected": false,
+      "gap_type": "rule",
+      "firing_rules": [],
+      "reason": {
+        "explanation": "gap-chase - Credential Access already shows a gap",
+        "source": "heuristic"
+      }
+    },
+    {
+      "step": 12,
+      "technique_id": "T1560.001",
+      "name": "Archive Collected Data: Archive via Utility",
+      "tactics": [
+        "Collection"
+      ],
+      "detected": false,
+      "gap_type": "rule",
+      "firing_rules": [],
+      "reason": {
+        "explanation": "gap-chase - Collection already shows a gap",
+        "source": "heuristic"
+      }
+    }
+  ],
+  "stop": {
+    "reason": "max_steps",
+    "steps_taken": 12
+  },
+  "summary": {
+    "steps": 12,
+    "detected": 8,
+    "gaps": 4,
+    "gap_techniques": [
+      "T1003.008",
+      "T1005",
+      "T1552.004",
+      "T1560.001"
+    ],
+    "tactics_covered": 11
+  }
+}

@@ -61,6 +61,10 @@ def coverage_dict(
                 "gap_type": v.gap_type.value,
                 "expected_gap_type": v.expected_gap_type.value,
                 "unexpected": v.unexpected,
+                # Detection depth: how many rules independently catch this technique. 0 = gap;
+                # 1 = a SINGLE POINT OF FAILURE (green, but one rule edit away from blind);
+                # 2+ = redundant. A pure count over firing_rules - never a verdict.
+                "depth": len(v.firing_rules),
                 "candidates_evaluated": v.candidates_evaluated,
                 "candidates_excluded": v.candidates_excluded,
                 "firing_rules": list(v.firing_rules),

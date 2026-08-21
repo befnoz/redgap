@@ -14,8 +14,8 @@ authors:
 repository-code: "https://github.com/befnoz/redgap"
 url: "https://befnoz.github.io/redgap/"
 license: MIT
-version: "1.0.0"
-date-released: "2026-08-19"
+version: "1.1.0"
+date-released: "2026-08-21"
 keywords:
   - detection-engineering
   - detection-coverage

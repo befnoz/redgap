@@ -90,8 +90,18 @@ def test_catalog_spans_eleven_tactics():
 
 
 def test_version_is_single_valued():
-    pyproject = tomllib.loads((Path(__file__).parents[1] / "pyproject.toml").read_text("utf-8"))
+    root = Path(__file__).parents[1]
+    pyproject = tomllib.loads((root / "pyproject.toml").read_text("utf-8"))
     assert pyproject["project"]["version"] == redgap.__version__
+    # CITATION.cff is a THIRD version source shipped in the sdist; keep it single-valued too so
+    # a bump can't leave the citation metadata claiming an older release.
+    cff = (root / "CITATION.cff").read_text("utf-8")
+    cff_version = next(
+        line.split(":", 1)[1].strip().strip('"')
+        for line in cff.splitlines()
+        if line.startswith("version:")
+    )
+    assert cff_version == redgap.__version__
 
 
 # --- Determinism holds across processes with different hash seeds ----------------------

