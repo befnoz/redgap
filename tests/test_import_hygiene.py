@@ -11,6 +11,9 @@ import sys
 _CORE = [
     "redgap.pipeline",
     "redgap.planner",
+    "redgap.agent_state",
+    "redgap.verify",
+    "redgap.suggest",
     "redgap.engine_facade",
     "redgap.target",
     "redgap.detection.coverage",

@@ -43,6 +43,23 @@ jobs:
       - name: Run the coverage loop offline (one command, no key, no Docker)
         run: redgap run --json > coverage-ci.json
 
+      - name: Prove honesty offline (fixtures authentic, deterministic, planner-independent)
+        run: redgap verify
+
+      - name: Run the adaptive gap-driven loop offline (writes + checks the attack-path)
+        run: |
+          redgap run --adaptive
+          python - <<'PY'
+          import json
+          ap = json.load(open("out/attack-path.json"))
+          grid = {t["id"]: t["detected"] for t in json.load(open("out/coverage.json"))["techniques"]}
+          assert ap["schema"] == "redgap.attack_path/v1", ap["schema"]
+          assert ap["steps"], "adaptive run produced no steps"
+          bad = [s["technique_id"] for s in ap["steps"] if s["detected"] != grid[s["technique_id"]]]
+          assert not bad, f"attack-path contradicts the coverage grid: {bad}"
+          print("adaptive OK:", ap["summary"])
+          PY
+
       - name: Upload coverage artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -77,3 +94,5 @@ jobs:
           redgap version
           redgap run --json > "$RUNNER_TEMP/coverage-installed.json"
           python -c "import json,sys; d=json.load(open(sys.argv[1])); assert d['summary']['techniques']==len(d['techniques'])>0, d['summary']" "$RUNNER_TEMP/coverage-installed.json"
+          redgap run --adaptive --out "$RUNNER_TEMP/adaptive-out"
+          python -c "import json,os,sys; a=json.load(open(os.path.join(sys.argv[1],'attack-path.json'))); assert a['steps'] and a['schema']=='redgap.attack_path/v1', a" "$RUNNER_TEMP/adaptive-out"

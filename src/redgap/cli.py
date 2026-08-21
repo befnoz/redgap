@@ -8,6 +8,7 @@ with no Docker and no API key. ``--live`` captures fresh telemetry from the Dock
 from __future__ import annotations
 
 import json as _json
+import os
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Annotated
@@ -84,6 +85,17 @@ def run(
     llm: Annotated[
         bool, typer.Option("--llm", help="Use the optional LLM planner (needs ANTHROPIC_API_KEY).")
     ] = False,
+    adaptive: Annotated[
+        bool,
+        typer.Option(
+            "--adaptive",
+            help="Adaptive gap-driven chaining; also writes attack-path.json/.md (the ordered "
+            "killchain). The coverage grid is byte-identical either way.",
+        ),
+    ] = False,
+    max_steps: Annotated[
+        int, typer.Option("--max-steps", min=1, help="Adaptive planner step cap (default 12).")
+    ] = 12,
 ) -> None:
     """Run the coverage loop (REPLAY by default)."""
     if live:
@@ -98,7 +110,13 @@ def run(
 
     try:
         verdicts, report = run_coverage(
-            target, generated_at=_now(), out_dir=out, fix=fix, use_llm=(True if llm else None)
+            target,
+            generated_at=_now(),
+            out_dir=out,
+            fix=fix,
+            use_llm=(True if llm else None),
+            auto=adaptive,
+            max_steps=max_steps,
         )
     except TargetError as exc:
         console.print(f"[red]error:[/red] {exc}")
@@ -108,7 +126,15 @@ def run(
         typer.echo(_json.dumps(report, indent=2, ensure_ascii=False))
     else:
         _render(verdicts, report, target.mode)
-        console.print(f"[dim]wrote coverage.json/.md + navigator-layer.json → {out}/[/dim]")
+        wrote = "coverage.json/.md + navigator-layer.json"
+        if adaptive:
+            wrote += " + attack-path.json/.md"
+        console.print(f"[dim]wrote {wrote} → {out}/[/dim]")
+        if adaptive:
+            attack_md = out / "attack-path.md"
+            if attack_md.is_file():
+                console.print()
+                console.print(attack_md.read_text(encoding="utf-8"))
 
     raise typer.Exit(exit_code_for(verdicts))
 
@@ -201,6 +227,108 @@ def capture(
     for tid, n in counts.items():
         console.print(f"  {tid}: [bold]{n}[/bold] events")
     console.print("[green]fixtures regenerated.[/green]")
+
+
+@app.command()
+def suggest(
+    limit: Annotated[
+        int, typer.Option("--limit", min=1, help="Max rule-gaps to draft rules for.")
+    ] = 3,
+) -> None:
+    """For each rule-gap, an optional LLM drafts a candidate Sigma rule - then the ENGINE, not
+    the model, re-runs it and says whether it actually closes the gap.
+
+    The most literal demonstration of the trust boundary: the model writes rule text; only the
+    deterministic engine grants green. Needs the ``llm`` extra and ``ANTHROPIC_API_KEY``.
+    """
+    if not os.getenv("ANTHROPIC_API_KEY"):
+        console.print(
+            "[yellow]redgap suggest needs ANTHROPIC_API_KEY[/yellow] - the LLM drafts a rule, "
+            "the engine judges it. Install [bold]redgap[llm][/bold] and set the key."
+        )
+        raise typer.Exit(2)
+
+    from redgap.catalog import BY_ID
+    from redgap.models import GapType
+    from redgap.suggest import suggest_for_gaps
+
+    target = ReplayTarget()
+    try:
+        verdicts, _ = run_coverage(target, generated_at=_now())
+    except TargetError as exc:
+        console.print(f"[red]error:[/red] {exc}")
+        raise typer.Exit(2) from exc
+
+    gaps = [
+        (v.technique_id, BY_ID[v.technique_id].name)
+        for v in verdicts
+        if not v.detected and v.gap_type is GapType.RULE
+    ][:limit]
+    if not gaps:
+        console.print(
+            "[green]no rule-gaps to draft for[/green] - every gap is base-rate or closed."
+        )
+        raise typer.Exit(0)
+
+    label = {
+        "closes": "[green]CLOSES the gap[/green]",
+        "over_broad": "[yellow]OVER-BROAD (also fires elsewhere)[/yellow]",
+        "untagged": "[yellow]fires, but the draft omitted the ATT&CK tag[/yellow]",
+        "no_fire": "[red]did NOT fire on the real telemetry[/red]",
+        "unevaluable": "[red]unevaluable[/red]",
+    }
+    for r in suggest_for_gaps(target, gaps):
+        v = r["verdict"]
+        console.print(f"\n[bold]{r['technique_id']}[/bold] {escape(r['name'])}")
+        console.print("[dim]--- LLM-drafted candidate (unverified) ---[/dim]")
+        console.print(escape(r["candidate_yaml"]))
+        verdict_line = label.get(v["status"], v["status"])
+        if v["status"] == "over_broad" and v.get("also_fires"):
+            verdict_line += f" [dim]{', '.join(v['also_fires'])}[/dim]"
+        console.print(f"[bold]engine verdict:[/bold] {verdict_line}")
+    console.print(
+        "\n[dim]The model wrote the rule text; the engine decided whether it fires. "
+        "A draft is never trusted until the engine re-runs it on real telemetry.[/dim]"
+    )
+    raise typer.Exit(0)
+
+
+@app.command()
+def verify() -> None:
+    """Prove RedGap's honesty in one offline command (no key, no Docker, no network).
+
+    Re-checks that every committed fixture matches its sha256 provenance, that coverage is
+    deterministic across runs, and that the batch and adaptive planners produce byte-identical
+    coverage - so the orchestration layer can never move a verdict. Exit 0 if all hold, else 1.
+    """
+    from redgap.verify import run_verification
+
+    try:
+        r = run_verification(generated_at=_now())
+    except TargetError as exc:
+        console.print(f"[red]✗ fixture authenticity FAILED:[/red] {exc}")
+        raise typer.Exit(1) from exc
+
+    def mark(ok: bool) -> str:
+        return "[green]✓[/green]" if ok else "[red]✗[/red]"
+
+    console.print(
+        f"{mark(r.fixtures_checked > 0)} {r.fixtures_checked} fixtures authentic "
+        f"(sha256 matches provenance)"
+    )
+    console.print(f"{mark(r.deterministic)} coverage deterministic (byte-identical across runs)")
+    console.print(
+        f"{mark(r.planner_independent)} verdict identical batch vs adaptive planner "
+        f"(orchestration never sets a verdict)"
+    )
+    if r.ok:
+        console.print(
+            f"[bold green]OK[/bold green] - {r.detected}/{r.techniques} detected, "
+            f"engine-computed and reproducible."
+        )
+    else:
+        console.print("[bold red]FAILED[/bold red] - an invariant did not hold.")
+    raise typer.Exit(0 if r.ok else 1)
 
 
 @app.command()

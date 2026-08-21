@@ -14,9 +14,11 @@ The name is the output: in the coverage grid, detected techniques are green and 
 [![Live demo](https://img.shields.io/badge/demo-live-2e7d32)](https://befnoz.github.io/redgap/)
 [![PyPI](https://img.shields.io/pypi/v/redgap)](https://pypi.org/project/redgap/)
 
-> **v1.0 - what this is and is not.** RedGap is a deterministic harness over a *fixed* set of techniques. It is **not** an autonomous agent that continuously attacks and adapts. Adaptive, gap-driven technique chaining (the agent choosing its next attack from the last result) is the honest **next step**, tracked on the roadmap. Precise scope on purpose.
+> **v1.1 - what this is and is not.** RedGap is a deterministic harness over a *fixed* set of benign techniques. `run --adaptive` now sequences them by chasing coverage gaps - breadth (open an untested tactic) then depth (pile onto a tactic already showing a gap) - and can let a model choose the order. But it stays a **bounded** sequencer (a step cap, the fixed catalog, its own disposable lab), **not** an unbounded autonomous agent that continuously attacks. And whichever planner runs, the `detected` verdict is still the engine's, never the model's. Precise scope on purpose.
 
-**Status.** RedGap's own parser + evaluator ingests **all 122 real SigmaHQ `linux/process_creation` rules** with zero parser errors and zero evaluator crashes - that ruleset is vendored under [`tests/corpus/`](https://github.com/befnoz/redgap/tree/main/tests/corpus/sigmahq_linux_process_creation) and checked by [`test_sigmahq_corpus.py`](https://github.com/befnoz/redgap/blob/main/tests/test_sigmahq_corpus.py), so the claim is reproducible, not asserted. **333 tests** run fully offline in CI. Coverage is computed from **51 committed real-telemetry captures** - one per technique, each with a raw log + parsed events + sha256 provenance - not authored logs; the default run detects **34/51** across 11 ATT&CK tactics. See [docs/architecture.md](https://github.com/befnoz/redgap/blob/main/docs/architecture.md) · committed output in [docs/samples/](https://github.com/befnoz/redgap/tree/main/docs/samples).
+**Status.** RedGap's own parser + evaluator ingests **all 122 real SigmaHQ `linux/process_creation` rules** with zero parser errors and zero evaluator crashes - that ruleset is vendored under [`tests/corpus/`](https://github.com/befnoz/redgap/tree/main/tests/corpus/sigmahq_linux_process_creation) and checked by [`test_sigmahq_corpus.py`](https://github.com/befnoz/redgap/blob/main/tests/test_sigmahq_corpus.py), so the claim is reproducible, not asserted. **371 tests** run fully offline in CI. Coverage is computed from **51 committed real-telemetry captures** - one per technique, each with a raw log + parsed events + sha256 provenance - not authored logs; the default run detects **34/51** across 11 ATT&CK tactics. See [docs/architecture.md](https://github.com/befnoz/redgap/blob/main/docs/architecture.md) · committed output in [docs/samples/](https://github.com/befnoz/redgap/tree/main/docs/samples).
+
+For the rigor behind the claims: [**METHODOLOGY.md**](https://github.com/befnoz/redgap/blob/main/docs/METHODOLOGY.md) (formal definition, evaluation protocol, corpus datasheet), [**THREAT-MODEL.md**](https://github.com/befnoz/redgap/blob/main/docs/THREAT-MODEL.md) (each defense mapped to its test), and a third-party [**benchmark**](https://github.com/befnoz/redgap/tree/main/docs/benchmarks) against all 122 SigmaHQ rules. Re-prove it yourself offline: `redgap verify`.
 
 ---
 
@@ -84,6 +86,27 @@ A run executes **51 benign techniques across 11 ATT&CK tactics** and produces a 
 
 ---
 
+## Adaptive, gap-driven chaining - `redgap run --adaptive`
+
+A flat catalog sweep tells you *which* techniques slip through. `--adaptive` tells you the **story**: it sequences techniques by chasing coverage - open an untested tactic first (breadth), then pile onto a tactic that already shows a detection gap (depth) - building a realistic kill-chain instead of an alphabetical list. It writes two extra artifacts, `attack-path.json` and a rendered `attack-path.md`.
+
+```bash
+redgap run --adaptive               # deterministic, offline - no API key needed
+redgap run --adaptive --llm         # a model chooses the order and when to stop
+```
+
+![redgap run --adaptive: a gap-driven kill-chain, breadth-first across tactics then chasing open gaps, ending with the attack-path artifacts](https://raw.githubusercontent.com/befnoz/redgap/main/docs/adaptive-demo.gif)
+
+The same run, on the dashboard - a kill-chain ribbon where breadth reads left-to-right across the tactics and the gap-chase piles *downward* under the two bleeding tactics (their spine rings glow red). Every bead opens the same real-telemetry evidence drawer as the matrix:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/befnoz/redgap/main/docs/screenshot-attackpath.png" alt="RedGap attack-path ribbon: 12 steps threaded across 11 ATT&CK tactics in kill-chain order; breadth 01-09 sweeps one new tactic per column, then depth 10-12 piles downward under Credential Access and Collection, whose rule-gap spine rings glow red" width="1000">
+</p>
+
+The trust boundary is unchanged, and this is the subtle part: **the planner authors the order and the "why chosen" note - never a verdict.** Every `detected` in the attack-path is *copied* from the deterministic verdict the engine already computed, so the narrative and the grid physically cannot disagree. The coverage grid (`coverage.json`) is **byte-identical** whether you run the default sweep or `--adaptive`, with or without `--llm` - a test asserts it. The model's one tool has no field to write a verdict into. See a committed example under [docs/samples/adaptive/](https://github.com/befnoz/redgap/tree/main/docs/samples/adaptive).
+
+---
+
 ## The dashboard
 
 The same coverage as an interactive page - [befnoz.github.io/redgap](https://befnoz.github.io/redgap/). The full ATT&CK grid, detected in green, rule-gaps in red, base-rate gaps in amber:
@@ -129,6 +152,12 @@ redgap audit --rules examples/my-sigma
 
 ![redgap audit scoring a Sigma rule set: 1 firing, 1 SILENT, 1 out-of-corpus](https://raw.githubusercontent.com/befnoz/redgap/main/docs/audit-demo.gif)
 
+**Let a model draft the missing rule - and let the engine judge it.** `redgap suggest` (opt-in, needs a key) asks an LLM to write a candidate Sigma rule for each rule-gap, then the **deterministic engine** re-runs it and reports whether it actually `closes` the gap, `no_fire`s, is `over_broad`, or forgot the ATT&CK tag. The model writes rule text; only the engine grants green - the same trust boundary, made literal.
+
+```bash
+redgap suggest        # LLM drafts, engine judges (never the other way round)
+```
+
 The `OS Credential Dumping` rule *looks* like coverage - it is tagged to the right technique and passes static validation - yet it never fires on real Linux telemetry (it only matches a Windows tool name). That is the **SILENT** bucket: false confidence that linting the rule text cannot surface, because it never runs the rule against real events.
 
 ---
@@ -169,7 +198,6 @@ Not shipped: weaponizable breadth, real exploits, credential material, or anythi
 
 ## Roadmap (honest next steps)
 
-- Adaptive, gap-driven technique chaining (agent picks the next attack from the last verdict).
 - Effect / syscall-level detection (e.g. `utimensat` for timestomp) via a higher-fidelity collector.
 - Correlation rules (turn the base-rate gap into a real detection).
 - Portability: the rules are standard Sigma, so they already run unchanged in Zircolite or any SIEM.

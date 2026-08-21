@@ -1,0 +1,1079 @@
+{
+  "name": "RedGap coverage",
+  "versions": {
+    "attack": "16",
+    "navigator": "4.19.0",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "RedGap offense<->detection coverage. Green = detected by a Sigma rule; red = gap. Verdicts are deterministic (logs + rules), not AI-generated.",
+  "techniques": [
+    {
+      "techniqueID": "T1087.001",
+      "tactic": "discovery",
+      "color": "#2e7d32",
+      "comment": "detected by aaaa1111-0000-4000-8000-000000000001",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "none"
+        },
+        {
+          "name": "firing_rules",
+          "value": "aaaa1111-0000-4000-8000-000000000001"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1057",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1136.001",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548.001",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548.001",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070.006",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1082",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1016",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1069.001",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1518.001",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1083",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1033",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1518",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1140",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1222.002",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070.004",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1497.001",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1497.001",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059",
+      "tactic": "execution",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059.004",
+      "tactic": "execution",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1059.006",
+      "tactic": "execution",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.003",
+      "tactic": "execution",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.003",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.003",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.002",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.002",
+      "tactic": "execution",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1053.002",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1548",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1546.004",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1546.004",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1098.004",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1098.004",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1552.001",
+      "tactic": "credential-access",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1003.008",
+      "tactic": "credential-access",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1552.004",
+      "tactic": "credential-access",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1560.001",
+      "tactic": "collection",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1005",
+      "tactic": "collection",
+      "color": "#c62828",
+      "comment": "gap (base_rate)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "base_rate"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1071.001",
+      "tactic": "command-and-control",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1090",
+      "tactic": "command-and-control",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1567",
+      "tactic": "exfiltration",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1048.003",
+      "tactic": "exfiltration",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1485",
+      "tactic": "impact",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1489",
+      "tactic": "impact",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1653",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1565.001",
+      "tactic": "impact",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1592.004",
+      "tactic": "reconnaissance",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1007",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1049",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1027",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1036",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1055.009",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1055.009",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1105",
+      "tactic": "command-and-control",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1531",
+      "tactic": "impact",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1201",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1614.001",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1613",
+      "tactic": "discovery",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1070.003",
+      "tactic": "defense-evasion",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1543.002",
+      "tactic": "persistence",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    },
+    {
+      "techniqueID": "T1543.002",
+      "tactic": "privilege-escalation",
+      "color": "#c62828",
+      "comment": "gap (rule)",
+      "enabled": true,
+      "metadata": [
+        {
+          "name": "gap_type",
+          "value": "rule"
+        },
+        {
+          "name": "firing_rules",
+          "value": "none"
+        }
+      ]
+    }
+  ],
+  "legendItems": [
+    {
+      "label": "detected",
+      "color": "#2e7d32"
+    },
+    {
+      "label": "gap (uncovered)",
+      "color": "#c62828"
+    }
+  ],
+  "hideDisabled": false,
+  "showTacticRowBackground": false,
+  "sorting": 0
+}

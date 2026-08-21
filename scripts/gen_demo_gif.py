@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Render the animated terminal casts under ``docs/`` - ``demo.gif`` (a real ``redgap
-run``) and ``audit-demo.gif`` (``redgap audit`` catching a SILENT rule).
+run``), ``audit-demo.gif`` (``redgap audit`` catching a SILENT rule), and
+``adaptive-demo.gif`` (``redgap run --adaptive`` walking a gap-driven kill-chain).
 
 These are *rasterized* GIFs, not animated SVGs (which GitHub strips when a README embeds
 them), so the casts play inline on the project page. The frames are deterministic - the
 same content the committed samples and the site show - so re-running is reproducible.
 
-    python scripts/gen_demo_gif.py     # writes docs/demo.gif and docs/audit-demo.gif
+    python scripts/gen_demo_gif.py     # writes docs/demo.gif, audit-demo.gif, adaptive-demo.gif
 
 Requires Pillow and a monospace TTF. The font is only used to rasterize here; nothing
 about it ships in the GIFs.
@@ -135,6 +136,50 @@ AUDIT_LINES: list[Line] = [
 ]
 
 
+# ---- content: `redgap run --adaptive` - gap-driven killchain -------------------------
+def _astep(
+    step: int, tid: str, tactic: str, status: str, color: tuple[int, int, int], why: str
+) -> list[Span]:
+    left = f" {str(step).rjust(2)}  {tid.ljust(10)}{tactic.ljust(19)}"
+    return [
+        (left, SUBTLE, False),
+        ("● ", color, True),
+        (status.ljust(13), color, False),
+        (why, DIM, False),
+    ]
+
+
+# Truthful subset of the committed docs/samples/adaptive/attack-path.md (12-step chain).
+ADAPTIVE_LINES: list[Line] = [
+    [("$ ", RED, True), ("redgap run --adaptive", INK, False)],
+    [("REPLAY - adaptive gap-driven chaining", DIM, False)],
+    [("  the coverage grid stays byte-identical; this adds the path", DIM, False)],
+    None,
+    [("  #  ATT&CK     TACTIC             VERDICT       WHY", DIM, False)],
+    _astep(1, "T1087.001", "Discovery", "detected", GREEN, "seed"),
+    _astep(2, "T1592.004", "Reconnaissance", "detected", GREEN, "breadth: new tactic"),
+    _astep(3, "T1053.002", "Priv. Escalation", "detected", GREEN, "breadth: new tactic"),
+    _astep(4, "T1027", "Defense Evasion", "detected", GREEN, "breadth: new tactic"),
+    _astep(5, "T1003.008", "Credential Access", "gap (rule)", RED, "breadth: new tactic"),
+    [("     ... 4 more ...", DIM, False)],
+    _astep(10, "T1552.001", "Credential Access", "detected", GREEN, "gap-chase"),
+    _astep(11, "T1552.004", "Credential Access", "gap (rule)", RED, "gap-chase"),
+    _astep(12, "T1560.001", "Collection", "gap (rule)", RED, "gap-chase"),
+    None,
+    [
+        ("  stopped ", SUBTLE, False),
+        ("max_steps", AMBER, True),
+        (" after 12  ·  ", DIM, False),
+        ("8", GREEN, True),
+        (" detected  ·  ", DIM, False),
+        ("4", RED, True),
+        (" gaps  ·  ", DIM, False),
+        ("attack-path.json", INK, False),
+    ],
+    [("  -> the agent ordered the chain; the verdict stays engine-computed", GREEN, False)],
+]
+
+
 def _line_width(line: Line) -> int:
     if line is None:
         return 0
@@ -234,6 +279,7 @@ def build(lines: list[Line], cmd: str, typed_idx: int, out: Path) -> None:
 def main() -> None:
     build(RUN_LINES, "redgap run", 1, DOCS / "demo.gif")
     build(AUDIT_LINES, "redgap audit --rules ./my-sigma/", 0, DOCS / "audit-demo.gif")
+    build(ADAPTIVE_LINES, "redgap run --adaptive", 0, DOCS / "adaptive-demo.gif")
 
 
 if __name__ == "__main__":

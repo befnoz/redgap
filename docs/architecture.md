@@ -26,8 +26,29 @@ subset, or requests a technique that does not exist.
 | Target | `src/redgap/target.py` | `ReplayTarget` (committed real fixtures, offline) / `LiveDockerTarget` |
 | Telemetry | `src/redgap/telemetry/` | snoopy-format parser → SigmaHQ `process_creation` events |
 | Detection | `src/redgap/detection/` | pySigma parser + RedGap's own AST evaluator; coverage join |
-| Planner | `src/redgap/planner.py` | Heuristic (default) / LLM (optional), one `ToolExecutor` |
-| Report | `src/redgap/report/` | `coverage.json`, `coverage.md`, ATT&CK Navigator layer |
+| Planner | `src/redgap/planner.py` | Batch{heuristic default / LLM} × adaptive{heuristic / LLM}, one `ToolExecutor` |
+| Agent state | `src/redgap/agent_state.py` | Pure verdict-cache projection + the `attack-path` artifact (stdlib + catalog only) |
+| Report | `src/redgap/report/` | `coverage.json`, `coverage.md`, ATT&CK Navigator layer, `attack-path.json` |
+
+## Planners: batch and adaptive, deterministic and LLM
+
+The planner layer is a 2×2. The **batch** planners run the whole catalog; the **adaptive**
+planners (`--adaptive`) chase coverage - open an untested tactic first (breadth), then pile
+onto a tactic already showing a gap (depth). Each row has a deterministic default and an
+opt-in LLM variant (`--llm`):
+
+|            | deterministic (default)     | LLM (`--llm`)         |
+|------------|-----------------------------|-----------------------|
+| batch      | `HeuristicPlanner`          | `LLMPlanner`          |
+| adaptive   | `AdaptiveHeuristicPlanner`  | `AdaptivePlanner`     |
+
+All four drive the **same** `ToolExecutor` and return `engine.coverage()`. The adaptive
+LLM path is one *stateless, forced* call per step to a single `select_next_technique` tool
+whose schema has **no verdict field** - the model can order and stop, nothing else. Every
+technique's verdict is computed and cached **before** the next model call. `attack-path.json`
+copies each `detected` from that cache; the planner authors only the order and the reason,
+so `tests/test_adaptive_pipeline.py` can assert the path never contradicts the grid, and the
+grid itself stays byte-identical to a plain run.
 
 ## Two modes, one engine
 

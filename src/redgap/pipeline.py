@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 from redgap._resources import rules_dir as _rules_dir
+from redgap.agent_state import render_attack_path
 from redgap.catalog import CATALOG
 from redgap.detection.sigma_ast import load_rules_detailed
 from redgap.engine_facade import CoverageEngine
@@ -35,6 +36,8 @@ def run_coverage(
     exclude: tuple[str, ...] | None = None,
     loaded: tuple[list, list] | None = None,
     audit_mode: bool = False,
+    auto: bool = False,
+    max_steps: int = 12,
 ) -> tuple[list[Verdict], dict]:
     """Evaluate coverage for ``target`` and (optionally) write the report artifacts.
 
@@ -58,7 +61,11 @@ def run_coverage(
         rules, excluded = loaded
     engine = CoverageEngine(target, rules, excluded, generated_at=generated_at)
 
-    report = make_planner(engine, use_llm=use_llm).run()
+    # The planner sequences techniques; whichever one runs, ``report`` is engine.coverage()
+    # (byte-identical). When ``auto`` the adaptive planner ALSO records the ordered chain it
+    # walked in ``planner.attack_path`` - a narrative lens, never a competing verdict source.
+    planner = make_planner(engine, use_llm=use_llm, auto=auto, max_steps=max_steps)
+    report = planner.run()
     verdicts = engine.verdicts()
     if out_dir is not None:
         out = Path(out_dir)
@@ -85,6 +92,16 @@ def run_coverage(
             encoding="utf-8",
             newline="\n",
         )
+        attack_path = getattr(planner, "attack_path", None)
+        if attack_path is not None:
+            (out / "attack-path.json").write_text(
+                json.dumps(attack_path, indent=2, ensure_ascii=False) + "\n",
+                encoding="utf-8",
+                newline="\n",
+            )
+            (out / "attack-path.md").write_text(
+                render_attack_path(attack_path), encoding="utf-8", newline="\n"
+            )
     return verdicts, report
 
 

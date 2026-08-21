@@ -1,0 +1,1013 @@
+{
+  "tool": "redgap",
+  "mode": "replay",
+  "run_id": "replay",
+  "generated_at": "2026-08-11T00:00:00+00:00",
+  "tool_versions": {},
+  "summary": {
+    "techniques": 51,
+    "detected": 1,
+    "gaps": 50,
+    "gaps_by_type": {
+      "base_rate": 5,
+      "rule": 45
+    }
+  },
+  "techniques": [
+    {
+      "id": "T1087.001",
+      "name": "Account Discovery: Local Account",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": true,
+      "gap_type": "none",
+      "expected_gap_type": "none",
+      "unexpected": false,
+      "depth": 1,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [
+        "aaaa1111-0000-4000-8000-000000000001"
+      ],
+      "matched_event_ids": [
+        "ev_8cc32953659d6a0f"
+      ],
+      "evidence": [
+        {
+          "rule_id": "aaaa1111-0000-4000-8000-000000000001",
+          "rule_title": "Local Account Enumeration via /etc/passwd",
+          "rule_path": "examples/my-sigma/local_account_enum.yml",
+          "event_id": "ev_8cc32953659d6a0f",
+          "matched_fields": {
+            "CommandLine": "cat /etc/passwd",
+            "Image": "/usr/bin/cat"
+          }
+        }
+      ]
+    },
+    {
+      "id": "T1057",
+      "name": "Process Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1136.001",
+      "name": "Create Account: Local Account",
+      "tactics": [
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1548.001",
+      "name": "Abuse Elevation Control Mechanism: Setuid and Setgid",
+      "tactics": [
+        "Privilege Escalation",
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1070.006",
+      "name": "Indicator Removal: Timestomp",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1082",
+      "name": "System Information Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1016",
+      "name": "System Network Configuration Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1069.001",
+      "name": "Permission Groups Discovery: Local Groups",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1518.001",
+      "name": "Software Discovery: Security Software Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1083",
+      "name": "File and Directory Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1033",
+      "name": "System Owner/User Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1518",
+      "name": "Software Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1140",
+      "name": "Deobfuscate/Decode Files or Information",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1222.002",
+      "name": "Linux and Mac File and Directory Permissions Modification",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1070.004",
+      "name": "Indicator Removal: File Deletion",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1497.001",
+      "name": "Virtualization/Sandbox Evasion: System Checks",
+      "tactics": [
+        "Defense Evasion",
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1059",
+      "name": "Command and Scripting Interpreter",
+      "tactics": [
+        "Execution"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1059.004",
+      "name": "Command and Scripting Interpreter: Unix Shell",
+      "tactics": [
+        "Execution"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1059.006",
+      "name": "Command and Scripting Interpreter: Python",
+      "tactics": [
+        "Execution"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1053.003",
+      "name": "Scheduled Task/Job: Cron",
+      "tactics": [
+        "Execution",
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1053.002",
+      "name": "Scheduled Task/Job: At",
+      "tactics": [
+        "Privilege Escalation",
+        "Execution",
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1548",
+      "name": "Abuse Elevation Control Mechanism",
+      "tactics": [
+        "Privilege Escalation",
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1546.004",
+      "name": "Event Triggered Execution: Unix Shell Configuration Modification",
+      "tactics": [
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1098.004",
+      "name": "Account Manipulation: SSH Authorized Keys",
+      "tactics": [
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1552.001",
+      "name": "Unsecured Credentials: Credentials In Files",
+      "tactics": [
+        "Credential Access"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1003.008",
+      "name": "OS Credential Dumping: /etc/passwd and /etc/shadow",
+      "tactics": [
+        "Credential Access"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 1,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1552.004",
+      "name": "Unsecured Credentials: Private Keys",
+      "tactics": [
+        "Credential Access"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1560.001",
+      "name": "Archive Collected Data: Archive via Utility",
+      "tactics": [
+        "Collection"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1005",
+      "name": "Data from Local System",
+      "tactics": [
+        "Collection"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "base_rate",
+      "expected_gap_type": "base_rate",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1071.001",
+      "name": "Application Layer Protocol: Web Protocols",
+      "tactics": [
+        "Command and Control"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1090",
+      "name": "Proxy",
+      "tactics": [
+        "Command and Control"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1567",
+      "name": "Exfiltration Over Web Service",
+      "tactics": [
+        "Exfiltration"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1048.003",
+      "name": "Exfiltration Over Unencrypted Non-C2 Protocol",
+      "tactics": [
+        "Exfiltration"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1485",
+      "name": "Data Destruction",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1489",
+      "name": "Service Stop",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1653",
+      "name": "Power Settings",
+      "tactics": [
+        "Persistence"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1565.001",
+      "name": "Data Manipulation: Stored Data Manipulation",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1592.004",
+      "name": "Gather Victim Host Information: Client Configurations",
+      "tactics": [
+        "Reconnaissance"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1007",
+      "name": "System Service Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1049",
+      "name": "System Network Connections Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1027",
+      "name": "Obfuscated Files or Information",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1036",
+      "name": "Masquerading",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1055.009",
+      "name": "Process Injection: Proc Memory",
+      "tactics": [
+        "Defense Evasion",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1070",
+      "name": "Indicator Removal",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1105",
+      "name": "Ingress Tool Transfer",
+      "tactics": [
+        "Command and Control"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1531",
+      "name": "Account Access Removal",
+      "tactics": [
+        "Impact"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "none",
+      "unexpected": true,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1201",
+      "name": "Password Policy Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1614.001",
+      "name": "System Location Discovery: System Language Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1613",
+      "name": "Container and Resource Discovery",
+      "tactics": [
+        "Discovery"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1070.003",
+      "name": "Indicator Removal: Clear Command History",
+      "tactics": [
+        "Defense Evasion"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    },
+    {
+      "id": "T1543.002",
+      "name": "Create or Modify System Process: Systemd Service",
+      "tactics": [
+        "Persistence",
+        "Privilege Escalation"
+      ],
+      "executed": true,
+      "telemetry_present": true,
+      "detected": false,
+      "gap_type": "rule",
+      "expected_gap_type": "rule",
+      "unexpected": false,
+      "depth": 0,
+      "candidates_evaluated": 0,
+      "candidates_excluded": 0,
+      "firing_rules": [],
+      "matched_event_ids": [],
+      "evidence": []
+    }
+  ]
+}
