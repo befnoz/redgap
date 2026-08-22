@@ -8,7 +8,7 @@
 <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 <meta name="theme-color" content="#06080c" media="(prefers-color-scheme: dark)" />
 <meta name="theme-color" content="#f4f6fa" media="(prefers-color-scheme: light)" />
-<meta name="description" content="RedGap runs benign MITRE ATT&CK techniques against its own disposable lab and deterministically decides — from logs and Sigma rules, no AI in the loop — whether each was detected or is a gap. Find the red." />
+<meta name="description" content="RedGap runs benign MITRE ATT&CK techniques against its own disposable lab and deterministically decides — from logs and Sigma rules, no AI in the verdict — which your detections catch, then chains the gaps into an adaptive attack path. Find the red." />
 <meta name="author" content="befnoz" />
 <meta name="keywords" content="detection engineering, MITRE ATT&CK, Sigma rules, detection coverage, purple team, offense detection, security, redgap" />
 <link rel="canonical" href="https://befnoz.github.io/redgap/" />
@@ -16,16 +16,16 @@
 <meta property="og:site_name" content="RedGap" />
 <meta property="og:url" content="https://befnoz.github.io/redgap/" />
 <meta property="og:title" content="RedGap — find the red gaps in your detection coverage" />
-<meta property="og:description" content="Automated MITRE ATT&CK offense/detection coverage harness. Runs 51 benign techniques, captures real telemetry, and deterministically decides detected-vs-gap from Sigma rules — no AI in the verdict." />
+<meta property="og:description" content="Automated MITRE ATT&CK offense/detection coverage harness. Runs 51 benign techniques, deterministically decides detected-vs-gap from Sigma rules, then chains the gaps into an adaptive attack path — no AI in the verdict." />
 <meta property="og:image" content="https://befnoz.github.io/redgap/social-preview.png" />
 <meta property="og:image:width" content="1280" />
 <meta property="og:image:height" content="640" />
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:title" content="RedGap — find the red gaps in your detection coverage" />
-<meta name="twitter:description" content="Deterministic MITRE ATT&CK offense/detection coverage harness. No AI in the verdict." />
+<meta name="twitter:description" content="Deterministic MITRE ATT&CK coverage harness that chains detection gaps into an adaptive attack path. No AI in the verdict." />
 <meta name="twitter:image" content="https://befnoz.github.io/redgap/social-preview.png" />
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"SoftwareApplication","name":"RedGap","applicationCategory":"SecurityApplication","operatingSystem":"Linux","description":"Automated MITRE ATT&CK offense/detection coverage harness - deterministic, no AI in the verdict.","url":"https://befnoz.github.io/redgap/","downloadUrl":"https://pypi.org/project/redgap/","codeRepository":"https://github.com/befnoz/redgap","license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"befnoz"}}
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"RedGap","applicationCategory":"SecurityApplication","operatingSystem":"Linux","description":"Automated MITRE ATT&CK offense/detection coverage harness - deterministic, chains detection gaps into an adaptive attack path, no AI in the verdict.","url":"https://befnoz.github.io/redgap/","downloadUrl":"https://pypi.org/project/redgap/","codeRepository":"https://github.com/befnoz/redgap","license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"befnoz"}}
 </script>
 <style>
   :root {
@@ -152,7 +152,7 @@
   .term .bar i:nth-child(1) { background: #ff5f57; } .term .bar i:nth-child(2) { background: #febc2e; } .term .bar i:nth-child(3) { background: #28c840; }
   .term .bar span { margin-left: 8px; font-family: var(--mono); font-size: 12px; color: var(--faint-ink); }
   .term pre { margin: 0; padding: 16px 18px; font-family: var(--mono); font-size: 13px; line-height: 1.65;
-    min-height: 330px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
+    min-height: 388px; white-space: pre-wrap; word-break: break-word; color: var(--ink); }
   .term .p { color: var(--accent); } .term .c { color: var(--faint-ink); }
   .term .ok { color: var(--green-ink); } .term .bad { color: var(--red-ink); } .term .warn { color: var(--amber); }
   .term .cur { display: inline-block; width: 8px; height: 15px; background: var(--green); vertical-align: -2px; animation: blink 1.05s step-end infinite; }
@@ -726,8 +726,10 @@
       <div class="reveal">
         <div class="eyebrow" style="margin-bottom:8px">offline coverage run</div>
         <div class="code"><span class="p">$</span> pip install redgap
-<span class="p">$</span> redgap run          <span class="c"># REPLAY: prints the grid + writes reports</span>
-<span class="p">$</span> redgap run --fix    <span class="c"># close the timestomp gap: red → green</span></div>
+<span class="p">$</span> redgap run             <span class="c"># REPLAY: prints the grid + writes reports</span>
+<span class="p">$</span> redgap run --adaptive  <span class="c"># chain the gaps into an attack path</span>
+<span class="p">$</span> redgap run --fix       <span class="c"># close the timestomp gap: red → green</span>
+<span class="p">$</span> redgap verify          <span class="c"># re-prove it offline: authentic + deterministic</span></div>
         <p class="dim" style="font-size:13px">From source: <span class="mono">git clone github.com/befnoz/redgap &amp;&amp; pip install -e .</span></p>
       </div>
       <div class="reveal">
@@ -749,8 +751,11 @@
       <a class="btn primary" href="https://github.com/befnoz/redgap" target="_blank" rel="noopener">★ Star on GitHub</a>
       <a class="btn" href="https://pypi.org/project/redgap/" target="_blank" rel="noopener">PyPI ↗</a>
       <a class="ln" href="#coverage">Coverage</a>
-      <a class="ln" href="#use">How to use</a>
+      <a class="ln" href="#attackpath">Attack path</a>
       <a class="ln" href="#run">Quickstart</a>
+      <a class="ln" href="https://github.com/befnoz/redgap/blob/main/docs/METHODOLOGY.md" target="_blank" rel="noopener">Methodology ↗</a>
+      <a class="ln" href="https://github.com/befnoz/redgap/blob/main/docs/THREAT-MODEL.md" target="_blank" rel="noopener">Threat model ↗</a>
+      <a class="ln" href="https://github.com/befnoz/redgap/tree/main/docs/benchmarks" target="_blank" rel="noopener">Benchmark ↗</a>
     </div>
     <p class="fine">RedGap attacks only its own disposable local lab — no free-form target, the live container
       runs with no network, and every launch is gated in code (and re-audited by 100+ adversarial agents). Every
@@ -5468,6 +5473,8 @@
       '  <span class="c">… 45 more …</span>',
       '',
       '  <span class="ok">34</span>/51 detected · <span class="bad">17</span> gaps  <span class="c">(rule:12, base-rate:5)</span>',
+      '',
+      '  <span class="p">$</span> redgap run --adaptive  <span class="c">→ chains the gaps into an attack path</span>',
       '  <span class="c">→ find the red. close it. prove it.</span>',
     ];
     var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;

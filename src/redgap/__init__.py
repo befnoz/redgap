@@ -6,4 +6,4 @@ never depends on a language model. The optional LLM planner lives behind the
 ``redgap[llm]`` extra and is disabled by default.
 """
 
-__version__ = "1.1.0"
+__version__ = "1.1.1"

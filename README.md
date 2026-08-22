@@ -6,9 +6,13 @@
   <img src="https://raw.githubusercontent.com/befnoz/redgap/main/docs/demo.gif" alt="A real REPLAY coverage run: redgap re-evaluates captured telemetry against Sigma rules and reports 34 of 51 ATT&CK techniques detected, 17 gaps (12 rule, 5 base-rate)." width="720">
 </p>
 
-RedGap is an automated, MITRE ATT&CK-mapped **offense↔detection coverage harness**. It runs **51 benign** ATT&CK techniques (across 11 tactics) against its own disposable local lab, collects real telemetry with an **independent collector**, and then **deterministically** - from logs and Sigma rules, with no AI in the loop - decides whether each technique was *detected* or is a *gap*. Point it at **your own** Sigma rules with `redgap audit --rules` and it grades them the same way. The output is a coverage report (`technique → detected? → gap type`) plus an ATT&CK Navigator layer and a per-rule health scorecard.
+RedGap is an automated, MITRE ATT&CK-mapped **offense↔detection coverage harness**. It runs **51 benign** ATT&CK techniques (across 11 tactics) against its own disposable local lab, collects real telemetry with an **independent collector**, and then **deterministically** - from logs and Sigma rules, with **no AI in the verdict** - decides whether each technique was *detected* or is a *gap*. It then **chains the gaps into an adaptive attack path** (`redgap run --adaptive`). Point it at **your own** Sigma rules with `redgap audit --rules` and it grades them the same way. The output is a coverage report (`technique → detected? → gap type`) plus an ATT&CK Navigator layer, a per-rule health scorecard, and the attack-path artifact.
 
-The name is the output: in the coverage grid, detected techniques are green and gaps are **red**. RedGap finds the red.
+The name is the output: in the coverage grid, detected techniques are green and gaps are **red**. RedGap finds the red - then walks a realistic kill-chain through them:
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/befnoz/redgap/main/docs/adaptive-ribbon.gif" alt="RedGap adaptive attack-path kill-chain ribbon: verdict-coded beads on a spine reveal breadth-first across ATT&CK tactics, then the gap-chase piles downward under the two bleeding tactics whose rule-gap rings glow red" width="900">
+</p>
 
 [![CI](https://github.com/befnoz/redgap/actions/workflows/ci.yml/badge.svg)](https://github.com/befnoz/redgap/actions/workflows/ci.yml)
 [![Live demo](https://img.shields.io/badge/demo-live-2e7d32)](https://befnoz.github.io/redgap/)
@@ -176,6 +180,9 @@ The honest picture:
 | Emits a detected-vs-gap coverage verdict | - | - | - | ✅ |
 | Flags **SILENT** rules (pass validation, never fire) | - | - | - | ✅ |
 | Gap taxonomy (rule vs base-rate) | - | - | - | ✅ |
+| Chains techniques into a gap-driven **attack path** | - | - | - | ✅ |
+| Reports detection **depth** (single point of failure) | - | - | - | ✅ |
+| Re-proves its own numbers offline (`redgap verify`) | - | - | - | ✅ |
 
 They are complementary, not competitors. `sigma-cli` lints (`sigma check`) and converts
 (`sigma convert`) your rules but never runs them against events; Atomic Red Team is a far

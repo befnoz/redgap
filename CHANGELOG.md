@@ -4,6 +4,27 @@ All notable changes to RedGap are documented here. The format is based on
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.1] - 2026-08-22
+
+Release polish - surface the v1.1 flagship consistently across every surface and refresh
+metadata. No code or behavior changes; 371 tests still pass.
+
+### Changed
+- The adaptive attack-path is now surfaced where it belongs: a refreshed social-preview card
+  (kill-chain ribbon), an animated ribbon demo (`docs/adaptive-ribbon.gif`) near the top of the
+  README, a "How it compares" row for gap-driven chaining / detection depth / `redgap verify`,
+  and an `--adaptive` beat in the dashboard hero + quickstart.
+- `SCOPE.md` updated to v1.1: adaptive chaining, `redgap suggest`, `redgap verify`, the
+  benchmark, and the dashboard are now listed **in scope** (adaptive was previously, wrongly,
+  listed as out-of-scope roadmap); the out-of-scope list now reads "unbounded autonomous
+  operation".
+- `docs/architecture.svg` now shows the batch/adaptive planner and the `attack-path.json` output.
+- Social/SEO copy corrected: "no AI in the loop" -> "no AI in the **verdict**" (the LLM is in
+  the orchestration loop, never the verdict), and og/twitter/JSON-LD/meta now mention the
+  adaptive attack path.
+- `pyproject.toml` / `CITATION.cff` keywords add `adaptive` / `attack-path` / `kill-chain`.
+- `SECURITY.md` supported-versions is now version-independent; `sitemap.xml` lastmod refreshed.
+
 ## [1.1.0] - 2026-08-21
 
 ### Added
@@ -141,6 +162,7 @@ Initial public release.
 - ATT&CK Navigator layer, `coverage.json` / `coverage.md` reports, CI, PyPI packaging,
   and the GitHub Pages dashboard.
 
+[1.1.1]: https://github.com/befnoz/redgap/releases/tag/v1.1.1
 [1.1.0]: https://github.com/befnoz/redgap/releases/tag/v1.1.0
 [1.0.2]: https://github.com/befnoz/redgap/releases/tag/v1.0.2
 [1.0.1]: https://github.com/befnoz/redgap/releases/tag/v1.0.1
