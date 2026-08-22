@@ -12,4 +12,4 @@ If you find a security issue in RedGap - or believe a technique module could be 
 
 ## Supported versions
 
-RedGap is at 1.0.0. Only the latest release / the current `main` is supported.
+Only the latest release and the current `main` are supported.
